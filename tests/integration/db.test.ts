@@ -37,10 +37,10 @@ describe("database schema (migrations applied to PGlite)", () => {
     ]) expect(names).toContain(n);
   });
 
-  it("treats usernames case-insensitively (citext, AU-01)", async () => {
+  it("treats usernames case-insensitively (unique lower(username) index, AU-01)", async () => {
     await makeUser("Maria.Santos");
     await expect(makeUser("maria.santos")).rejects.toThrow();
-    const found = await t.db.select().from(users).where(eq(users.username, "MARIA.SANTOS"));
+    const found = await t.db.select().from(users).where(sql`lower(${users.username}) = ${"MARIA.SANTOS".toLowerCase()}`);
     expect(found).toHaveLength(1);
   });
 

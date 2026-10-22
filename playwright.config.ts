@@ -20,7 +20,16 @@ export default defineConfig({
   webServer: {
     command: `npx next start -p ${port}`,
     port,
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     timeout: 120_000,
+    // End-to-end runs use an in-memory Postgres (PGlite) and the mock VectorShift: no network, no Neon.
+    env: {
+      DB_DRIVER: "pglite",
+      ALLOW_PGLITE: "true",
+      PGLITE_SEED_ADMIN: "e2e_admin:admin pass phrase for tests",
+      APP_SECRET: "e2e-secret-e2e-secret-e2e-secret-0001",
+      APP_ORIGIN: `http://localhost:${port}`,
+      VECTORSHIFT_BASE_URL: "http://localhost:4010",
+    },
   },
 });

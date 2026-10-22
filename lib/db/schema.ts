@@ -8,7 +8,6 @@ import { sql } from "drizzle-orm";
 import {
   bigint,
   bigserial,
-  customType,
   date,
   index,
   integer,
@@ -21,7 +20,6 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-const citext = customType<{ data: string }>({ dataType: () => "citext" });
 const ts = (name: string) => timestamp(name, { withTimezone: true, mode: "date" });
 
 export const USER_ROLES = ["user", "admin"] as const;
@@ -29,7 +27,7 @@ export const USER_STATUSES = ["active", "suspended"] as const;
 export const PRODUCTS = ["quick_report", "executive_summary", "feasibility_report", "teaser_intake"] as const;
 export const REPORT_STATUSES = ["draft", "queued", "running", "ready", "failed", "needs_confirmation"] as const;
 export const RUN_STATUSES = ["queued", "running", "succeeded", "failed", "cancelled"] as const;
-export const AUTH_ATTEMPT_KINDS = ["login", "login_address", "register", "reset"] as const;
+export const AUTH_ATTEMPT_KINDS = ["login", "login_address", "register", "availability"] as const;
 
 export type Product = (typeof PRODUCTS)[number];
 export type ReportStatus = (typeof REPORT_STATUSES)[number];
@@ -37,10 +35,15 @@ export type RunStatus = (typeof RUN_STATUSES)[number];
 export type UserRole = (typeof USER_ROLES)[number];
 export type UserStatus = (typeof USER_STATUSES)[number];
 
+/**
+ * Usernames are unique regardless of case (AU-01) through a unique index on lower(username).
+ * (Originally citext; changed in migration 0002 so the same schema runs on Neon and on PGlite.)
+ * Look users up with lower() (see lib/db/repos/users.ts).
+ */
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   publicId: text("public_id").notNull().unique(),
-  username: citext("username").notNull().unique(),
+  username: text("username").notNull(),
   displayUsername: text("display_username").notNull(),
   passwordHash: text("password_hash").notNull(),
   recoveryKeyHash: text("recovery_key_hash").notNull(),
@@ -50,7 +53,7 @@ export const users = pgTable("users", {
   privacyVersion: text("privacy_version").notNull(),
   createdAt: ts("created_at").notNull().defaultNow(),
   lastActiveAt: ts("last_active_at"),
-});
+}, (t) => [uniqueIndex("users_username_lower_unique").on(sql`lower(${t.username})`)]);
 
 export const sessions = pgTable(
   "sessions",

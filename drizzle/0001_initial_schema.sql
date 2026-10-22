@@ -118,7 +118,7 @@ CREATE TABLE "usage_events" (
 CREATE TABLE "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"public_id" text NOT NULL,
-	"username" "citext" NOT NULL,
+	"username" text NOT NULL,
 	"display_username" text NOT NULL,
 	"password_hash" text NOT NULL,
 	"recovery_key_hash" text NOT NULL,

@@ -30,7 +30,8 @@ const schema = z.object({
     .default("false")
     .transform((v) => v === "true"),
   APP_ORIGIN: z.string().url().default("http://localhost:3000"),
-  ADDRESS_HASH_SALT: z.string().optional(),
+  APP_SECRET: z.string().min(32).optional(),
+  PGLITE_DIR: z.string().optional(),
   ALLOW_INDEXING: z
     .enum(["true", "false"])
     .default("false")

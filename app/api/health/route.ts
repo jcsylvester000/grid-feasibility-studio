@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql } from "drizzle-orm";
-import { db } from "@/lib/db/client";
+import { getDb } from "@/lib/db/client";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +10,7 @@ export async function GET() {
   let database: "ok" | "not_configured" | "error" = "ok";
   let tables: number | null = null;
   try {
-    const res = (await db().execute(
+    const res = (await (await getDb()).execute(
       sql`select count(*)::int as n from information_schema.tables where table_schema = 'public' and table_type = 'BASE TABLE'`,
     )) as unknown as { rows: { n: number }[] };
     tables = res.rows[0]?.n ?? null;

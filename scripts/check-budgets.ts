@@ -22,6 +22,9 @@ const budgets: { route: string; limitKb: number; group: string }[] = [
   { route: "/how-it-works", limitKb: BUDGET_KB.public, group: "public" },
   { route: "/terms", limitKb: BUDGET_KB.public, group: "public" },
   { route: "/privacy", limitKb: BUDGET_KB.public, group: "public" },
+  { route: "/register", limitKb: BUDGET_KB.public, group: "public" },
+  { route: "/login", limitKb: BUDGET_KB.public, group: "public" },
+  { route: "/reset", limitKb: BUDGET_KB.public, group: "public" },
 ];
 const extra = (process.env.BUDGET_ROUTES ?? "").split(",").filter(Boolean);
 for (const spec of extra) {
