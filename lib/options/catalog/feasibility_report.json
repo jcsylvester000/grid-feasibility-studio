@@ -1,0 +1,1823 @@
+[
+ {
+  "key": "product",
+  "label": "Product",
+  "type": "choice",
+  "meaning": "Product and format: Product. Chosen in the Studio; not property information.",
+  "provider_tag": "system",
+  "who_provides": "GRID user",
+  "options": [
+   {
+    "value": "executive_summary",
+    "label": "Executive Summary (one page)"
+   },
+   {
+    "value": "feasibility_report",
+    "label": "Feasibility Report (full study)"
+   },
+   {
+    "value": "quick_report",
+    "label": "Quick Report (broker / agent)"
+   }
+  ]
+ },
+ {
+  "key": "toc_mode",
+  "label": "Page order",
+  "type": "choice",
+  "meaning": "Product and format: Page order. Report-template setting.",
+  "provider_tag": "system",
+  "who_provides": "GRID template owner",
+  "options": [
+   {
+    "value": "summary_first",
+    "label": "Cover → Executive Summary → Contents"
+   },
+   {
+    "value": "toc_first",
+    "label": "Cover → Contents → Executive Summary"
+   }
+  ]
+ },
+ {
+  "key": "property.name",
+  "label": "Property or project name",
+  "type": "text",
+  "meaning": "Property: Property or project name. The listing name or a working name the broker assigns.",
+  "provider_tag": "can",
+  "who_provides": "Broker"
+ },
+ {
+  "key": "property.region",
+  "label": "Region",
+  "type": "text",
+  "meaning": "Property: Region. Known from the listing and the site visit.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "capability": "location"
+ },
+ {
+  "key": "property.province",
+  "label": "Province",
+  "type": "text",
+  "meaning": "Property: Province. Known from the listing and the site visit.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "capability": "location"
+ },
+ {
+  "key": "property.city",
+  "label": "City or municipality",
+  "type": "text",
+  "meaning": "Property: City or municipality. Known from the listing and the site visit.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "capability": "location"
+ },
+ {
+  "key": "property.barangay",
+  "label": "Barangay",
+  "type": "text",
+  "meaning": "Property: Barangay. Shown on the tax declaration and title copies brokers usually collect when taking a listing.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "capability": "location"
+ },
+ {
+  "key": "property.address",
+  "label": "Street / landmark",
+  "type": "text",
+  "meaning": "Property: Street / landmark. Known from the site visit.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "capability": "location"
+ },
+ {
+  "key": "property.road_access",
+  "label": "Road access",
+  "type": "choice",
+  "meaning": "Property: Road access. Observed on the site visit.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "options": [
+   {
+    "value": "major_road",
+    "label": "Fronts a major road or highway"
+   },
+   {
+    "value": "secondary_road",
+    "label": "Fronts a secondary road"
+   },
+   {
+    "value": "inner_road",
+    "label": "Inner lot, road access via easement"
+   },
+   {
+    "value": "unknown",
+    "label": "Not sure",
+    "means_unknown": true
+   }
+  ]
+ },
+ {
+  "key": "property.lot_area",
+  "label": "Lot area",
+  "type": "number",
+  "meaning": "Property: Lot area. Stated in the listing and on the title copy. It is the seller's figure until a geodetic survey confirms it, so the report keeps it 'to be confirmed'.",
+  "provider_tag": "can",
+  "who_provides": "Broker (seller-stated)",
+  "unit": "sqm",
+  "capability": "lot_area"
+ },
+ {
+  "key": "property.floor_area",
+  "label": "Existing floor area",
+  "type": "number",
+  "meaning": "Property: Existing floor area. Stated in the listing for improved property; confirm against the building plans or tax declaration.",
+  "provider_tag": "can",
+  "who_provides": "Broker (seller-stated)",
+  "unit": "sqm"
+ },
+ {
+  "key": "use.intended_use",
+  "label": "Intended use",
+  "type": "choice",
+  "meaning": "Intended use and goals: Intended use. Brokers can suggest the likely best use from what sells or leases nearby, but the owner or developer decides the concept.",
+  "provider_tag": "idea",
+  "who_provides": "Owner decides; broker advises",
+  "capability": "intended_use",
+  "options": [
+   {
+    "value": "residential_subdivision",
+    "label": "Residential subdivision (house and lot / lots only)",
+    "maps_to": {
+     "canonical": "residential_subdivision"
+    }
+   },
+   {
+    "value": "residential_condominium",
+    "label": "Residential condominium",
+    "maps_to": {
+     "canonical": "residential_condominium"
+    }
+   },
+   {
+    "value": "commercial",
+    "label": "Commercial (retail, office, strip mall)",
+    "maps_to": {
+     "canonical": "commercial"
+    }
+   },
+   {
+    "value": "mixed_use",
+    "label": "Mixed use",
+    "maps_to": {
+     "canonical": "mixed_use"
+    }
+   },
+   {
+    "value": "industrial_warehouse",
+    "label": "Industrial / warehouse",
+    "maps_to": {
+     "canonical": "industrial_warehouse"
+    }
+   },
+   {
+    "value": "hospitality_resort",
+    "label": "Hospitality / resort",
+    "maps_to": {
+     "canonical": "hospitality_resort"
+    }
+   },
+   {
+    "value": "agricultural",
+    "label": "Agricultural",
+    "maps_to": {
+     "canonical": "agricultural"
+    }
+   },
+   {
+    "value": "institutional",
+    "label": "Institutional (school, clinic)",
+    "maps_to": {
+     "canonical": "institutional"
+    }
+   },
+   {
+    "value": "land_banking",
+    "label": "Land banking (hold and resell the land)",
+    "maps_to": {
+     "canonical": "land_banking"
+    }
+   }
+  ]
+ },
+ {
+  "key": "use.detail",
+  "label": "Type",
+  "type": "choice",
+  "meaning": "Intended use and goals: Type. Same as intended use: a market-based suggestion, not a decided concept.",
+  "provider_tag": "idea",
+  "who_provides": "Owner decides; broker advises",
+  "capability": "intended_use",
+  "options": [
+   {
+    "value": "Economic / socialized housing",
+    "label": "Economic / socialized housing",
+    "group": "residential_subdivision"
+   },
+   {
+    "value": "Low-cost house and lot",
+    "label": "Low-cost house and lot",
+    "group": "residential_subdivision"
+   },
+   {
+    "value": "Mid-market house and lot",
+    "label": "Mid-market house and lot",
+    "group": "residential_subdivision"
+   },
+   {
+    "value": "High-end lots only",
+    "label": "High-end lots only",
+    "group": "residential_subdivision"
+   },
+   {
+    "value": "Mid-rise (up to 12 floors)",
+    "label": "Mid-rise (up to 12 floors)",
+    "group": "residential_condominium"
+   },
+   {
+    "value": "High-rise",
+    "label": "High-rise",
+    "group": "residential_condominium"
+   },
+   {
+    "value": "Serviced residences",
+    "label": "Serviced residences",
+    "group": "residential_condominium"
+   },
+   {
+    "value": "Strip mall / community retail",
+    "label": "Strip mall / community retail",
+    "group": "commercial"
+   },
+   {
+    "value": "Office building",
+    "label": "Office building",
+    "group": "commercial"
+   },
+   {
+    "value": "Showroom",
+    "label": "Showroom",
+    "group": "commercial"
+   },
+   {
+    "value": "Mall anchor pad",
+    "label": "Mall anchor pad",
+    "group": "commercial"
+   },
+   {
+    "value": "Retail podium + residential tower",
+    "label": "Retail podium + residential tower",
+    "group": "mixed_use"
+   },
+   {
+    "value": "Township block",
+    "label": "Township block",
+    "group": "mixed_use"
+   },
+   {
+    "value": "Dry warehouse",
+    "label": "Dry warehouse",
+    "group": "industrial_warehouse"
+   },
+   {
+    "value": "Cold storage",
+    "label": "Cold storage",
+    "group": "industrial_warehouse"
+   },
+   {
+    "value": "Light industrial",
+    "label": "Light industrial",
+    "group": "industrial_warehouse"
+   },
+   {
+    "value": "Beach resort",
+    "label": "Beach resort",
+    "group": "hospitality_resort"
+   },
+   {
+    "value": "Mountain / highland resort",
+    "label": "Mountain / highland resort",
+    "group": "hospitality_resort"
+   },
+   {
+    "value": "Business hotel",
+    "label": "Business hotel",
+    "group": "hospitality_resort"
+   },
+   {
+    "value": "Dive resort",
+    "label": "Dive resort",
+    "group": "hospitality_resort"
+   },
+   {
+    "value": "Orchard / plantation",
+    "label": "Orchard / plantation",
+    "group": "agricultural"
+   },
+   {
+    "value": "Farm lease",
+    "label": "Farm lease",
+    "group": "agricultural"
+   },
+   {
+    "value": "School",
+    "label": "School",
+    "group": "institutional"
+   },
+   {
+    "value": "Clinic / medical centre",
+    "label": "Clinic / medical centre",
+    "group": "institutional"
+   },
+   {
+    "value": "Raw land, no improvements",
+    "label": "Raw land, no improvements",
+    "group": "land_banking"
+   },
+   {
+    "value": "Partially developed land",
+    "label": "Partially developed land",
+    "group": "land_banking"
+   }
+  ]
+ },
+ {
+  "key": "use.goal",
+  "label": "Owner's goal",
+  "type": "choice",
+  "meaning": "Intended use and goals: Owner's goal. Brokers know whether the client wants to sell, lease, hold or find a JV partner because that is the engagement.",
+  "provider_tag": "can",
+  "who_provides": "Broker (from the client brief)",
+  "capability": "goals_objectives",
+  "options": [
+   {
+    "value": "sell",
+    "label": "Develop and sell"
+   },
+   {
+    "value": "lease",
+    "label": "Develop and lease (build and hold)"
+   },
+   {
+    "value": "land_bank",
+    "label": "Hold the land and resell later"
+   },
+   {
+    "value": "jv",
+    "label": "Find a joint-venture partner"
+   },
+   {
+    "value": "undecided",
+    "label": "Undecided: show me the best use"
+   }
+  ]
+ },
+ {
+  "key": "use.horizon",
+  "label": "Time horizon",
+  "type": "choice",
+  "meaning": "Intended use and goals: Time horizon. Brokers usually know roughly how long the client is willing to wait, but not a committed investment horizon.",
+  "provider_tag": "idea",
+  "who_provides": "Owner",
+  "unit": "years",
+  "capability": "goals_objectives",
+  "options": [
+   {
+    "value": 3,
+    "label": "3 years",
+    "maps_to": {
+     "low": null,
+     "base": 3,
+     "high": null,
+     "unit": "years"
+    }
+   },
+   {
+    "value": 5,
+    "label": "5 years",
+    "maps_to": {
+     "low": null,
+     "base": 5,
+     "high": null,
+     "unit": "years"
+    }
+   },
+   {
+    "value": 7,
+    "label": "7 years",
+    "maps_to": {
+     "low": null,
+     "base": 7,
+     "high": null,
+     "unit": "years"
+    }
+   },
+   {
+    "value": 10,
+    "label": "10 years",
+    "maps_to": {
+     "low": null,
+     "base": 10,
+     "high": null,
+     "unit": "years"
+    }
+   },
+   {
+    "value": 15,
+    "label": "15 years",
+    "maps_to": {
+     "low": null,
+     "base": 15,
+     "high": null,
+     "unit": "years"
+    }
+   }
+  ]
+ },
+ {
+  "key": "use.target_irr",
+  "label": "Target return",
+  "type": "choice",
+  "meaning": "Intended use and goals: Target return. A hurdle rate is the investor's internal figure tied to their cost of capital. Clients rarely share it with a broker, and brokers are not asked to set it.",
+  "provider_tag": "cant",
+  "who_provides": "Owner / investor",
+  "unit": "%",
+  "capability": "goals_objectives",
+  "options": [
+   {
+    "value": "",
+    "label": "No target",
+    "means_unknown": true
+   },
+   {
+    "value": 10,
+    "label": "10% IRR",
+    "maps_to": {
+     "low": null,
+     "base": 10,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 12,
+    "label": "12% IRR",
+    "maps_to": {
+     "low": null,
+     "base": 12,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 15,
+    "label": "15% IRR",
+    "maps_to": {
+     "low": null,
+     "base": 15,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 18,
+    "label": "18% IRR",
+    "maps_to": {
+     "low": null,
+     "base": 18,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 20,
+    "label": "20% IRR",
+    "maps_to": {
+     "low": null,
+     "base": 20,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 25,
+    "label": "25% IRR",
+    "maps_to": {
+     "low": null,
+     "base": 25,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ]
+ },
+ {
+  "key": "market.has_mi",
+  "label": "Market Insight report",
+  "type": "choice",
+  "meaning": "Market evidence: Market Insight report. Brokers on GRID can run Market Insight themselves.",
+  "provider_tag": "can",
+  "who_provides": "Broker (GRID user)",
+  "options": [
+   {
+    "value": "no",
+    "label": "No Market Insight report yet"
+   },
+   {
+    "value": "yes",
+    "label": "Yes, I have a Market Insight report"
+   }
+  ]
+ },
+ {
+  "key": "market.mi_id",
+  "label": "Market Insight report ID",
+  "type": "text",
+  "meaning": "Market evidence: Market Insight report ID. Shown on the Market Insight report.",
+  "provider_tag": "can",
+  "who_provides": "Broker (GRID user)"
+ },
+ {
+  "key": "market.asking_low",
+  "label": "Asking price, low",
+  "type": "number",
+  "meaning": "Market evidence: Asking price, low. Gathering comparable listings is core broker work. These are asking prices; closed prices are harder to get and the report says so.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "unit": "PHP/sqm"
+ },
+ {
+  "key": "market.asking_high",
+  "label": "Asking price, high",
+  "type": "number",
+  "meaning": "Market evidence: Asking price, high. As above.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "unit": "PHP/sqm"
+ },
+ {
+  "key": "market.comps_count",
+  "label": "Number of comparable listings",
+  "type": "number",
+  "meaning": "Market evidence: Number of comparable listings. The broker knows how many listings they compared.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "unit": "listings"
+ },
+ {
+  "key": "market.as_of",
+  "label": "Prices as of",
+  "type": "text",
+  "meaning": "Market evidence: Prices as of. The date the broker gathered the listings.",
+  "provider_tag": "can",
+  "who_provides": "Broker"
+ },
+ {
+  "key": "market.zonal_per_sqm",
+  "label": "BIR zonal value",
+  "type": "number",
+  "meaning": "Market evidence: BIR zonal value. BIR zonal values are public schedules and can be searched by street, so brokers routinely quote them.",
+  "provider_tag": "can",
+  "who_provides": "Broker (public record)",
+  "unit": "PHP/sqm"
+ },
+ {
+  "key": "owner.name",
+  "label": "Owner / developer name",
+  "type": "text",
+  "meaning": "Owner or developer: Owner / developer name. The broker's client.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "capability": "owner_developer_profile"
+ },
+ {
+  "key": "owner.type",
+  "label": "Owner type",
+  "type": "choice",
+  "meaning": "Owner or developer: Owner type. The broker knows whether the client is an individual, a family corporation, a developer or a fund.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "capability": "owner_developer_profile",
+  "options": [
+   {
+    "value": "",
+    "label": "Not disclosed",
+    "means_unknown": true
+   },
+   {
+    "value": "individual",
+    "label": "Individual landowner"
+   },
+   {
+    "value": "family_corp",
+    "label": "Family corporation"
+   },
+   {
+    "value": "developer_established",
+    "label": "Developer, established"
+   },
+   {
+    "value": "developer_first",
+    "label": "Developer, first project"
+   },
+   {
+    "value": "fund",
+    "label": "Fund / REIT / institutional investor"
+   },
+   {
+    "value": "cooperative",
+    "label": "Cooperative"
+   }
+  ]
+ },
+ {
+  "key": "owner.track",
+  "label": "Completed projects",
+  "type": "choice",
+  "meaning": "Owner or developer: Completed projects. Brokers know a developer's reputation and visible projects, but not an exact count of completed and turned-over projects.",
+  "provider_tag": "idea",
+  "who_provides": "Owner / developer",
+  "unit": "completed projects",
+  "capability": "owner_developer_profile",
+  "options": [
+   {
+    "value": "",
+    "label": "Not disclosed",
+    "means_unknown": true
+   },
+   {
+    "value": 0,
+    "label": "No completed projects",
+    "maps_to": {
+     "low": null,
+     "base": 0,
+     "high": null,
+     "unit": "completed projects"
+    }
+   },
+   {
+    "value": 1,
+    "label": "1–2 completed projects",
+    "maps_to": {
+     "low": 1,
+     "base": 1,
+     "high": 2,
+     "unit": "completed projects"
+    }
+   },
+   {
+    "value": 3,
+    "label": "3–5 completed projects",
+    "maps_to": {
+     "low": 3,
+     "base": 3,
+     "high": 5,
+     "unit": "completed projects"
+    }
+   },
+   {
+    "value": 6,
+    "label": "6–10 completed projects",
+    "maps_to": {
+     "low": 6,
+     "base": 6,
+     "high": 10,
+     "unit": "completed projects"
+    }
+   },
+   {
+    "value": 11,
+    "label": "More than 10",
+    "maps_to": {
+     "low": 10,
+     "base": 11,
+     "high": null,
+     "unit": "completed projects"
+    }
+   }
+  ]
+ },
+ {
+  "key": "owner.years",
+  "label": "Years operating",
+  "type": "choice",
+  "meaning": "Owner or developer: Years operating. A rough idea from the client relationship; the exact figure comes from SEC registration records.",
+  "provider_tag": "idea",
+  "who_provides": "Owner / developer (SEC records)",
+  "unit": "years",
+  "capability": "owner_developer_profile",
+  "options": [
+   {
+    "value": "",
+    "label": "Not disclosed",
+    "means_unknown": true
+   },
+   {
+    "value": 1,
+    "label": "Under 2 years",
+    "maps_to": {
+     "low": null,
+     "base": 1,
+     "high": 2,
+     "unit": "years"
+    }
+   },
+   {
+    "value": 3,
+    "label": "2–5 years",
+    "maps_to": {
+     "low": 2,
+     "base": 3,
+     "high": 5,
+     "unit": "years"
+    }
+   },
+   {
+    "value": 7,
+    "label": "5–10 years",
+    "maps_to": {
+     "low": 5,
+     "base": 7,
+     "high": 10,
+     "unit": "years"
+    }
+   },
+   {
+    "value": 15,
+    "label": "Over 10 years",
+    "maps_to": {
+     "low": 10,
+     "base": 15,
+     "high": null,
+     "unit": "years"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.land_cost",
+  "label": "Land cost",
+  "type": "number",
+  "meaning": "Costs and funding: Land cost. For a buyer, the land cost is the asking or negotiated price, which the broker handles. For an owner who already holds the land, the broker can give the market price but not the owner's book cost.",
+  "provider_tag": "can",
+  "who_provides": "Broker (asking or offer price)",
+  "unit": "PHP",
+  "capability": "land_cost"
+ },
+ {
+  "key": "fin.build_cost",
+  "label": "Development / build cost",
+  "type": "number",
+  "meaning": "Costs and funding: Development / build cost. Brokers often carry a per-sqm ballpark by building class, but a bill of materials and cost estimate is signed and sealed by an architect or civil engineer for the building permit.",
+  "provider_tag": "idea",
+  "who_provides": "Contractor, architect or quantity surveyor",
+  "unit": "PHP",
+  "capability": "development_cost"
+ },
+ {
+  "key": "fin.soft_pct",
+  "label": "Soft costs",
+  "type": "choice",
+  "meaning": "Costs and funding: Soft costs. Design fees, permits, legal and financing fees depend on the consultants and the developer's own budget.",
+  "provider_tag": "cant",
+  "who_provides": "Developer / project manager",
+  "unit": "%",
+  "capability": "development_cost",
+  "options": [
+   {
+    "value": 5,
+    "label": "5% of build cost",
+    "maps_to": {
+     "low": null,
+     "base": 5,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 8,
+    "label": "8% of build cost",
+    "maps_to": {
+     "low": null,
+     "base": 8,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 10,
+    "label": "10% of build cost",
+    "maps_to": {
+     "low": null,
+     "base": 10,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 12,
+    "label": "12% of build cost",
+    "maps_to": {
+     "low": null,
+     "base": 12,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 15,
+    "label": "15% of build cost",
+    "maps_to": {
+     "low": null,
+     "base": 15,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.sellable_area",
+  "label": "Sellable area",
+  "type": "number",
+  "meaning": "Costs and funding: Sellable area. Brokers can guess a saleable share of the lot from nearby projects, but the true figure comes from the site development plan after roads, open space and setbacks.",
+  "provider_tag": "idea",
+  "who_provides": "Architect / developer (site plan)",
+  "unit": "sqm",
+  "capability": "unit_mix_and_pricing"
+ },
+ {
+  "key": "fin.price_per_sqm",
+  "label": "Planned selling price",
+  "type": "number",
+  "meaning": "Costs and funding: Planned selling price. Pricing from comparables is a broker strength. It is still a plan, not a closed price.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "unit": "PHP/sqm",
+  "capability": "unit_mix_and_pricing"
+ },
+ {
+  "key": "fin.absorption_months",
+  "label": "Sales period",
+  "type": "choice",
+  "meaning": "Costs and funding: Sales period. Brokers know roughly how fast nearby projects sell, which gives a range, not a commitment.",
+  "provider_tag": "idea",
+  "who_provides": "Broker / developer sales team",
+  "unit": "months",
+  "capability": "timeline",
+  "options": [
+   {
+    "value": 12,
+    "label": "12 months",
+    "maps_to": {
+     "low": null,
+     "base": 12,
+     "high": null,
+     "unit": "months"
+    }
+   },
+   {
+    "value": 18,
+    "label": "18 months",
+    "maps_to": {
+     "low": null,
+     "base": 18,
+     "high": null,
+     "unit": "months"
+    }
+   },
+   {
+    "value": 24,
+    "label": "24 months",
+    "maps_to": {
+     "low": null,
+     "base": 24,
+     "high": null,
+     "unit": "months"
+    }
+   },
+   {
+    "value": 36,
+    "label": "36 months",
+    "maps_to": {
+     "low": null,
+     "base": 36,
+     "high": null,
+     "unit": "months"
+    }
+   },
+   {
+    "value": 48,
+    "label": "48 months",
+    "maps_to": {
+     "low": null,
+     "base": 48,
+     "high": null,
+     "unit": "months"
+    }
+   },
+   {
+    "value": 60,
+    "label": "60 months",
+    "maps_to": {
+     "low": null,
+     "base": 60,
+     "high": null,
+     "unit": "months"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.selling_pct",
+  "label": "Selling / exit costs",
+  "type": "choice",
+  "meaning": "Costs and funding: Selling / exit costs. Commission is the broker's own business. Published guides put residential sales around 3–5% and large commercial or land deals often 1–3%, with no rate fixed by law.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "unit": "%",
+  "capability": "operating_assumptions",
+  "options": [
+   {
+    "value": 3,
+    "label": "3% of sales",
+    "maps_to": {
+     "low": null,
+     "base": 3,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 5,
+    "label": "5% of sales",
+    "maps_to": {
+     "low": null,
+     "base": 5,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 6,
+    "label": "6% of sales",
+    "maps_to": {
+     "low": null,
+     "base": 6,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 8,
+    "label": "8% of sales",
+    "maps_to": {
+     "low": null,
+     "base": 8,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 10,
+    "label": "10% of sales",
+    "maps_to": {
+     "low": null,
+     "base": 10,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.construction_months",
+  "label": "Construction period",
+  "type": "choice",
+  "meaning": "Costs and funding: Construction period. A rough idea from similar builds; the real schedule comes from the contractor.",
+  "provider_tag": "idea",
+  "who_provides": "Contractor / developer",
+  "unit": "months",
+  "capability": "timeline",
+  "options": [
+   {
+    "value": 6,
+    "label": "6 months",
+    "maps_to": {
+     "low": null,
+     "base": 6,
+     "high": null,
+     "unit": "months"
+    }
+   },
+   {
+    "value": 12,
+    "label": "12 months",
+    "maps_to": {
+     "low": null,
+     "base": 12,
+     "high": null,
+     "unit": "months"
+    }
+   },
+   {
+    "value": 18,
+    "label": "18 months",
+    "maps_to": {
+     "low": null,
+     "base": 18,
+     "high": null,
+     "unit": "months"
+    }
+   },
+   {
+    "value": 24,
+    "label": "24 months",
+    "maps_to": {
+     "low": null,
+     "base": 24,
+     "high": null,
+     "unit": "months"
+    }
+   },
+   {
+    "value": 36,
+    "label": "36 months",
+    "maps_to": {
+     "low": null,
+     "base": 36,
+     "high": null,
+     "unit": "months"
+    }
+   },
+   {
+    "value": 48,
+    "label": "48 months",
+    "maps_to": {
+     "low": null,
+     "base": 48,
+     "high": null,
+     "unit": "months"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.leasable_area",
+  "label": "Leasable area",
+  "type": "number",
+  "meaning": "Costs and funding: Leasable area. A guess from the lot size and building type until there is a design.",
+  "provider_tag": "idea",
+  "who_provides": "Architect / developer",
+  "unit": "sqm",
+  "capability": "unit_mix_and_pricing"
+ },
+ {
+  "key": "fin.rent_per_sqm_month",
+  "label": "Planned rent",
+  "type": "number",
+  "meaning": "Costs and funding: Planned rent. Leasing brokers know asking rents for comparable space.",
+  "provider_tag": "can",
+  "who_provides": "Broker (leasing comparables)",
+  "unit": "PHP/sqm/month",
+  "capability": "unit_mix_and_pricing"
+ },
+ {
+  "key": "fin.occupancy",
+  "label": "Stabilised occupancy",
+  "type": "choice",
+  "meaning": "Costs and funding: Stabilised occupancy. Brokers have a feel for local vacancy, but stabilised occupancy for a new building is a projection.",
+  "provider_tag": "idea",
+  "who_provides": "Leasing broker / property manager",
+  "unit": "%",
+  "capability": "operating_assumptions",
+  "options": [
+   {
+    "value": 60,
+    "label": "60% stabilised occupancy",
+    "maps_to": {
+     "low": null,
+     "base": 60,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 70,
+    "label": "70% stabilised occupancy",
+    "maps_to": {
+     "low": null,
+     "base": 70,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 80,
+    "label": "80% stabilised occupancy",
+    "maps_to": {
+     "low": null,
+     "base": 80,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 85,
+    "label": "85% stabilised occupancy",
+    "maps_to": {
+     "low": null,
+     "base": 85,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 90,
+    "label": "90% stabilised occupancy",
+    "maps_to": {
+     "low": null,
+     "base": 90,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 95,
+    "label": "95% stabilised occupancy",
+    "maps_to": {
+     "low": null,
+     "base": 95,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.opex_pct",
+  "label": "Operating costs",
+  "type": "choice",
+  "meaning": "Costs and funding: Operating costs. Operating costs come from property-management budgets and the owner's books, which brokers don't see.",
+  "provider_tag": "cant",
+  "who_provides": "Property manager / owner",
+  "unit": "%",
+  "capability": "operating_assumptions",
+  "options": [
+   {
+    "value": 15,
+    "label": "15% of rental revenue",
+    "maps_to": {
+     "low": null,
+     "base": 15,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 20,
+    "label": "20% of rental revenue",
+    "maps_to": {
+     "low": null,
+     "base": 20,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 25,
+    "label": "25% of rental revenue",
+    "maps_to": {
+     "low": null,
+     "base": 25,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 30,
+    "label": "30% of rental revenue",
+    "maps_to": {
+     "low": null,
+     "base": 30,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 35,
+    "label": "35% of rental revenue",
+    "maps_to": {
+     "low": null,
+     "base": 35,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 40,
+    "label": "40% of rental revenue",
+    "maps_to": {
+     "low": null,
+     "base": 40,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.escalation",
+  "label": "Rent escalation",
+  "type": "choice",
+  "meaning": "Costs and funding: Rent escalation. Brokers know typical escalation clauses; published guides put Philippine commercial leases commonly at 5–10% a year, by negotiation.",
+  "provider_tag": "idea",
+  "who_provides": "Broker / lease contracts",
+  "unit": "%",
+  "capability": "operating_assumptions",
+  "options": [
+   {
+    "value": 0,
+    "label": "0% per year",
+    "maps_to": {
+     "low": null,
+     "base": 0,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 3,
+    "label": "3% per year",
+    "maps_to": {
+     "low": null,
+     "base": 3,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 5,
+    "label": "5% per year",
+    "maps_to": {
+     "low": null,
+     "base": 5,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 7,
+    "label": "7% per year",
+    "maps_to": {
+     "low": null,
+     "base": 7,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 10,
+    "label": "10% per year",
+    "maps_to": {
+     "low": null,
+     "base": 10,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.exit_cap",
+  "label": "Exit valuation (cap rate)",
+  "type": "choice",
+  "meaning": "Costs and funding: Exit valuation (cap rate). Arriving at an opinion of value is the work of a licensed real estate appraiser under RA 9646, a separate licence from the broker's.",
+  "provider_tag": "cant",
+  "who_provides": "Licensed appraiser / valuer",
+  "unit": "%",
+  "capability": "operating_assumptions",
+  "options": [
+   {
+    "value": 6,
+    "label": "6% cap rate",
+    "maps_to": {
+     "low": null,
+     "base": 6,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 7,
+    "label": "7% cap rate",
+    "maps_to": {
+     "low": null,
+     "base": 7,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 8,
+    "label": "8% cap rate",
+    "maps_to": {
+     "low": null,
+     "base": 8,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 9,
+    "label": "9% cap rate",
+    "maps_to": {
+     "low": null,
+     "base": 9,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 10,
+    "label": "10% cap rate",
+    "maps_to": {
+     "low": null,
+     "base": 10,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 12,
+    "label": "12% cap rate",
+    "maps_to": {
+     "low": null,
+     "base": 12,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.appreciation",
+  "label": "Land appreciation",
+  "type": "choice",
+  "meaning": "Costs and funding: Land appreciation. Brokers have a sense of how prices have moved locally, but it is anecdotal unless backed by closed-sale data.",
+  "provider_tag": "idea",
+  "who_provides": "Broker (anecdotal) / appraiser",
+  "unit": "%",
+  "capability": "operating_assumptions",
+  "options": [
+   {
+    "value": 0,
+    "label": "0% per year",
+    "maps_to": {
+     "low": null,
+     "base": 0,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 3,
+    "label": "3% per year",
+    "maps_to": {
+     "low": null,
+     "base": 3,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 5,
+    "label": "5% per year",
+    "maps_to": {
+     "low": null,
+     "base": 5,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 8,
+    "label": "8% per year",
+    "maps_to": {
+     "low": null,
+     "base": 8,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 10,
+    "label": "10% per year",
+    "maps_to": {
+     "low": null,
+     "base": 10,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 12,
+    "label": "12% per year",
+    "maps_to": {
+     "low": null,
+     "base": 12,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.equity_pct",
+  "label": "Funding split",
+  "type": "choice",
+  "meaning": "Costs and funding: Funding split. How much the client will fund with equity versus a loan is the client's financial decision and often confidential.",
+  "provider_tag": "cant",
+  "who_provides": "Owner / CFO / bank",
+  "unit": "%",
+  "capability": "funding_structure",
+  "options": [
+   {
+    "value": 20,
+    "label": "20% equity / 80% loan",
+    "maps_to": {
+     "low": null,
+     "base": 20,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 30,
+    "label": "30% equity / 70% loan",
+    "maps_to": {
+     "low": null,
+     "base": 30,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 40,
+    "label": "40% equity / 60% loan",
+    "maps_to": {
+     "low": null,
+     "base": 40,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 50,
+    "label": "50% equity / 50% loan",
+    "maps_to": {
+     "low": null,
+     "base": 50,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 60,
+    "label": "60% equity / 40% loan",
+    "maps_to": {
+     "low": null,
+     "base": 60,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 100,
+    "label": "100% equity (no loan)",
+    "maps_to": {
+     "low": null,
+     "base": 100,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.loan_rate",
+  "label": "Loan interest rate",
+  "type": "choice",
+  "meaning": "Costs and funding: Loan interest rate. Brokers know published bank loan rates, but the client's actual rate depends on their own bank negotiation.",
+  "provider_tag": "idea",
+  "who_provides": "Bank / owner",
+  "unit": "%",
+  "capability": "funding_structure",
+  "options": [
+   {
+    "value": 6,
+    "label": "6% per year",
+    "maps_to": {
+     "low": null,
+     "base": 6,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 7,
+    "label": "7% per year",
+    "maps_to": {
+     "low": null,
+     "base": 7,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 8,
+    "label": "8% per year",
+    "maps_to": {
+     "low": null,
+     "base": 8,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 9,
+    "label": "9% per year",
+    "maps_to": {
+     "low": null,
+     "base": 9,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 10,
+    "label": "10% per year",
+    "maps_to": {
+     "low": null,
+     "base": 10,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 11,
+    "label": "11% per year",
+    "maps_to": {
+     "low": null,
+     "base": 11,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 12,
+    "label": "12% per year",
+    "maps_to": {
+     "low": null,
+     "base": 12,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.discount_rate",
+  "label": "Discount rate",
+  "type": "choice",
+  "meaning": "Costs and funding: Discount rate. The investor's cost of capital; not a broker figure.",
+  "provider_tag": "cant",
+  "who_provides": "Owner / investor",
+  "unit": "%",
+  "capability": "funding_structure",
+  "options": [
+   {
+    "value": 8,
+    "label": "8%",
+    "maps_to": {
+     "low": null,
+     "base": 8,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 10,
+    "label": "10%",
+    "maps_to": {
+     "low": null,
+     "base": 10,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 12,
+    "label": "12%",
+    "maps_to": {
+     "low": null,
+     "base": 12,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 14,
+    "label": "14%",
+    "maps_to": {
+     "low": null,
+     "base": 14,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 15,
+    "label": "15%",
+    "maps_to": {
+     "low": null,
+     "base": 15,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 18,
+    "label": "18%",
+    "maps_to": {
+     "low": null,
+     "base": 18,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ]
+ },
+ {
+  "key": "fin.tax_rate",
+  "label": "Income tax",
+  "type": "choice",
+  "meaning": "Costs and funding: Income tax. Depends on the owner's entity and tax position; a tax adviser's call.",
+  "provider_tag": "cant",
+  "who_provides": "Owner's accountant / tax adviser",
+  "unit": "%",
+  "capability": "operating_assumptions",
+  "options": [
+   {
+    "value": 25,
+    "label": "25% corporate income tax",
+    "maps_to": {
+     "low": null,
+     "base": 25,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 20,
+    "label": "20% corporate income tax (qualifying smaller corporations)",
+    "maps_to": {
+     "low": null,
+     "base": 20,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 0,
+    "label": "Pre-tax view (0%)",
+    "maps_to": {
+     "low": null,
+     "base": 0,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ]
+ },
+ {
+  "key": "docs.title_documents",
+  "label": "Title (TCT/CCT)",
+  "type": "file",
+  "meaning": "Documents and checks: Title (TCT/CCT). Brokers usually get a photocopy from the seller when taking a listing. Authenticity still needs a certified true copy from the Registry of Deeds.",
+  "provider_tag": "can",
+  "who_provides": "Broker (copy from seller)",
+  "capability": "title_documents"
+ },
+ {
+  "key": "docs.tax_declaration",
+  "label": "Tax declaration",
+  "type": "file",
+  "meaning": "Documents and checks: Tax declaration. Usually collected with the title copy.",
+  "provider_tag": "can",
+  "who_provides": "Broker (copy from seller)",
+  "capability": "tax_declaration"
+ },
+ {
+  "key": "docs.zoning_certificate",
+  "label": "Zoning certificate",
+  "type": "file",
+  "meaning": "Documents and checks: Zoning certificate. Issued by the LGU zoning office. It is often quick and cheap to get (Quezon City lists about an hour and ₱100–300, with a title copy and location sketch), so this is the cheapest gap to close.",
+  "provider_tag": "cant",
+  "who_provides": "LGU zoning office (owner or developer applies)",
+  "capability": "zoning_certificate"
+ },
+ {
+  "key": "docs.site_survey",
+  "label": "Survey plan",
+  "type": "file",
+  "meaning": "Documents and checks: Survey plan. A relocation or verification survey is a geodetic engineer's work, commissioned by the owner.",
+  "provider_tag": "cant",
+  "who_provides": "Licensed geodetic engineer",
+  "capability": "site_survey"
+ },
+ {
+  "key": "docs.geotechnical_report",
+  "label": "Geotechnical report",
+  "type": "file",
+  "meaning": "Documents and checks: Geotechnical report. The NSCP requires a professional foundation-investigation report for structures of two storeys or more, with boring tests for three storeys and up. This is commissioned by the developer.",
+  "provider_tag": "cant",
+  "who_provides": "Geotechnical / civil engineer",
+  "capability": "geotechnical_report"
+ },
+ {
+  "key": "docs.environmental_permits",
+  "label": "ECC or CNC",
+  "type": "file",
+  "meaning": "Documents and checks: ECC or CNC. The DENR Environmental Management Bureau issues it to the project proponent, based on the project description and impact assessment.",
+  "provider_tag": "cant",
+  "who_provides": "Project proponent via DENR-EMB",
+  "capability": "environmental_permits"
+ },
+ {
+  "key": "zoning_answer",
+  "label": "Zoning result",
+  "type": "choice",
+  "meaning": "Documents and checks: Zoning result. Brokers usually know what the area is zoned for from neighbouring uses and the CLUP, but only the certificate confirms it.",
+  "provider_tag": "idea",
+  "who_provides": "Broker (local knowledge) / LGU",
+  "options": [
+   {
+    "value": "unknown",
+    "label": "Not sure / no certificate",
+    "means_unknown": true
+   },
+   {
+    "value": "permitted",
+    "label": "Certificate says the use is permitted"
+   },
+   {
+    "value": "conditional",
+    "label": "Permitted with conditions or a variance"
+   },
+   {
+    "value": "not_permitted",
+    "label": "Use is not permitted"
+   }
+  ]
+ },
+ {
+  "key": "hazard_answer",
+  "label": "Hazard result",
+  "type": "choice",
+  "meaning": "Documents and checks: Hazard result. Brokers often know whether a street floods and can check public hazard maps, but a site assessment confirms it.",
+  "provider_tag": "idea",
+  "who_provides": "Broker (local knowledge) / engineer",
+  "options": [
+   {
+    "value": "unknown",
+    "label": "Not assessed",
+    "means_unknown": true
+   },
+   {
+    "value": "low",
+    "label": "Low hazard (per survey / geohazard certificate)"
+   },
+   {
+    "value": "moderate",
+    "label": "Moderate hazard, mitigation needed"
+   },
+   {
+    "value": "high",
+    "label": "High hazard"
+   }
+  ]
+ }
+]

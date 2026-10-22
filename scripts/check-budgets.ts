@@ -1,6 +1,7 @@
 /**
  * First-load JavaScript budget check (BRD PF-03). Run after `npm run build`:
  *   npm run check:budgets
+ * Signed-in pages need BUDGET_COOKIE="grid_session=..." (they are skipped otherwise).
  * Starts `next start`, loads each route's HTML, collects every <script src>, and sums their
  * gzip-compressed sizes. Fails (exit 1) when a route is over its budget.
  */
@@ -25,6 +26,10 @@ const budgets: { route: string; limitKb: number; group: string }[] = [
   { route: "/register", limitKb: BUDGET_KB.public, group: "public" },
   { route: "/login", limitKb: BUDGET_KB.public, group: "public" },
   { route: "/reset", limitKb: BUDGET_KB.public, group: "public" },
+  { route: "/app", limitKb: BUDGET_KB.app, group: "app" },
+  { route: "/app/new", limitKb: BUDGET_KB.app, group: "app" },
+  { route: "/app/reports", limitKb: BUDGET_KB.app, group: "app" },
+  { route: "/app/account", limitKb: BUDGET_KB.app, group: "app" },
 ];
 const extra = (process.env.BUDGET_ROUTES ?? "").split(",").filter(Boolean);
 for (const spec of extra) {
@@ -57,7 +62,13 @@ async function main() {
     await waitForServer(base + "/");
     console.log("Route".padEnd(26), "First-load JS (gzip)".padEnd(22), "Budget", "  Result");
     for (const b of budgets) {
-      const html = await (await fetch(base + b.route)).text();
+      const cookie = b.group === "public" ? undefined : process.env.BUDGET_COOKIE;
+      const res = await fetch(base + b.route, { headers: cookie ? { cookie } : {}, redirect: "manual" });
+      if (res.status >= 300) {
+        console.log(b.route.padEnd(26), `skipped (HTTP ${res.status}; set BUDGET_COOKIE for signed-in pages)`);
+        continue;
+      }
+      const html = await res.text();
       // Skip noModule polyfills: modern browsers (Next.js 16 support list) never download them.
       const srcs = [...html.matchAll(/<script([^>]+)>/g)]
         .filter((m) => !/noModule/i.test(m[1]!))

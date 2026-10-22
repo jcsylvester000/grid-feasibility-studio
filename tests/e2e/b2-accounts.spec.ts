@@ -70,7 +70,7 @@ test("AC-014: login lands on /app within 2 seconds; logout ends the session", as
   const started = Date.now();
   await page.waitForURL("**/app");
   expect(Date.now() - started).toBeLessThan(2000);
-  await expect(page.getByText(/Your User ID is U-/)).toBeVisible();
+  await expect(page.locator('header a[href="/app/account"]')).toHaveText(/^U-[0-9A-Z]{6}$/);
   await page.goto("/");
   await expect(page.locator('header a[href="/app"]').first()).toBeAttached();
   await page.goto("/app");

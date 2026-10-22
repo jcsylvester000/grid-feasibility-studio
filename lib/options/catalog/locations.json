@@ -1,0 +1,97 @@
+{
+ "NCR": {
+  "Metro Manila": [
+   "Caloocan",
+   "Las Piñas",
+   "Makati",
+   "Mandaluyong",
+   "Manila",
+   "Marikina",
+   "Muntinlupa",
+   "Parañaque",
+   "Pasay",
+   "Pasig",
+   "Quezon City",
+   "Taguig",
+   "Valenzuela"
+  ]
+ },
+ "CALABARZON (Region IV-A)": {
+  "Batangas": [
+   "Batangas City",
+   "Lipa",
+   "Mabini",
+   "Nasugbu",
+   "Santo Tomas"
+  ],
+  "Cavite": [
+   "Bacoor",
+   "Dasmariñas",
+   "General Trias",
+   "Imus",
+   "Silang",
+   "Tagaytay"
+  ],
+  "Laguna": [
+   "Biñan",
+   "Calamba",
+   "San Pedro",
+   "Santa Rosa"
+  ],
+  "Rizal": [
+   "Antipolo",
+   "Cainta",
+   "Taytay"
+  ]
+ },
+ "Central Luzon (Region III)": {
+  "Bulacan": [
+   "Malolos",
+   "Meycauayan",
+   "San Jose del Monte"
+  ],
+  "Pampanga": [
+   "Angeles",
+   "Mabalacat",
+   "San Fernando"
+  ],
+  "Tarlac": [
+   "Capas",
+   "Tarlac City"
+  ]
+ },
+ "Central Visayas (Region VII)": {
+  "Bohol": [
+   "Panglao",
+   "Tagbilaran"
+  ],
+  "Cebu": [
+   "Cebu City",
+   "Lapu-Lapu",
+   "Mandaue",
+   "Talisay"
+  ]
+ },
+ "Western Visayas (Region VI)": {
+  "Iloilo": [
+   "Iloilo City"
+  ],
+  "Negros Occidental": [
+   "Bacolod"
+  ]
+ },
+ "Davao Region (Region XI)": {
+  "Davao del Norte": [
+   "Island Garden City of Samal",
+   "Tagum"
+  ],
+  "Davao del Sur": [
+   "Davao City"
+  ]
+ },
+ "Northern Mindanao (Region X)": {
+  "Misamis Oriental": [
+   "Cagayan de Oro"
+  ]
+ }
+}

@@ -1,5 +1,5 @@
 import { eq, sql } from "drizzle-orm";
-import { getDb, isUniqueViolation, type Tx } from "../client";
+import { getDb, isUniqueViolation, type DB, type Tx } from "../client";
 import { users, type UserRole } from "../schema";
 import { generatePublicId } from "@/lib/auth/ids";
 
@@ -72,7 +72,7 @@ export class UsernameTakenError extends Error {
 }
 
 export async function updateCredentials(
-  tx: Tx,
+  tx: Tx | DB,
   userId: string,
   values: { passwordHash?: string; recoveryKeyHash?: string },
 ) {

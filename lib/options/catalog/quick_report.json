@@ -1,0 +1,2719 @@
+[
+ {
+  "key": "property.region",
+  "label": "Region",
+  "type": "text",
+  "meaning": "Property: Region. Known from the listing and the site visit.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "capability": "location"
+ },
+ {
+  "key": "property.province",
+  "label": "Province",
+  "type": "text",
+  "meaning": "Property: Province. Known from the listing and the site visit.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "capability": "location"
+ },
+ {
+  "key": "property.city",
+  "label": "City or municipality",
+  "type": "text",
+  "meaning": "Property: City or municipality. Known from the listing and the site visit.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "capability": "location"
+ },
+ {
+  "key": "property.barangay",
+  "label": "Barangay",
+  "type": "text",
+  "meaning": "Property: Barangay. Shown on the tax declaration and title copies brokers usually collect when taking a listing.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "capability": "location"
+ },
+ {
+  "key": "property.road_access",
+  "label": "Road access",
+  "type": "choice",
+  "meaning": "Property: Road access. Observed on the site visit.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "options": [
+   {
+    "value": "major_road",
+    "label": "Fronts a major road or highway"
+   },
+   {
+    "value": "secondary_road",
+    "label": "Fronts a secondary road"
+   },
+   {
+    "value": "inner_road",
+    "label": "Inner lot, road access via easement"
+   },
+   {
+    "value": "unknown",
+    "label": "Not sure",
+    "means_unknown": true
+   }
+  ]
+ },
+ {
+  "key": "use.goal",
+  "label": "Owner's goal",
+  "type": "choice",
+  "meaning": "Intended use and goals: Owner's goal. Brokers know whether the client wants to sell, lease, hold or find a JV partner because that is the engagement.",
+  "provider_tag": "can",
+  "who_provides": "Broker (from the client brief)",
+  "capability": "goals_objectives",
+  "options": [
+   {
+    "value": "sell",
+    "label": "Develop and sell"
+   },
+   {
+    "value": "lease",
+    "label": "Develop and lease (build and hold)"
+   },
+   {
+    "value": "land_bank",
+    "label": "Hold the land and resell later"
+   },
+   {
+    "value": "jv",
+    "label": "Find a joint-venture partner"
+   },
+   {
+    "value": "undecided",
+    "label": "Undecided: show me the best use"
+   }
+  ]
+ },
+ {
+  "key": "owner.type",
+  "label": "Owner type",
+  "type": "choice",
+  "meaning": "Owner or developer: Owner type. The broker knows whether the client is an individual, a family corporation, a developer or a fund.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "capability": "owner_developer_profile",
+  "options": [
+   {
+    "value": "",
+    "label": "Not disclosed",
+    "means_unknown": true
+   },
+   {
+    "value": "individual",
+    "label": "Individual landowner"
+   },
+   {
+    "value": "family_corp",
+    "label": "Family corporation"
+   },
+   {
+    "value": "developer_established",
+    "label": "Developer, established"
+   },
+   {
+    "value": "developer_first",
+    "label": "Developer, first project"
+   },
+   {
+    "value": "fund",
+    "label": "Fund / REIT / institutional investor"
+   },
+   {
+    "value": "cooperative",
+    "label": "Cooperative"
+   }
+  ]
+ },
+ {
+  "key": "qd.lot_area",
+  "label": "Lot area",
+  "type": "choice",
+  "meaning": "Property: Lot area. Stated in the listing and on the title copy. It is the seller's figure until a geodetic survey confirms it, so the report keeps it 'to be confirmed'.",
+  "provider_tag": "can",
+  "who_provides": "Broker (seller-stated)",
+  "unit": "sqm",
+  "options": [
+   {
+    "value": 100,
+    "label": "about 100 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 100,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 150,
+    "label": "about 150 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 150,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 200,
+    "label": "about 200 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 200,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 300,
+    "label": "about 300 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 300,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 400,
+    "label": "about 400 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 400,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 500,
+    "label": "about 500 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 500,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 750,
+    "label": "about 750 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 750,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 1000,
+    "label": "about 1,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 1000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 1500,
+    "label": "about 1,500 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 1500,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 2000,
+    "label": "about 2,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 2000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 2500,
+    "label": "about 2,500 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 2500,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 3000,
+    "label": "about 3,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 3000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 4000,
+    "label": "about 4,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 4000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 5000,
+    "label": "about 5,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 5000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 7500,
+    "label": "about 7,500 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 7500,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 10000,
+    "label": "about 10,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 10000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 12500,
+    "label": "about 12,500 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 12500,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 15000,
+    "label": "about 15,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 15000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 20000,
+    "label": "about 20,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 20000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 25000,
+    "label": "about 25,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 25000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 30000,
+    "label": "about 30,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 30000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 40000,
+    "label": "about 40,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 40000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 50000,
+    "label": "about 50,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 50000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 75000,
+    "label": "about 75,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 75000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 100000,
+    "label": "about 100,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 100000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 150000,
+    "label": "about 150,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 150000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 200000,
+    "label": "about 200,000 sqm",
+    "maps_to": {
+     "low": null,
+     "base": 200000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   }
+  ],
+  "maps_from": "property.lot_area"
+ },
+ {
+  "key": "qd.floor_area",
+  "label": "Existing floor area",
+  "type": "choice",
+  "meaning": "Property: Existing floor area. Stated in the listing for improved property; confirm against the building plans or tax declaration.",
+  "provider_tag": "can",
+  "who_provides": "Broker (seller-stated)",
+  "unit": "sqm",
+  "options": [
+   {
+    "value": 0,
+    "label": "None (raw land)",
+    "maps_to": {
+     "low": null,
+     "base": 0,
+     "high": null,
+     "unit": "sqm"
+    }
+   },
+   {
+    "value": 50,
+    "label": "about 50 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 50,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 100,
+    "label": "about 100 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 100,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 200,
+    "label": "about 200 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 200,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 300,
+    "label": "about 300 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 300,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 500,
+    "label": "about 500 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 500,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 750,
+    "label": "about 750 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 750,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 1000,
+    "label": "about 1,000 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 1000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 1500,
+    "label": "about 1,500 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 1500,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 2000,
+    "label": "about 2,000 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 2000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 3000,
+    "label": "about 3,000 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 3000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 5000,
+    "label": "about 5,000 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 5000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 7500,
+    "label": "about 7,500 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 7500,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 10000,
+    "label": "about 10,000 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 10000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 15000,
+    "label": "about 15,000 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 15000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   },
+   {
+    "value": 20000,
+    "label": "about 20,000 sqm of building",
+    "maps_to": {
+     "low": null,
+     "base": 20000,
+     "high": null,
+     "unit": "sqm",
+     "approximate": true
+    }
+   }
+  ],
+  "maps_from": "property.floor_area"
+ },
+ {
+  "key": "qd.ask_psqm",
+  "label": "Land cost",
+  "type": "choice",
+  "meaning": "Costs and funding: Land cost. For a buyer, the land cost is the asking or negotiated price, which the broker handles. For an owner who already holds the land, the broker can give the market price but not the owner's book cost.",
+  "provider_tag": "can",
+  "who_provides": "Broker (asking or offer price)",
+  "unit": "PHP/sqm",
+  "options": [
+   {
+    "value": 500,
+    "label": "₱500 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 500,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 750,
+    "label": "₱750 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 750,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 1000,
+    "label": "₱1,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 1000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 1500,
+    "label": "₱1,500 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 1500,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 2000,
+    "label": "₱2,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 2000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 2500,
+    "label": "₱2,500 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 2500,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 3000,
+    "label": "₱3,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 3000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 4000,
+    "label": "₱4,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 4000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 5000,
+    "label": "₱5,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 5000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 6000,
+    "label": "₱6,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 6000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 7000,
+    "label": "₱7,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 7000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 8000,
+    "label": "₱8,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 8000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 9000,
+    "label": "₱9,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 9000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 10000,
+    "label": "₱10,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 10000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 12000,
+    "label": "₱12,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 12000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 15000,
+    "label": "₱15,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 15000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 18000,
+    "label": "₱18,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 18000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 20000,
+    "label": "₱20,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 20000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 25000,
+    "label": "₱25,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 25000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 30000,
+    "label": "₱30,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 30000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 35000,
+    "label": "₱35,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 35000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 40000,
+    "label": "₱40,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 40000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 45000,
+    "label": "₱45,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 45000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 50000,
+    "label": "₱50,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 50000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 55000,
+    "label": "₱55,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 55000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 60000,
+    "label": "₱60,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 60000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 65000,
+    "label": "₱65,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 65000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 70000,
+    "label": "₱70,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 70000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 75000,
+    "label": "₱75,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 75000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 80000,
+    "label": "₱80,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 80000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 90000,
+    "label": "₱90,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 90000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 100000,
+    "label": "₱100,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 100000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 120000,
+    "label": "₱120,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 120000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 150000,
+    "label": "₱150,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 150000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 180000,
+    "label": "₱180,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 180000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 200000,
+    "label": "₱200,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 200000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 250000,
+    "label": "₱250,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 250000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 300000,
+    "label": "₱300,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 300000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 400000,
+    "label": "₱400,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 400000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 500000,
+    "label": "₱500,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 500000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   }
+  ],
+  "maps_from": "fin.land_cost"
+ },
+ {
+  "key": "qd.comp_low",
+  "label": "Asking price, low",
+  "type": "choice",
+  "meaning": "Market evidence: Asking price, low. Gathering comparable listings is core broker work. These are asking prices; closed prices are harder to get and the report says so.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "unit": "PHP/sqm",
+  "options": [
+   {
+    "value": 500,
+    "label": "₱500 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 500,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 750,
+    "label": "₱750 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 750,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 1000,
+    "label": "₱1,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 1000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 1500,
+    "label": "₱1,500 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 1500,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 2000,
+    "label": "₱2,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 2000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 2500,
+    "label": "₱2,500 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 2500,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 3000,
+    "label": "₱3,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 3000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 4000,
+    "label": "₱4,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 4000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 5000,
+    "label": "₱5,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 5000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 6000,
+    "label": "₱6,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 6000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 7000,
+    "label": "₱7,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 7000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 8000,
+    "label": "₱8,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 8000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 9000,
+    "label": "₱9,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 9000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 10000,
+    "label": "₱10,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 10000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 12000,
+    "label": "₱12,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 12000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 15000,
+    "label": "₱15,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 15000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 18000,
+    "label": "₱18,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 18000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 20000,
+    "label": "₱20,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 20000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 25000,
+    "label": "₱25,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 25000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 30000,
+    "label": "₱30,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 30000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 35000,
+    "label": "₱35,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 35000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 40000,
+    "label": "₱40,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 40000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 45000,
+    "label": "₱45,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 45000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 50000,
+    "label": "₱50,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 50000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 55000,
+    "label": "₱55,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 55000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 60000,
+    "label": "₱60,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 60000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 65000,
+    "label": "₱65,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 65000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 70000,
+    "label": "₱70,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 70000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 75000,
+    "label": "₱75,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 75000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 80000,
+    "label": "₱80,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 80000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 90000,
+    "label": "₱90,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 90000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 100000,
+    "label": "₱100,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 100000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 120000,
+    "label": "₱120,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 120000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 150000,
+    "label": "₱150,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 150000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 180000,
+    "label": "₱180,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 180000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 200000,
+    "label": "₱200,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 200000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 250000,
+    "label": "₱250,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 250000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 300000,
+    "label": "₱300,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 300000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 400000,
+    "label": "₱400,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 400000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 500000,
+    "label": "₱500,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 500000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   }
+  ],
+  "maps_from": "market.asking_low"
+ },
+ {
+  "key": "qd.comp_high",
+  "label": "Asking price, high",
+  "type": "choice",
+  "meaning": "Market evidence: Asking price, high. As above.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "unit": "PHP/sqm",
+  "options": [
+   {
+    "value": 500,
+    "label": "₱500 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 500,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 750,
+    "label": "₱750 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 750,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 1000,
+    "label": "₱1,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 1000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 1500,
+    "label": "₱1,500 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 1500,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 2000,
+    "label": "₱2,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 2000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 2500,
+    "label": "₱2,500 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 2500,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 3000,
+    "label": "₱3,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 3000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 4000,
+    "label": "₱4,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 4000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 5000,
+    "label": "₱5,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 5000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 6000,
+    "label": "₱6,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 6000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 7000,
+    "label": "₱7,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 7000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 8000,
+    "label": "₱8,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 8000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 9000,
+    "label": "₱9,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 9000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 10000,
+    "label": "₱10,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 10000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 12000,
+    "label": "₱12,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 12000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 15000,
+    "label": "₱15,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 15000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 18000,
+    "label": "₱18,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 18000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 20000,
+    "label": "₱20,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 20000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 25000,
+    "label": "₱25,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 25000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 30000,
+    "label": "₱30,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 30000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 35000,
+    "label": "₱35,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 35000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 40000,
+    "label": "₱40,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 40000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 45000,
+    "label": "₱45,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 45000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 50000,
+    "label": "₱50,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 50000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 55000,
+    "label": "₱55,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 55000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 60000,
+    "label": "₱60,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 60000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 65000,
+    "label": "₱65,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 65000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 70000,
+    "label": "₱70,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 70000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 75000,
+    "label": "₱75,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 75000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 80000,
+    "label": "₱80,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 80000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 90000,
+    "label": "₱90,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 90000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 100000,
+    "label": "₱100,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 100000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 120000,
+    "label": "₱120,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 120000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 150000,
+    "label": "₱150,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 150000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 180000,
+    "label": "₱180,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 180000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 200000,
+    "label": "₱200,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 200000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 250000,
+    "label": "₱250,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 250000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 300000,
+    "label": "₱300,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 300000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 400000,
+    "label": "₱400,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 400000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 500000,
+    "label": "₱500,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 500000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   }
+  ],
+  "maps_from": "market.asking_high"
+ },
+ {
+  "key": "qd.comp_count",
+  "label": "Number of comparable listings",
+  "type": "choice",
+  "meaning": "Market evidence: Number of comparable listings. The broker knows how many listings they compared.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "unit": "listings",
+  "options": [
+   {
+    "value": 0,
+    "label": "None yet",
+    "maps_to": {
+     "low": null,
+     "base": 0,
+     "high": null,
+     "unit": "listings"
+    },
+    "means_unknown": true
+   },
+   {
+    "value": 2,
+    "label": "1–2 listings",
+    "maps_to": {
+     "low": 1,
+     "base": 2,
+     "high": 2,
+     "unit": "listings"
+    }
+   },
+   {
+    "value": 4,
+    "label": "3–5 listings",
+    "maps_to": {
+     "low": 3,
+     "base": 4,
+     "high": 5,
+     "unit": "listings"
+    }
+   },
+   {
+    "value": 8,
+    "label": "6–10 listings",
+    "maps_to": {
+     "low": 6,
+     "base": 8,
+     "high": 10,
+     "unit": "listings"
+    }
+   },
+   {
+    "value": 15,
+    "label": "11–20 listings",
+    "maps_to": {
+     "low": 11,
+     "base": 15,
+     "high": 20,
+     "unit": "listings"
+    }
+   },
+   {
+    "value": 25,
+    "label": "More than 20 listings",
+    "maps_to": {
+     "low": 20,
+     "base": 25,
+     "high": null,
+     "unit": "listings"
+    }
+   }
+  ],
+  "maps_from": "market.comps_count"
+ },
+ {
+  "key": "qd.as_of",
+  "label": "Prices as of",
+  "type": "choice",
+  "meaning": "Market evidence: Prices as of. The date the broker gathered the listings.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "unit": "months ago",
+  "options": [
+   {
+    "value": 0,
+    "label": "This month",
+    "maps_to": {
+     "low": null,
+     "base": 0,
+     "high": null,
+     "unit": "months ago"
+    }
+   },
+   {
+    "value": 2,
+    "label": "1–3 months ago",
+    "maps_to": {
+     "low": 1,
+     "base": 2,
+     "high": 3,
+     "unit": "months ago"
+    }
+   },
+   {
+    "value": 5,
+    "label": "3–6 months ago",
+    "maps_to": {
+     "low": 3,
+     "base": 5,
+     "high": 6,
+     "unit": "months ago"
+    }
+   },
+   {
+    "value": 9,
+    "label": "Older than 6 months",
+    "maps_to": {
+     "low": null,
+     "base": 9,
+     "high": null,
+     "unit": "months ago"
+    }
+   }
+  ],
+  "maps_from": "market.as_of"
+ },
+ {
+  "key": "qd.zonal",
+  "label": "BIR zonal value",
+  "type": "choice",
+  "meaning": "Market evidence: BIR zonal value. BIR zonal values are public schedules and can be searched by street, so brokers routinely quote them.",
+  "provider_tag": "can",
+  "who_provides": "Broker (public record)",
+  "unit": "PHP/sqm",
+  "options": [
+   {
+    "value": 0,
+    "label": "Not checked yet",
+    "maps_to": {
+     "low": null,
+     "base": 0,
+     "high": null,
+     "unit": "PHP/sqm"
+    },
+    "means_unknown": true
+   },
+   {
+    "value": 500,
+    "label": "₱500 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 500,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 750,
+    "label": "₱750 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 750,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 1000,
+    "label": "₱1,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 1000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 1500,
+    "label": "₱1,500 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 1500,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 2000,
+    "label": "₱2,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 2000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 2500,
+    "label": "₱2,500 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 2500,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 3000,
+    "label": "₱3,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 3000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 4000,
+    "label": "₱4,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 4000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 5000,
+    "label": "₱5,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 5000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 6000,
+    "label": "₱6,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 6000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 7000,
+    "label": "₱7,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 7000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 8000,
+    "label": "₱8,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 8000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 9000,
+    "label": "₱9,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 9000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 10000,
+    "label": "₱10,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 10000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 12000,
+    "label": "₱12,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 12000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 15000,
+    "label": "₱15,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 15000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 18000,
+    "label": "₱18,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 18000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 20000,
+    "label": "₱20,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 20000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 25000,
+    "label": "₱25,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 25000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 30000,
+    "label": "₱30,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 30000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 35000,
+    "label": "₱35,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 35000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 40000,
+    "label": "₱40,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 40000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 45000,
+    "label": "₱45,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 45000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 50000,
+    "label": "₱50,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 50000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 55000,
+    "label": "₱55,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 55000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 60000,
+    "label": "₱60,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 60000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 65000,
+    "label": "₱65,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 65000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 70000,
+    "label": "₱70,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 70000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 75000,
+    "label": "₱75,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 75000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 80000,
+    "label": "₱80,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 80000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 90000,
+    "label": "₱90,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 90000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 100000,
+    "label": "₱100,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 100000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 120000,
+    "label": "₱120,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 120000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 150000,
+    "label": "₱150,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 150000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 180000,
+    "label": "₱180,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 180000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 200000,
+    "label": "₱200,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 200000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 250000,
+    "label": "₱250,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 250000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 300000,
+    "label": "₱300,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 300000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 400000,
+    "label": "₱400,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 400000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   },
+   {
+    "value": 500000,
+    "label": "₱500,000 per sqm",
+    "maps_to": {
+     "low": null,
+     "base": 500000,
+     "high": null,
+     "unit": "PHP/sqm"
+    }
+   }
+  ],
+  "maps_from": "market.zonal_per_sqm"
+ },
+ {
+  "key": "qd.rent",
+  "label": "Planned rent",
+  "type": "choice",
+  "meaning": "Costs and funding: Planned rent. Leasing brokers know asking rents for comparable space.",
+  "provider_tag": "can",
+  "who_provides": "Broker (leasing comparables)",
+  "unit": "PHP/sqm/month",
+  "options": [
+   {
+    "value": 0,
+    "label": "Not applicable / not leased",
+    "maps_to": {
+     "low": null,
+     "base": 0,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    },
+    "means_unknown": true
+   },
+   {
+    "value": 100,
+    "label": "₱100 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 100,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 150,
+    "label": "₱150 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 150,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 200,
+    "label": "₱200 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 200,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 300,
+    "label": "₱300 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 300,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 400,
+    "label": "₱400 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 400,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 500,
+    "label": "₱500 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 500,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 600,
+    "label": "₱600 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 600,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 700,
+    "label": "₱700 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 700,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 800,
+    "label": "₱800 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 800,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 1000,
+    "label": "₱1,000 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 1000,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 1200,
+    "label": "₱1,200 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 1200,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 1500,
+    "label": "₱1,500 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 1500,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 1800,
+    "label": "₱1,800 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 1800,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 2000,
+    "label": "₱2,000 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 2000,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 2500,
+    "label": "₱2,500 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 2500,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   },
+   {
+    "value": 3000,
+    "label": "₱3,000 per sqm per month",
+    "maps_to": {
+     "low": null,
+     "base": 3000,
+     "high": null,
+     "unit": "PHP/sqm/month"
+    }
+   }
+  ],
+  "maps_from": "fin.rent_per_sqm_month"
+ },
+ {
+  "key": "qd.title_copy",
+  "label": "Title (TCT/CCT)",
+  "type": "choice",
+  "meaning": "Documents and checks: Title (TCT/CCT). Brokers usually get a photocopy from the seller when taking a listing. Authenticity still needs a certified true copy from the Registry of Deeds.",
+  "provider_tag": "can",
+  "who_provides": "Broker (copy from seller)",
+  "options": [
+   {
+    "value": "no",
+    "label": "No copy yet"
+   },
+   {
+    "value": "yes",
+    "label": "Have a photocopy from the seller"
+   }
+  ],
+  "maps_from": "docs.title_documents"
+ },
+ {
+  "key": "qd.tax_dec",
+  "label": "Tax declaration",
+  "type": "choice",
+  "meaning": "Documents and checks: Tax declaration. Usually collected with the title copy.",
+  "provider_tag": "can",
+  "who_provides": "Broker (copy from seller)",
+  "options": [
+   {
+    "value": "no",
+    "label": "No copy yet"
+   },
+   {
+    "value": "yes",
+    "label": "Have a copy"
+   }
+  ],
+  "maps_from": "docs.tax_declaration"
+ },
+ {
+  "key": "qd.mi",
+  "label": "Market Insight report",
+  "type": "choice",
+  "meaning": "Market evidence: Market Insight report. Brokers on GRID can run Market Insight themselves.",
+  "provider_tag": "can",
+  "who_provides": "Broker (GRID user)",
+  "options": [
+   {
+    "value": "no",
+    "label": "Not run yet",
+    "means_unknown": true
+   },
+   {
+    "value": "yes",
+    "label": "Yes, Market Insight has been run"
+   }
+  ],
+  "maps_from": "market.has_mi"
+ },
+ {
+  "key": "qd.commission",
+  "label": "Selling / exit costs",
+  "type": "choice",
+  "meaning": "Costs and funding: Selling / exit costs. Commission is the broker's own business. Published guides put residential sales around 3–5% and large commercial or land deals often 1–3%, with no rate fixed by law.",
+  "provider_tag": "can",
+  "who_provides": "Broker",
+  "unit": "%",
+  "options": [
+   {
+    "value": 3,
+    "label": "3% of sales",
+    "maps_to": {
+     "low": null,
+     "base": 3,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 5,
+    "label": "5% of sales",
+    "maps_to": {
+     "low": null,
+     "base": 5,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 6,
+    "label": "6% of sales",
+    "maps_to": {
+     "low": null,
+     "base": 6,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 8,
+    "label": "8% of sales",
+    "maps_to": {
+     "low": null,
+     "base": 8,
+     "high": null,
+     "unit": "%"
+    }
+   },
+   {
+    "value": 10,
+    "label": "10% of sales",
+    "maps_to": {
+     "low": null,
+     "base": 10,
+     "high": null,
+     "unit": "%"
+    }
+   }
+  ],
+  "maps_from": "fin.selling_pct"
+ }
+]
