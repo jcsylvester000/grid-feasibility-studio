@@ -65,6 +65,9 @@ string with user `admin_reader` and that password.
 | `FEATURE_TEASER_SCAN` | `false` until GRID approves release 1b |
 | `ALLOW_INDEXING` | `true` only for the production domain |
 | `DESIGN_SAMPLES` | `false` (or leave unset) |
+| `DEMO_MODE` | `true` only on a demo or staging site (shows "Load the 20 demo scenarios"); `false` in production |
+| `DEMO_LOGIN` | Demo site only: a shared login as `username:password` (e.g. `TestUser1:…`), created on first sign-in. Needs `DEMO_MODE=true`. Remove before launch |
+| `PROTOTYPE_MODE` | Optional. The prototype banner already shows while `VECTORSHIFT_BASE_URL` is not the VectorShift API |
 
 Do not set `ALLOW_PGLITE`, `PGLITE_SEED_ADMIN` or `UPLOAD_LOCAL_DIR` on Netlify; they are for tests only.
 

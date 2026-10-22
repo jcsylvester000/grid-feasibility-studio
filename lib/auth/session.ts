@@ -71,10 +71,28 @@ export async function clientAddress() {
   );
 }
 
-/** SE-04: every mutating request must come from APP_ORIGIN. */
+const originOf = (u: string | null | undefined) => {
+  try {
+    return u ? new URL(u).origin : null;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * SE-04: every mutating request must come from this site. Accepted when the browser's Origin equals APP_ORIGIN
+ * (trailing slash and path ignored) or the host the request was served on (Netlify site, deploy previews,
+ * a custom domain). A cross-site form cannot make the browser send an Origin that matches our own host.
+ */
 export async function isSameOrigin() {
-  const origin = (await headers()).get("origin");
-  return origin === appOrigin();
+  const h = await headers();
+  const origin = originOf(h.get("origin"));
+  if (!origin) return false;
+  if (origin === originOf(appOrigin())) return true;
+  const host = (h.get("x-forwarded-host") ?? h.get("host") ?? "").split(",")[0]!.trim().toLowerCase();
+  if (host && new URL(origin).host.toLowerCase() === host) return true;
+  console.warn(JSON.stringify({ event: "origin_mismatch", origin, app_origin: appOrigin(), host }));
+  return false;
 }
 
 // ------------------------------------------------------------- flash (recovery key)

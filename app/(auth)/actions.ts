@@ -9,6 +9,7 @@ import {
   setSessionCookies,
 } from "@/lib/auth/session";
 import { safeNext } from "@/lib/auth/redirects";
+import { ensureDemoAccount } from "@/lib/demo/account";
 
 export type FormState = {
   fieldErrors?: FieldErrors;
@@ -54,6 +55,8 @@ export async function registerAction(_prev: FormState, fd: FormData): Promise<Fo
 export async function loginAction(_prev: FormState, fd: FormData): Promise<FormState> {
   const values = { username: str(fd, "username") };
   if (!(await isSameOrigin())) return { formError: ORIGIN_ERROR, values };
+  // Prototype showcases: the shared demo login (DEMO_LOGIN) is created on first use.
+  await ensureDemoAccount(values.username, str(fd, "password"));
   const result = await authenticate({
     username: values.username,
     password: str(fd, "password"),
