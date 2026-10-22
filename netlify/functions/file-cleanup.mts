@@ -1,11 +1,13 @@
 /**
- * Netlify Scheduled Function: deletes UploadThing files past delete_after and retries queued
- * deletions (UP-06). Runs daily at 02:30 Asia/Manila (18:30 UTC). Implemented in batch B6.
+ * Netlify Scheduled Function: deletes files past delete_after (90 days after the last run that used
+ * them) and retries queued UploadThing deletions (UP-06). Daily at 02:30 Asia/Manila (18:30 UTC).
  */
 import type { Config } from "@netlify/functions";
+import { runFileCleanup } from "../../lib/files/service";
 
 export default async () => {
-  console.log("file-cleanup: scheduled; implementation arrives in batch B6");
+  const result = await runFileCleanup();
+  console.log(JSON.stringify({ job: "file-cleanup", ...result }));
 };
 
 export const config: Config = { schedule: "30 18 * * *" };

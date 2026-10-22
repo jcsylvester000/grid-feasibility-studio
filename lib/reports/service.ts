@@ -11,6 +11,8 @@ import {
 } from "@/lib/db/repos/reports";
 import { PRODUCTS as PRODUCT_KEYS, REPORT_STATUSES, type Product } from "@/lib/db/schema";
 import type { UserRow } from "@/lib/db/repos/users";
+import { DEFAULT_INTAKE } from "@/lib/forms";
+import { drainDeletions } from "@/lib/files/service";
 import { track } from "@/lib/usage/track";
 
 export const MIN_RUNS_FOR_TYPICAL = 20;
@@ -50,7 +52,7 @@ export function defaultTitle(product: Product, now = new Date()) {
 
 export async function createReport(user: UserRow, product: Product) {
   if (!isEnabledProduct(product)) throw new Error("PRODUCT_DISABLED");
-  const report = await createDraftReport(user.id, product, defaultTitle(product));
+  const report = await createDraftReport(user.id, product, defaultTitle(product), DEFAULT_INTAKE[product]);
   await track(user.publicId, "report.created", { product });
   return report;
 }
@@ -78,7 +80,8 @@ export async function removeReport(user: UserRow, id: string) {
   const result = await deleteReportForUser(user.id, id);
   if (!result) return false;
   await track(user.publicId, "report.deleted", { product: result.report.product });
-  // UploadThing deletion of result.utKeys is performed by the file service (batch B6); keys are queued.
+  // Keys were queued in the same transaction; delete them from storage now (retried daily on failure, UP-06).
+  if (result.utKeys.length) await drainDeletions(result.utKeys);
   return true;
 }
 

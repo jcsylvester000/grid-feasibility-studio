@@ -11,12 +11,13 @@ import { callPipeline, type PipelineFile } from "@/lib/vectorshift/client";
 import { shouldAutoRetry } from "@/lib/vectorshift/errors";
 import { parseOutputs } from "@/lib/vectorshift/parse-output";
 import { appOrigin, pipelineId as pipelineFor, RETRY_DELAY_MS, timeoutMs, vectorShift } from "./config";
+import { docsIntake, loadRunFiles } from "@/lib/files/run-files";
 import { buildRunRequest, type RunDocument } from "./run-request";
 
 export type RunFiles = (runId: string, reportId: string) => Promise<{ documents: RunDocument[]; files: PipelineFile[] }>;
 
-/** File loader (UploadThing signed URLs). Replaced in batch B6; Quick Report has no files. */
-let loadFiles: RunFiles = async () => ({ documents: [], files: [] });
+/** File loader: signed URLs from storage (B6). Tests may replace it. */
+let loadFiles: RunFiles = (runId, reportId) => loadRunFiles(runId, reportId);
 export function setFileLoader(fn: RunFiles) {
   loadFiles = fn;
 }
@@ -67,7 +68,7 @@ export async function executeRun(runId: string, opts: { fetchImpl?: typeof fetch
       product,
       reportId: report.id,
       attempt: run.attempt,
-      intake: checked ? checked.intake : report.intake,
+      intake: { ...(checked ? checked.intake : report.intake), ...docsIntake(documents) },
       complete: checked ? checked.ok : true,
       userPublicId,
       appOrigin: appOrigin(),

@@ -6,6 +6,7 @@
 import type { Product } from "@/lib/db/schema";
 import { EXPECTED_SCHEMA } from "@/lib/contract/validate";
 import { fieldDictionary, type FieldEntry } from "@/lib/options";
+import { inputLevel as formLevel } from "@/lib/forms/levels";
 
 export const FRONT_END_VERSION = "web 0.4.0";
 
@@ -63,7 +64,7 @@ export function manilaDate(now = new Date()) {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Manila", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
 }
 
-export type RunDocument = { doc_ref: string; file_name: string; mime: string; url: string; expires_at: string; user_label?: string };
+export type RunDocument = { doc_ref: string; file_name: string; mime: string; url: string; expires_at: string; user_label?: string; capability?: string };
 
 export function buildRunRequest(opts: {
   product: Product;
@@ -78,7 +79,13 @@ export function buildRunRequest(opts: {
 }) {
   const dict = fieldDictionary(opts.product);
   const caps = providedCapabilities(opts.intake, dict);
-  const level = inputLevel(caps, opts.documents?.length ?? 0);
+  // Executive Summary and Feasibility Report: the form's level rules (lib/forms/levels.ts), so the meter
+  // the user saw and the level the pipeline receives agree.
+  const docs = Object.fromEntries((opts.documents ?? []).filter((d) => d.capability).map((d) => [d.capability!, true]));
+  const level: InputLevel =
+    opts.product === "executive_summary" || opts.product === "feasibility_report"
+      ? (formLevel(opts.product, opts.intake, docs).code ?? "L0_location_only")
+      : inputLevel(caps, opts.documents?.length ?? 0);
   return {
     request_version: "1.0" as const,
     product: opts.product,

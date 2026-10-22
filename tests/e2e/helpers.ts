@@ -56,3 +56,31 @@ export async function fillQuickReport(page: Page) {
   await page.getByRole("button", { name: "Next" }).click();
 }
 
+
+/** Signs up and starts a draft of the given product from the dashboard; returns the report id. */
+export async function signUpAndStart(page: Page, productName: "Executive Summary" | "Feasibility Report") {
+  await freshAddress(page);
+  await register(page);
+  await page.getByLabel("I have saved my recovery key.").check();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.waitForURL("**/app");
+  await page.getByRole("button", { name: `Start ${productName}` }).click();
+  await page.waitForURL(/\/app\/new\/(executive_summary|feasibility_report)\?id=/);
+  return new URL(page.url()).searchParams.get("id")!;
+}
+
+export async function goToStep(page: Page, name: RegExp) {
+  await page.getByRole("navigation", { name: "Form steps" }).getByRole("button", { name }).click();
+}
+
+/** Fills the required property and use answers (Taguig, 14,323 sqm, industrial warehouse to lease). */
+export async function fillPropertyAndUse(page: Page) {
+  await goToStep(page, /^\d?\s*Property/);
+  await choose(page, "Region", "NCR");
+  await choose(page, "Province", "Metro Manila");
+  await choose(page, "City or municipality", "Taguig");
+  await page.getByLabel("Lot area").fill("14323");
+  await goToStep(page, /Use and goals/);
+  await page.getByLabel("Intended use").selectOption({ value: "industrial_warehouse" });
+  await page.getByLabel("Owner's goal").selectOption({ value: "lease" });
+}

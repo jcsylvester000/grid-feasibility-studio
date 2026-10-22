@@ -8,9 +8,9 @@ import { files, pendingFileDeletions, reports, runs, type Product, type ReportSt
 
 export type ReportRow = typeof reports.$inferSelect;
 
-export async function createDraftReport(userId: string, product: Product, title: string) {
+export async function createDraftReport(userId: string, product: Product, title: string, intake: Record<string, unknown> = {}) {
   const db = await getDb();
-  const [r] = await db.insert(reports).values({ userId, product, title }).returning();
+  const [r] = await db.insert(reports).values({ userId, product, title, intake }).returning();
   return r!;
 }
 

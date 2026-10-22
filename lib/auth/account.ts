@@ -1,5 +1,6 @@
 /** Account page rules (S-07): change password, new recovery key, log out everywhere, delete account. */
 import { getDb } from "@/lib/db/client";
+import { drainDeletions } from "@/lib/files/service";
 import { fileKeysForUser, queueFileDeletions } from "@/lib/db/repos/reports";
 import { deleteUserSessions, insertSession } from "@/lib/db/repos/sessions";
 import { updateCredentials, type UserRow } from "@/lib/db/repos/users";
@@ -66,9 +67,11 @@ export async function logoutEverywhere(user: UserRow) {
 export async function deleteAccount(user: UserRow, typedUsername: string) {
   if (typedUsername.trim().toLowerCase() !== user.username.toLowerCase())
     return { ok: false as const, error: "Type your username exactly to confirm." };
-  await queueFileDeletions(await fileKeysForUser(user.id));
+  const keys = await fileKeysForUser(user.id);
+  await queueFileDeletions(keys);
   const db = await getDb();
   await db.delete(users).where(eq(users.id, user.id));
+  if (keys.length) await drainDeletions(keys);
   await track(user.publicId, "user.deleted");
   return { ok: true as const };
 }

@@ -36,13 +36,18 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 /** Per-report scenario overrides for end-to-end tests: POST /__control/{reportId} { scenario }. */
 const overrides = new Map<string, string>();
 
-export type MockLogEntry = { pipelineId: string; scenario: string; product?: string; files: string[]; at: string };
+export type MockLogEntry = { pipelineId: string; scenario: string; product?: string; reportId?: string; files: string[]; documents?: string[]; at: string };
 export const mockLog: MockLogEntry[] = [];
 
 export async function handleMockRequest(req: Request, opts: { delayMs?: number } = {}): Promise<Response> {
   const url = new URL(req.url);
   const match = url.pathname.match(/^\/v1\/pipeline\/([^/]+)\/run$/);
   if (req.method === "GET" && url.pathname === "/health") return json(200, { ok: true });
+  // Tests: GET /__log?reportId=... returns what the mock received (file names and sizes, document refs).
+  if (req.method === "GET" && url.pathname === "/__log") {
+    const id = url.searchParams.get("reportId");
+    return json(200, { entries: mockLog.filter((e) => !id || e.reportId === id) });
+  }
   const control = url.pathname.match(/^\/__control\/([^/]+)$/);
   if (control) {
     if (req.method === "DELETE") overrides.delete(control[1]!);
@@ -75,7 +80,7 @@ export async function handleMockRequest(req: Request, opts: { delayMs?: number }
   } catch {
     return json(400, { status: "failed", error: "Malformed request body" });
   }
-  let runRequest: { report_id?: string; product?: string };
+  let runRequest: { report_id?: string; product?: string; documents?: { doc_ref: string; capability?: string }[] };
   try {
     runRequest = JSON.parse(String(inputs.run_request ?? ""));
   } catch {
@@ -83,7 +88,7 @@ export async function handleMockRequest(req: Request, opts: { delayMs?: number }
   }
   const override = runRequest.report_id ? overrides.get(runRequest.report_id) : undefined;
   if (override) scenario = override;
-  mockLog.push({ pipelineId, scenario, product: runRequest.product, files, at: new Date().toISOString() });
+  mockLog.push({ pipelineId, scenario, product: runRequest.product, reportId: runRequest.report_id, files, documents: (runRequest.documents ?? []).map((d) => `${d.doc_ref}:${d.capability ?? ""}`), at: new Date().toISOString() });
 
   const delay = opts.delayMs ?? Number(process.env.MOCK_VS_DELAY_MS ?? 2500);
   await sleep(scenario === "slow" ? delay * 10 : delay);

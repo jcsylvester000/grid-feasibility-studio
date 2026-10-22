@@ -12,6 +12,9 @@ const schema = z.object({
   DATABASE_URL_ADMIN_READER: z.string().optional(),
   DB_DRIVER: z.enum(["neon", "pglite"]).default("neon"),
   UPLOADTHING_TOKEN: z.string().optional(),
+  /** "uploadthing" (default) or "local": files kept on this computer (tests and offline work only). */
+  UPLOAD_DRIVER: z.enum(["uploadthing", "local"]).default("uploadthing"),
+  UPLOAD_LOCAL_DIR: z.string().optional(),
   VECTORSHIFT_API_KEY: z.string().optional(),
   VECTORSHIFT_BASE_URL: z.string().url().default("https://api.vectorshift.ai"),
   VS_PIPELINE_QUICK_REPORT: z.string().optional(),

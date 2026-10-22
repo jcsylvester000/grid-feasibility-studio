@@ -175,6 +175,8 @@ export const files = pgTable(
     name: text("name").notNull(),
     mimeType: text("mime_type").notNull(),
     sizeBytes: bigint("size_bytes", { mode: "number" }).notNull(),
+    /** What the document is (title_documents, zoning_certificate, ...; field dictionary docs.* keys), or null. */
+    docType: text("doc_type"),
     createdAt: ts("created_at").notNull().defaultNow(),
     deleteAfter: ts("delete_after").notNull(),
   },

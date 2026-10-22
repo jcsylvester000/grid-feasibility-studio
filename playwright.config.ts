@@ -44,6 +44,8 @@ export default defineConfig({
         RUN_DISPATCH: "inline",
         VS_MAX_CONCURRENT: "50",
         DESIGN_SAMPLES: "true",
+        UPLOAD_DRIVER: "local",
+        UPLOAD_LOCAL_DIR: ".data/e2e-uploads",
       },
     },
   ],

@@ -13,12 +13,15 @@ import { getReportForUser } from "@/lib/db/repos/reports";
 import { productInfo } from "@/lib/options/products";
 import { isEnabledProduct } from "@/lib/reports/service";
 import { startReportAction } from "../../actions";
+import { listFilesForReport } from "@/lib/db/repos/files";
+import { fileView } from "@/lib/files/service";
+import { uploadDriver } from "@/lib/files/storage";
 
 export const metadata: Metadata = { title: "Report form" };
 
 type Props = { params: Promise<{ product: string }>; searchParams: Promise<{ id?: string }> };
 
-/** S-03 shell. The step forms arrive in B4 (Quick Report) and B6 (Executive Summary, Feasibility Report). */
+/** S-03 report form: Quick Report (B4), Executive Summary and Feasibility Report with documents (B6). */
 export default async function ReportFormPage({ params, searchParams }: Props) {
   const { product } = await params;
   const { id } = await searchParams;
@@ -43,6 +46,7 @@ export default async function ReportFormPage({ params, searchParams }: Props) {
   if (!report || report.product !== product) notFound();
   if (report.status === "queued" || report.status === "running") redirect(`/app/reports/${report.id}/run`);
   const form = FORMS[product as Product];
+  const files = form?.steps.some((s) => s.documents) ? await listFilesForReport(report.id) : [];
 
   return (
     <div className="space-y-6" data-testid="report-form" data-report-id={report.id}>
@@ -56,6 +60,9 @@ export default async function ReportFormPage({ params, searchParams }: Props) {
       {form ? (
         <ReportForm
           reportId={report.id}
+          product={product}
+          uploadDriver={uploadDriver()}
+          initialFiles={files.map(fileView)}
           productName={info.name}
           steps={form.steps}
           fields={getOptions(product as Product).fields}
@@ -66,7 +73,7 @@ export default async function ReportFormPage({ params, searchParams }: Props) {
         />
       ) : (
         <div className="rounded-[var(--radius-card)] border border-dashed border-line-2 bg-white p-6">
-          <p className="font-medium">The {info.name} form arrives in batch B6.</p>
+          <p className="font-medium">The {info.name} form arrives in a later batch.</p>
           <p className="mt-1 text-sm text-muted">This draft is saved. It needs: {info.needs.toLowerCase()}.</p>
         </div>
       )}
