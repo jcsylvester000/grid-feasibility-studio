@@ -1,0 +1,781 @@
+{
+ "meta": {
+  "schema_version": "1.0.0",
+  "product": "executive_summary",
+  "tier": "desk",
+  "report_id": "ES-20261019-C6TAG",
+  "title": "Executive Summary: C6 Road commercial lot, Calzada–Tipas, Taguig",
+  "subject": {
+   "name": "C6 Road commercial lot, Calzada–Tipas",
+   "address": "C6 Road (Laguna Lake Highway)",
+   "city_municipality": "Taguig",
+   "province": "Metro Manila",
+   "intended_use": "industrial_warehouse",
+   "barangay": "Calzada-Tipas",
+   "region": "NCR",
+   "lot_area": {
+    "value": 14323,
+    "range": null,
+    "unit": "sqm",
+    "as_of": null,
+    "status": "to_be_confirmed",
+    "source_ids": [
+     "S-001"
+    ],
+    "note": "As entered; confirm against title and survey."
+   },
+   "intended_use_detail": "Dry warehouse"
+  },
+  "inputs_provided": {
+   "level": "L3_plus_cost_and_funding",
+   "items": [
+    {
+     "key": "location",
+     "provided": true
+    },
+    {
+     "key": "lot_area",
+     "provided": true
+    },
+    {
+     "key": "intended_use",
+     "provided": true
+    },
+    {
+     "key": "owner_developer_profile",
+     "provided": true
+    },
+    {
+     "key": "goals_objectives",
+     "provided": true
+    },
+    {
+     "key": "title_documents",
+     "provided": true
+    },
+    {
+     "key": "tax_declaration",
+     "provided": true
+    },
+    {
+     "key": "zoning_certificate",
+     "provided": false
+    },
+    {
+     "key": "site_survey",
+     "provided": false
+    },
+    {
+     "key": "geotechnical_report",
+     "provided": false
+    },
+    {
+     "key": "environmental_permits",
+     "provided": false
+    },
+    {
+     "key": "unit_mix_and_pricing",
+     "provided": true
+    },
+    {
+     "key": "development_cost",
+     "provided": true
+    },
+    {
+     "key": "land_cost",
+     "provided": true
+    },
+    {
+     "key": "funding_structure",
+     "provided": true
+    },
+    {
+     "key": "operating_assumptions",
+     "provided": true
+    },
+    {
+     "key": "timeline",
+     "provided": true
+    }
+   ]
+  },
+  "prepared_for": "Mock client (fictional): Dalisay Logistics Holdings, Inc.",
+  "prepared_by": "GRID Property Ventures · Feasibility Studio",
+  "generated_at": "2026-10-19T02:00:00.000Z",
+  "as_of": "2026-10-19",
+  "locale": "en-PH",
+  "currency": "PHP",
+  "run": {
+   "run_id": "run-FR-20261019-H5SNPM",
+   "dag_id": "grid.feasibility_report",
+   "dag_version": "0.1.0",
+   "nodes": [
+    {
+     "node_id": "N00_intake",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N01_input_gate",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N02_planner",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N03_doc_extract",
+     "model": "not connected (prototype)",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N04_r_location",
+     "model": "not connected (prototype)",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N05_r_market",
+     "model": "not connected (prototype)",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N06_r_technical",
+     "model": "not connected (prototype)",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N07_r_socio",
+     "model": "not connected (prototype)",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N08_r_environment",
+     "model": "not connected (prototype)",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N09_r_developer",
+     "model": "not connected (prototype)",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N10_evidence_merge",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N11_fact_check",
+     "model": "not connected (prototype)",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N12_finance_engine",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N13_section_writers",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N14_scoring",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N15_findings",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N16_qa_critic",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N17_exec_summary",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N18_assembler",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N19_human_review",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "N20_publish",
+     "model": "prototype",
+     "status": "succeeded"
+    }
+   ]
+  },
+  "review": {
+   "status": "approved",
+   "reviewer": "GRID research team (mock)",
+   "reviewed_at": "2026-10-19T09:00:00+08:00"
+  },
+  "disclaimer": "MOCK REPORT for demonstration. Market facts are real public listings and sources as of 19 October 2026; the client, its project concept and its financial assumptions are fictional. Not a licensed appraisal, engineering, legal, tax or investment opinion. Asking prices are not closed sales."
+ },
+ "mode": "standalone",
+ "source_report_id": "MI-C6-CALZADA",
+ "verdict": {
+  "rating": "not_feasible",
+  "headline": "Not feasible as a leased warehouse at the ₱42,000/sqm asking price: project IRR about 2.5% vs a 12% target. The use supports about ₱9,900/sqm.",
+  "conditions": [
+   "Test a higher-value use, or negotiate the land price",
+   "Confirm zoning, title and flood exposure"
+  ],
+  "thesis_breaker": "Paying near the asking price for a warehouse use.",
+  "confidence": "medium",
+  "confidence_note": "Real listings and published costs as of 19 Oct 2026; client assumptions illustrative."
+ },
+ "key_figures": {
+  "type": "kpi_strip",
+  "items": [
+   {
+    "label": "Asking price",
+    "figure": {
+     "value": 42000,
+     "range": null,
+     "unit": "PHP/sqm",
+     "as_of": "2026-10-19",
+     "status": "checked_public_source",
+     "source_ids": [
+      "S-001"
+     ],
+     "basis": "asking"
+    }
+   },
+   {
+    "label": "Comparable median",
+    "figure": {
+     "value": 35000,
+     "range": null,
+     "unit": "PHP/sqm",
+     "as_of": "2026-10-19",
+     "status": "checked_public_source",
+     "source_ids": [
+      "S-002"
+     ],
+     "basis": "asking"
+    }
+   },
+   {
+    "label": "Total project cost",
+    "figure": {
+     "value": 834766000,
+     "range": null,
+     "unit": "PHP",
+     "as_of": "2026-10-19",
+     "status": "computed",
+     "source_ids": [
+      "S-016"
+     ]
+    }
+   },
+   {
+    "label": "Project IRR",
+    "figure": {
+     "value": 2.525519158891164,
+     "range": null,
+     "unit": "%",
+     "as_of": "2026-10-19",
+     "status": "computed",
+     "source_ids": [
+      "S-016"
+     ]
+    }
+   },
+   {
+    "label": "NPV at 12%",
+    "figure": {
+     "value": -429592892.2548531,
+     "range": null,
+     "unit": "PHP",
+     "as_of": "2026-10-19",
+     "status": "computed",
+     "source_ids": [
+      "S-016"
+     ]
+    }
+   },
+   {
+    "label": "Land price that works",
+    "figure": {
+     "value": 9900,
+     "range": null,
+     "unit": "PHP/sqm",
+     "as_of": "2026-10-19",
+     "status": "computed",
+     "source_ids": [
+      "S-016"
+     ]
+    }
+   }
+  ]
+ },
+ "items": {
+  "project_description": {
+   "text": "A 14,323 sqm vacant commercial lot with direct C6 Road frontage in Calzada–Tipas, Taguig, asked at ₱42,000/sqm (about ₱601.6M), tested as an 8,000 sqm leased dry warehouse.",
+   "coverage": "complete",
+   "owner": "grid",
+   "claim_ids": []
+  },
+  "company_developer": {
+   "text": "Mock client (fictional): a logistics holding company with three completed projects, buying to build and hold.",
+   "coverage": "complete",
+   "owner": "grid",
+   "claim_ids": []
+  },
+  "goals_objectives": {
+   "text": "Acquire, build in 12 months and lease to 3PL and e-commerce tenants; target 12% project IRR over a 10-year hold.",
+   "coverage": "complete",
+   "owner": "grid",
+   "claim_ids": []
+  },
+  "location_analysis": {
+   "text": "Strong access: C-6 widened to four lanes in 2017, linking Taytay to Bicutan, with the planned C6 Expressway adding upside. Taguig had 1.31M residents at the 2024 census.",
+   "coverage": "complete",
+   "owner": "grid",
+   "claim_ids": []
+  },
+  "market_analysis": {
+   "text": "Twelve nearby lot listings are asked at ₱20,000–70,000/sqm (median ₱35,000); the subject is ~20% above the median. Warehouse asking rents run ₱250–500/sqm/month.",
+   "coverage": "complete",
+   "owner": "grid",
+   "claim_ids": []
+  },
+  "technical_study": {
+   "text": "Zoning, title and site studies are not yet confirmed. Steel warehouses cost ₱14,000–22,000/sqm before slab, fire protection and site works.",
+   "coverage": "complete",
+   "owner": "grid",
+   "claim_ids": []
+  },
+  "socio_economic": {
+   "text": "Land in the C-5 and C-6 belts now competes with residential use; the BSP rate is 5.00% with a hike expected.",
+   "coverage": "complete",
+   "owner": "grid",
+   "claim_ids": []
+  },
+  "environmental": {
+   "text": "Lakeshore lowland with a flood history (Ondoy 2009). An elevation survey and flood check are needed; ₱20M site works is budgeted.",
+   "coverage": "complete",
+   "owner": "grid",
+   "claim_ids": []
+  },
+  "financial_projection": {
+   "text": "Total cost ₱834.8M. Stabilised net income about ₱35.0M a year (4.2% yield). Project IRR 2.5%; NPV −₱429.6M at 12%.",
+   "coverage": "complete",
+   "owner": "grid",
+   "claim_ids": []
+  },
+  "findings_recommendation": {
+   "text": "Land is the problem: the use supports ~₱9,900/sqm, or rents of ~₱1,000/sqm at the asking price. Test a higher-value use or negotiate.",
+   "coverage": "complete",
+   "owner": "grid",
+   "claim_ids": []
+  },
+  "conclusion": {
+   "text": "Not feasible as a warehouse at the asking price. The site's C6 frontage and size merit a test of retail or mixed-use, after zoning and flood checks.",
+   "coverage": "complete",
+   "owner": "grid",
+   "claim_ids": []
+  }
+ },
+ "key_risks": [
+  {
+   "risk": "Land price far above what warehouse rents support",
+   "severity": "high",
+   "mitigation": "Negotiate or change use"
+  },
+  {
+   "risk": "Flood exposure on the lakeshore",
+   "severity": "high",
+   "mitigation": "Elevation survey and fill budget"
+  },
+  {
+   "risk": "Zoning not yet confirmed",
+   "severity": "medium",
+   "mitigation": "Zoning certificate first"
+  }
+ ],
+ "next_steps": [
+  "Request title, zoning and site studies from the listing broker",
+  "Commission an elevation survey and flood check",
+  "Test a retail or mixed-use concept on the same site",
+  "Benchmark an offer against the ₱35,000/sqm median"
+ ],
+ "limitations": [
+  {
+   "id": "L-01",
+   "affects": [
+    "market_analysis",
+    "metrics"
+   ],
+   "kind": "data_stale",
+   "reason": "Market evidence is asking prices and asking rents from online listings on 19 October 2026, not closed transactions. Closed prices are typically lower.",
+   "missing_inputs": [],
+   "effect": "confidence_reduced",
+   "how_to_resolve": "Obtain closed-sale evidence or a licensed appraisal before negotiating."
+  },
+  {
+   "id": "L-02",
+   "affects": [
+    "technical_study",
+    "feasibility_criteria"
+   ],
+   "kind": "requires_licensed_professional",
+   "reason": "Zoning has not been confirmed. The listing states that title, zoning and site studies are available on serious inquiry.",
+   "missing_inputs": [
+    "zoning_certificate"
+   ],
+   "effect": "confidence_reduced",
+   "how_to_resolve": "Request the zoning certificate or locational clearance from the Taguig City zoning office."
+  },
+  {
+   "id": "L-03",
+   "affects": [
+    "environmental",
+    "feasibility_criteria"
+   ],
+   "kind": "requires_site_visit",
+   "reason": "Site elevation and flood history have not been assessed. The area borders Laguna de Bay.",
+   "missing_inputs": [
+    "geotechnical_report",
+    "site_survey"
+   ],
+   "effect": "confidence_reduced",
+   "how_to_resolve": "Commission an elevation survey, a flood-hazard check and soil investigation."
+  },
+  {
+   "id": "L-04",
+   "affects": [
+    "market_analysis"
+   ],
+   "kind": "no_public_data",
+   "reason": "The BIR zonal value for the site is not published in the online sources checked.",
+   "missing_inputs": [],
+   "effect": "confidence_reduced",
+   "how_to_resolve": "Confirm the zonal value with the BIR Revenue District Office covering Taguig."
+  },
+  {
+   "id": "L-05",
+   "affects": [
+    "financials"
+   ],
+   "kind": "missing_user_input",
+   "reason": "The project concept, costs, funding and targets are illustrative assumptions for a fictional client.",
+   "missing_inputs": [],
+   "effect": "figures_estimated",
+   "how_to_resolve": "Replace with the actual buyer's budget, funding terms and hurdle rate."
+  },
+  {
+   "id": "L-06",
+   "affects": [
+    "financials",
+    "risk_sensitivity"
+   ],
+   "kind": "out_of_scope",
+   "reason": "This is a desk study, not an appraisal (opinions of value are reserved for licensed appraisers under RA 9646), engineering design, or legal or tax advice.",
+   "missing_inputs": [],
+   "effect": "confidence_reduced",
+   "how_to_resolve": "Engage licensed professionals before committing capital."
+  }
+ ],
+ "word_count": 330,
+ "sources": [
+  {
+   "id": "S-001",
+   "title": "Lamudi listing: 14,323 sqm Commercial Lot for Sale, C6 Road, Calzada–Tipas, Taguig City (listed by Grid Property Ventures, Inc.)",
+   "publisher": "Lamudi",
+   "url": "https://www.lamudi.com.ph/property/41032-73-741b85125d82-8be2-19db429-8957-77ba",
+   "type": "listing_portal",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-002",
+   "title": "Lamudi: Lot For Sale in Calzada, Taguig (search results incl. nearby Tipas, Palingon, Wawa, Sta. Ana)",
+   "publisher": "Lamudi",
+   "url": "https://www.lamudi.com.ph/buy/metro-manila/taguig/calzada-5/land/",
+   "type": "listing_portal",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-003",
+   "title": "Lamudi: Warehouse For Rent in Taguig, Metro Manila (152 listings)",
+   "publisher": "Lamudi",
+   "url": "https://www.lamudi.com.ph/rent/metro-manila/taguig/commercial/warehouse/",
+   "type": "listing_portal",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-004",
+   "title": "Warehouse Construction Cost in the Philippines (2026), 31 May 2026",
+   "publisher": "Aedo Construction",
+   "url": "https://aedoconstruction.com/blog/warehouse-construction-cost-philippines-2026/",
+   "type": "other",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-005",
+   "title": "Taguig (2024 census population; Calzada-Tipas barangay profile; Laguna de Bay flood susceptibility)",
+   "publisher": "Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Taguig",
+   "type": "other",
+   "tier": "C",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-006",
+   "title": "Circumferential Road 6 (Laguna Lake Highway; C-6 expressway plans)",
+   "publisher": "Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Circumferential_Road_6",
+   "type": "other",
+   "tier": "C",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-007",
+   "title": "DPWH: Phase 1 of Laguna Lake Highway opens on February 9 (2017)",
+   "publisher": "AutoIndustriya",
+   "url": "https://www.autoindustriya.com/auto-industry-news/dpwh-phase-1-of-laguna-lake-highway-opens-on-february-9.html",
+   "type": "news",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-008",
+   "title": "SMC to complete C6 Expressway in 2 or 3 years, 3 Feb 2025",
+   "publisher": "Context.ph",
+   "url": "https://context.ph/2025/02/03/smc-to-complete-c6-expressway-in-2-or-3-years/",
+   "type": "news",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-009",
+   "title": "Philippines: One more BSP hike expected in October (Standard Chartered), 6 Oct 2026",
+   "publisher": "FXStreet",
+   "url": "https://www.fxstreet.com/news/philippines-one-more-bsp-hike-expected-in-october-standard-chartered-202610061832",
+   "type": "news",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-010",
+   "title": "Still flooded, lakeside Taguig village cries out in the breeze (c. Sep 2012)",
+   "publisher": "Philippine Daily Inquirer",
+   "url": "https://newsinfo.inquirer.net/279710/still-flooded-lakeside-taguig-village-cries-out-in-the-breeze/amp",
+   "type": "news",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-011",
+   "title": "Standard Annual Rent Escalation Rates for Commercial Leases, 6 Feb 2026",
+   "publisher": "Respicio & Co.",
+   "url": "https://www.respicio.ph/commentaries/standard-annual-rent-escalation-rates-for-commercial-leases",
+   "type": "other",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-012",
+   "title": "High land prices drive warehouses out of Metro Manila (Leechiu Property Consultants briefing; undated)",
+   "publisher": "BusinessWorld",
+   "url": "https://bworldonline.com/?p=428401",
+   "type": "news",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-013",
+   "title": "Quality warehouse shortage keeps Manila rents elevated (Cushman & Wakefield; c. Sep 2026)",
+   "publisher": "Real Estate Asia",
+   "url": "https://realestateasia.com/videos/quality-warehouse-shortage-keeps-manila-rents-elevated",
+   "type": "news",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-014",
+   "title": "RA 9646 Real Estate Service Act: types of practitioners (appraisers)",
+   "publisher": "ren.ph",
+   "url": "https://ren.ph/academy/courses/ra-9646-essentials/types-of-practitioners",
+   "type": "other",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-015",
+   "title": "Client project assumptions (illustrative; fictional mock client)",
+   "publisher": "Mock client",
+   "url": null,
+   "type": "owner_document",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "no_url"
+  },
+  {
+   "id": "S-016",
+   "title": "GRID financial model (calculated from S-001 to S-015)",
+   "publisher": "GRID Property Ventures",
+   "url": null,
+   "type": "other",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "no_url"
+  }
+ ],
+ "claims": [
+  {
+   "id": "C-001",
+   "text": "The subject is a 14,323 sqm vacant commercial lot with direct C6 Road frontage in Calzada–Tipas, Taguig, asked at ₱42,000 per sqm.",
+   "status": "checked_public_source",
+   "source_ids": [
+    "S-001"
+   ],
+   "confidence": "medium",
+   "checked_by": "GRID research team"
+  },
+  {
+   "id": "C-002",
+   "text": "Twelve comparable lot listings within about 1.2 km are asked at ₱20,000–₱70,000 per sqm, with a median of ₱35,000 per sqm.",
+   "status": "checked_public_source",
+   "source_ids": [
+    "S-002"
+   ],
+   "confidence": "medium",
+   "checked_by": "GRID research team"
+  },
+  {
+   "id": "C-003",
+   "text": "Taguig warehouse asking rents range from about ₱250 to ₱500 per sqm per month; new builds near C6 are asked at ₱450–₱500.",
+   "status": "checked_public_source",
+   "source_ids": [
+    "S-003"
+   ],
+   "confidence": "medium",
+   "checked_by": "GRID research team"
+  },
+  {
+   "id": "C-004",
+   "text": "Metro Manila warehouse rents can reach about ₱600 per sqm per month.",
+   "status": "checked_public_source",
+   "source_ids": [
+    "S-013"
+   ],
+   "confidence": "medium",
+   "checked_by": "GRID research team"
+  },
+  {
+   "id": "C-005",
+   "text": "Basic steel-frame warehouses cost about ₱14,000–₱22,000 per sqm to build in 2026, excluding land, design, permits and site development.",
+   "status": "checked_public_source",
+   "source_ids": [
+    "S-004"
+   ],
+   "confidence": "medium",
+   "checked_by": "GRID research team"
+  },
+  {
+   "id": "C-006",
+   "text": "Taguig had 1,308,085 residents at the 2024 census; Calzada-Tipas had 32,160 residents on 1.07 sq km.",
+   "status": "checked_public_source",
+   "source_ids": [
+    "S-005"
+   ],
+   "confidence": "medium",
+   "checked_by": "GRID research team"
+  },
+  {
+   "id": "C-007",
+   "text": "The C-6 Laguna Lake Highway was widened to four lanes from Napindan to M.L. Quezon, opening 9 February 2017.",
+   "status": "checked_public_source",
+   "source_ids": [
+    "S-006",
+    "S-007"
+   ],
+   "confidence": "medium",
+   "checked_by": "GRID research team"
+  },
+  {
+   "id": "C-008",
+   "text": "The 32.7 km C6 Expressway (₱45.29B, San Miguel Corp.) targeted its first phase within two to three years of February 2025.",
+   "status": "checked_public_source",
+   "source_ids": [
+    "S-008"
+   ],
+   "confidence": "medium",
+   "checked_by": "GRID research team"
+  },
+  {
+   "id": "C-009",
+   "text": "Lowland areas along Laguna de Bay in Taguig are susceptible to flooding; the city was among the worst hit by Typhoon Ketsana (Ondoy) in 2009.",
+   "status": "checked_public_source",
+   "source_ids": [
+    "S-005",
+    "S-010"
+   ],
+   "confidence": "medium",
+   "checked_by": "GRID research team"
+  },
+  {
+   "id": "C-010",
+   "text": "The BSP policy rate stood at 5.00% in early October 2026, with a further 25 bp hike expected.",
+   "status": "checked_public_source",
+   "source_ids": [
+    "S-009"
+   ],
+   "confidence": "medium",
+   "checked_by": "GRID research team"
+  },
+  {
+   "id": "C-011",
+   "text": "At the asking price, the warehouse concept returns a project IRR of 2.5% against a 12% target.",
+   "status": "computed",
+   "source_ids": [
+    "S-016"
+   ],
+   "confidence": "high",
+   "checked_by": "GRID research team"
+  },
+  {
+   "id": "C-012",
+   "text": "The warehouse concept supports a land price of about ₱9,900 per sqm at a 12% project IRR.",
+   "status": "computed",
+   "source_ids": [
+    "S-016"
+   ],
+   "confidence": "high",
+   "checked_by": "GRID research team"
+  }
+ ],
+ "qa": []
+}

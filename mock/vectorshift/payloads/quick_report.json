@@ -1,0 +1,501 @@
+{
+ "meta": {
+  "schema_version": "1.0.0",
+  "product": "quick_report",
+  "tier": "desk",
+  "report_id": "QR-20261019-C6TAG",
+  "title": "Quick Report: C6 Road commercial lot, Calzada–Tipas, Taguig",
+  "subject": {
+   "name": "C6 Road commercial lot, Calzada–Tipas, Taguig",
+   "address": "—",
+   "city_municipality": "Taguig",
+   "province": "Metro Manila",
+   "intended_use": "other",
+   "intended_use_detail": "Raw land (use not assessed in the Quick Report)",
+   "region": "NCR",
+   "lot_area": {
+    "value": 14323,
+    "range": null,
+    "unit": "sqm",
+    "as_of": null,
+    "status": "to_be_confirmed",
+    "source_ids": [
+     "S-001"
+    ],
+    "note": "Approximate (dropdown band); confirm against title and survey."
+   }
+  },
+  "inputs_provided": {
+   "level": "L0_location_only",
+   "items": [
+    {
+     "key": "location",
+     "provided": true
+    },
+    {
+     "key": "lot_area",
+     "provided": true
+    },
+    {
+     "key": "intended_use",
+     "provided": false
+    },
+    {
+     "key": "owner_developer_profile",
+     "provided": false
+    },
+    {
+     "key": "goals_objectives",
+     "provided": true
+    },
+    {
+     "key": "title_documents",
+     "provided": false
+    },
+    {
+     "key": "tax_declaration",
+     "provided": false
+    },
+    {
+     "key": "zoning_certificate",
+     "provided": false
+    },
+    {
+     "key": "site_survey",
+     "provided": false
+    },
+    {
+     "key": "geotechnical_report",
+     "provided": false
+    },
+    {
+     "key": "environmental_permits",
+     "provided": false
+    },
+    {
+     "key": "unit_mix_and_pricing",
+     "provided": false
+    },
+    {
+     "key": "development_cost",
+     "provided": false
+    },
+    {
+     "key": "land_cost",
+     "provided": false
+    },
+    {
+     "key": "funding_structure",
+     "provided": false
+    },
+    {
+     "key": "operating_assumptions",
+     "provided": false
+    },
+    {
+     "key": "timeline",
+     "provided": false
+    }
+   ]
+  },
+  "prepared_for": "Mock client (fictional): Dalisay Logistics Holdings, Inc.",
+  "prepared_by": "GRID Property Ventures · Feasibility Studio (Quick Report)",
+  "generated_at": "2026-10-19T02:00:00.000Z",
+  "as_of": "2026-10-19",
+  "locale": "en-PH",
+  "currency": "PHP",
+  "run": {
+   "run_id": "run-QR-20261019-MBKSKI",
+   "dag_id": "grid.quick_report",
+   "dag_version": "0.2.0",
+   "nodes": [
+    {
+     "node_id": "Q00_quick_intake",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "Q01_tag_and_range",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "Q02_market_snapshot",
+     "model": "not connected (prototype)",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "Q03_sanity_checks",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "Q04_range_calculator",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "Q05_indicative_screen",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "Q06_one_page_writer",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "Q07_qa",
+     "model": "prototype",
+     "status": "succeeded"
+    },
+    {
+     "node_id": "Q08_publish",
+     "model": "prototype",
+     "status": "succeeded"
+    }
+   ]
+  },
+  "review": {
+   "status": "draft",
+   "notes": "Broker self-serve. Not reviewed by an ISR."
+  },
+  "disclaimer": "MOCK REPORT for demonstration. Comparable prices are real Lamudi asking prices as of 19 October 2026, not closed sales. An indicative price screen, not an appraisal or investment advice."
+ },
+ "model": "landbank",
+ "indicative": {
+  "rating": "marginal",
+  "label": "Marginal — fairly priced",
+  "headline": "Marginal: asked at ₱42,000/sqm, inside the comparable range of ₱30,000–₱50,000 and in the upper half (5% over the middle). Fair pricing; the upside has to come from negotiation or the use.",
+  "confidence": "low"
+ },
+ "metrics": [
+  {
+   "key": "price_vs_comps",
+   "label": "Asking price per sqm",
+   "low": 42000,
+   "base": 42000,
+   "high": 42000,
+   "unit": "PHP/sqm",
+   "status": "estimate",
+   "formula": "Compared with comparable listings ₱30,000–₱50,000 per sqm",
+   "better": "lower",
+   "compare": {
+    "low": 30000,
+    "high": 50000
+   }
+  },
+  {
+   "key": "total_asking",
+   "label": "Total asking price",
+   "low": 601566000,
+   "base": 601566000,
+   "high": 601566000,
+   "unit": "PHP",
+   "status": "estimate",
+   "formula": "Asking price per sqm × lot area (both approximate)",
+   "better": "lower"
+  },
+  {
+   "key": "value_at_comps",
+   "label": "Value at comparable prices",
+   "low": 429690000,
+   "base": 572920000,
+   "high": 716150000,
+   "unit": "PHP",
+   "status": "estimate",
+   "formula": "Lot area × comparable range",
+   "better": "higher"
+  },
+  {
+   "key": "discount_vs_comps",
+   "label": "Discount vs comparables",
+   "low": -0.4,
+   "base": -0.05,
+   "high": 0.16,
+   "unit": "%",
+   "status": "estimate",
+   "formula": "(Comparable price − asking) ÷ comparable price, at the comparable low, middle and high. Negative = premium.",
+   "better": "higher"
+  },
+  {
+   "key": "net_to_seller",
+   "label": "Seller's proceeds after commission",
+   "low": 583519020,
+   "base": 583519020,
+   "high": 583519020,
+   "unit": "PHP",
+   "status": "estimate",
+   "formula": "Total asking × (1 − 3% commission), before capital gains tax and other closing costs",
+   "better": "higher"
+  }
+ ],
+ "screening_rule": {
+  "metric": "price_vs_comps",
+  "label": "Asking price per sqm against comparable listings",
+  "promising_at": null,
+  "marginal_at": null,
+  "note": "Below the comparable low = Promising; inside the range = Marginal; above the comparable high = Weak."
+ },
+ "inputs": [
+  {
+   "key": "k0",
+   "label": "Location",
+   "value": "C6 Road, Calzada–Tipas, Taguig City",
+   "provider_tag": "can",
+   "status": "checked_public_source"
+  },
+  {
+   "key": "k1",
+   "label": "Lot area",
+   "value": "14,323 sqm",
+   "provider_tag": "can",
+   "status": "checked_public_source"
+  },
+  {
+   "key": "k2",
+   "label": "Building on site",
+   "value": "None (vacant raw land)",
+   "provider_tag": "can",
+   "status": "checked_public_source"
+  },
+  {
+   "key": "k3",
+   "label": "Road access",
+   "value": "Direct C6 Road frontage",
+   "provider_tag": "can",
+   "status": "checked_public_source"
+  },
+  {
+   "key": "k4",
+   "label": "Asking price",
+   "value": "₱42,000 per sqm (S-001)",
+   "provider_tag": "can",
+   "status": "checked_public_source"
+  },
+  {
+   "key": "k5",
+   "label": "Comparable range",
+   "value": "₱30,000–₱50,000 per sqm: C6-frontage and C6-access lots (S-002)",
+   "provider_tag": "can",
+   "status": "checked_public_source"
+  },
+  {
+   "key": "k6",
+   "label": "All nearby listings",
+   "value": "12 lots, ₱20,000–₱70,000; median ₱35,000",
+   "provider_tag": "can",
+   "status": "checked_public_source"
+  },
+  {
+   "key": "k7",
+   "label": "Prices gathered",
+   "value": "19 October 2026",
+   "provider_tag": "can",
+   "status": "checked_public_source"
+  },
+  {
+   "key": "k8",
+   "label": "BIR zonal value",
+   "value": "Not published online; to confirm with the BIR",
+   "provider_tag": "can",
+   "status": "checked_public_source"
+  },
+  {
+   "key": "k9",
+   "label": "Commission",
+   "value": "3% (commercial land deals often 1–3%)",
+   "provider_tag": "can",
+   "status": "checked_public_source"
+  },
+  {
+   "key": "k10",
+   "label": "Papers",
+   "value": "Title, zoning and site studies offered on inquiry",
+   "provider_tag": "can",
+   "status": "checked_public_source"
+  }
+ ],
+ "input_tag_summary": {
+  "can": 15,
+  "idea": 0,
+  "cant": 0
+ },
+ "flags": [
+  {
+   "label": "BIR zonal value not published online. Confirm it with the BIR; capital gains and documentary stamp taxes are generally based on the higher of the price and the zonal or fair market value.",
+   "tone": "warning"
+  },
+  {
+   "label": "Lakeshore location: lowland areas along Laguna de Bay are flood-susceptible. Check elevation and flood history.",
+   "tone": "warning"
+  },
+  {
+   "label": "Comparables are asking prices from listings, not closed sales.",
+   "tone": "info"
+  }
+ ],
+ "notes": [
+  "Evidence: 12 comparable lot listings within about 1.2 km, gathered 19 October 2026. The subject is 20% above the ₱35,000 median of all nearby listings, and in the upper half of the C6-frontage range.",
+  "Its direct C6 frontage and 1.4 ha size are scarce: few listed parcels over 10,000 sqm sit on C6 itself."
+ ],
+ "upgrade_path": [
+  {
+   "key": "u0",
+   "label": "Certified true copy of the title",
+   "who_provides": "Registry of Deeds",
+   "why": ""
+  },
+  {
+   "key": "u1",
+   "label": "Zoning certificate",
+   "who_provides": "Taguig City zoning office",
+   "why": ""
+  },
+  {
+   "key": "u2",
+   "label": "BIR zonal value",
+   "who_provides": "BIR Revenue District Office",
+   "why": ""
+  },
+  {
+   "key": "u3",
+   "label": "Elevation and flood check",
+   "who_provides": "Geodetic engineer / hazard maps",
+   "why": ""
+  },
+  {
+   "key": "u4",
+   "label": "Closed-sale evidence or appraisal",
+   "who_provides": "Licensed appraiser (RA 9646)",
+   "why": ""
+  },
+  {
+   "key": "u5",
+   "label": "Intended use and budget",
+   "who_provides": "Buyer",
+   "why": ""
+  },
+  {
+   "key": "u6",
+   "label": "Full feasibility study",
+   "who_provides": "GRID Feasibility Report",
+   "why": ""
+  }
+ ],
+ "estimates_next": [],
+ "limitations": [
+  {
+   "id": "L-01",
+   "affects": [
+    "market_analysis",
+    "metrics"
+   ],
+   "kind": "data_stale",
+   "reason": "Market evidence is asking prices and asking rents from online listings on 19 October 2026, not closed transactions. Closed prices are typically lower.",
+   "missing_inputs": [],
+   "effect": "confidence_reduced",
+   "how_to_resolve": "Obtain closed-sale evidence or a licensed appraisal before negotiating."
+  },
+  {
+   "id": "L-02",
+   "affects": [
+    "technical_study",
+    "feasibility_criteria"
+   ],
+   "kind": "requires_licensed_professional",
+   "reason": "Zoning has not been confirmed. The listing states that title, zoning and site studies are available on serious inquiry.",
+   "missing_inputs": [
+    "zoning_certificate"
+   ],
+   "effect": "confidence_reduced",
+   "how_to_resolve": "Request the zoning certificate or locational clearance from the Taguig City zoning office."
+  },
+  {
+   "id": "L-04",
+   "affects": [
+    "market_analysis"
+   ],
+   "kind": "no_public_data",
+   "reason": "The BIR zonal value for the site is not published in the online sources checked.",
+   "missing_inputs": [],
+   "effect": "confidence_reduced",
+   "how_to_resolve": "Confirm the zonal value with the BIR Revenue District Office covering Taguig."
+  },
+  {
+   "id": "L-07",
+   "affects": [
+    "indicative"
+   ],
+   "kind": "out_of_scope",
+   "reason": "An indicative price screen only. It does not test a development use, costs or returns; see the Feasibility Report for that.",
+   "missing_inputs": [],
+   "effect": "verdict_capped",
+   "how_to_resolve": "Commission the full Feasibility Report."
+  }
+ ],
+ "sources": [
+  {
+   "id": "S-001",
+   "title": "Lamudi listing: 14,323 sqm Commercial Lot for Sale, C6 Road, Calzada–Tipas, Taguig City (listed by Grid Property Ventures, Inc.)",
+   "publisher": "Lamudi",
+   "url": "https://www.lamudi.com.ph/property/41032-73-741b85125d82-8be2-19db429-8957-77ba",
+   "type": "listing_portal",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-002",
+   "title": "Lamudi: Lot For Sale in Calzada, Taguig (search results incl. nearby Tipas, Palingon, Wawa, Sta. Ana)",
+   "publisher": "Lamudi",
+   "url": "https://www.lamudi.com.ph/buy/metro-manila/taguig/calzada-5/land/",
+   "type": "listing_portal",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-005",
+   "title": "Taguig (2024 census population; Calzada-Tipas barangay profile; Laguna de Bay flood susceptibility)",
+   "publisher": "Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Taguig",
+   "type": "other",
+   "tier": "C",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-010",
+   "title": "Still flooded, lakeside Taguig village cries out in the breeze (c. Sep 2012)",
+   "publisher": "Philippine Daily Inquirer",
+   "url": "https://newsinfo.inquirer.net/279710/still-flooded-lakeside-taguig-village-cries-out-in-the-breeze/amp",
+   "type": "news",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-012",
+   "title": "High land prices drive warehouses out of Metro Manila (Leechiu Property Consultants briefing; undated)",
+   "publisher": "BusinessWorld",
+   "url": "https://bworldonline.com/?p=428401",
+   "type": "news",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  },
+  {
+   "id": "S-014",
+   "title": "RA 9646 Real Estate Service Act: types of practitioners (appraisers)",
+   "publisher": "ren.ph",
+   "url": "https://ren.ph/academy/courses/ra-9646-essentials/types-of-practitioners",
+   "type": "other",
+   "tier": "B",
+   "accessed_on": "2026-10-19",
+   "url_status": "live"
+  }
+ ],
+ "word_count": 142,
+ "qa": []
+}

@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.grid.ph/feasibility-studio/v1/run_request.schema.json",
+  "title": "GRID DAG RunRequest",
+  "description": "What the Next.js backend sends to the external DAG service to start a run. The same shape for every product. Intake is free-form by design (the front end owns its fields); the field dictionary tells the DAG what each key means.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "request_version",
+    "product",
+    "report_id",
+    "idempotency_key",
+    "run_context",
+    "field_dictionary",
+    "intake",
+    "documents",
+    "callback"
+  ],
+  "properties": {
+    "request_version": {
+      "const": "1.0"
+    },
+    "product": {
+      "type": "string",
+      "enum": [
+        "quick_report",
+        "executive_summary",
+        "feasibility_report",
+        "teaser_intake"
+      ]
+    },
+    "report_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "idempotency_key": {
+      "type": "string",
+      "minLength": 8,
+      "description": "Same key = same run. Lets the app retry a POST safely."
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+\\.[0-9]+$",
+      "description": "Payload schema version the app expects back. The DAG must return this major version."
+    },
+    "run_context": {
+      "$ref": "node_io.schema.json#/$defs/RunContext"
+    },
+    "field_dictionary": {
+      "$ref": "node_io.schema.json#/$defs/FieldDictionary"
+    },
+    "intake": {
+      "type": "object",
+      "description": "The intake exactly as the user submitted it. Any keys."
+    },
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "doc_ref",
+          "file_name",
+          "mime",
+          "url",
+          "expires_at"
+        ],
+        "properties": {
+          "doc_ref": {
+            "type": "string"
+          },
+          "file_name": {
+            "type": "string"
+          },
+          "user_label": {
+            "type": "string"
+          },
+          "capability": {
+            "type": "string"
+          },
+          "mime": {
+            "type": "string",
+            "enum": [
+              "application/pdf",
+              "image/jpeg",
+              "image/png",
+              "image/heic"
+            ]
+          },
+          "pages": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Short-lived signed URL."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "market_insight_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Existing Market Insight report id (Executive Summary)."
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "type": "string",
+          "enum": [
+            "desk",
+            "full"
+          ]
+        },
+        "toc_mode": {
+          "type": "string",
+          "enum": [
+            "summary_first",
+            "toc_first"
+          ]
+        },
+        "review_required": {
+          "type": "boolean"
+        },
+        "priority": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "high"
+          ]
+        }
+      }
+    },
+    "callback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "events"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "events": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "run.started",
+              "node.completed",
+              "run.succeeded",
+              "run.needs_review",
+              "run.failed",
+              "run.cancelled"
+            ]
+          }
+        }
+      }
+    },
+    "requested_by": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "org_id": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

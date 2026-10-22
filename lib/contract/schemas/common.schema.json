@@ -1,0 +1,1286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.grid.ph/feasibility-studio/v1/common.schema.json",
+  "title": "GRID Feasibility Studio - shared definitions",
+  "description": "Building blocks shared by the Executive Summary and Feasibility Report products. Every number is a Figure and every statement can point to a Claim, so the front end can always show where a value came from and how far it has been checked.",
+  "$defs": {
+    "VerificationStatus": {
+      "description": "How far a value or statement has been checked. Only 'verified_document' may be shown to users as 'Verified'.",
+      "type": "string",
+      "enum": [
+        "verified_document",
+        "checked_public_source",
+        "to_be_confirmed",
+        "owner_input",
+        "computed",
+        "estimate",
+        "assumption"
+      ]
+    },
+    "PriceBasis": {
+      "description": "What kind of price a figure represents. Asking prices must never be presented as closed transactions.",
+      "type": "string",
+      "enum": [
+        "asking",
+        "closed",
+        "zonal",
+        "appraised",
+        "assessed",
+        "not_applicable"
+      ]
+    },
+    "Confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "Owner": {
+      "description": "Who is responsible for supplying the content of a section.",
+      "type": "string",
+      "enum": [
+        "grid",
+        "owner_developer",
+        "shared"
+      ]
+    },
+    "Coverage": {
+      "description": "How complete a section is. The UI renders 'inputs_required' and 'out_of_scope' as explicit empty states instead of hiding the section.",
+      "type": "string",
+      "enum": [
+        "complete",
+        "partial",
+        "light",
+        "inputs_required",
+        "out_of_scope"
+      ]
+    },
+    "SourceId": {
+      "type": "string",
+      "pattern": "^S-[0-9]{3,4}$"
+    },
+    "ClaimId": {
+      "type": "string",
+      "pattern": "^C-[0-9]{3,4}$"
+    },
+    "Source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "publisher",
+        "type",
+        "tier",
+        "accessed_on",
+        "url_status"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/SourceId"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "government_registry",
+            "government_report",
+            "listing_portal",
+            "marketplace",
+            "news",
+            "research_firm",
+            "developer_disclosure",
+            "owner_document",
+            "forum_or_social",
+            "other"
+          ]
+        },
+        "tier": {
+          "description": "A = registry or official record; B = reputable secondary (research firm, major news, listing portal); C = sentiment only (forums, social).",
+          "type": "string",
+          "enum": [
+            "A",
+            "B",
+            "C"
+          ]
+        },
+        "published_on": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "accessed_on": {
+          "type": "string",
+          "format": "date"
+        },
+        "url_status": {
+          "type": "string",
+          "enum": [
+            "live",
+            "dead",
+            "paywalled",
+            "not_checked",
+            "no_url"
+          ]
+        },
+        "found_by": {
+          "description": "DAG node that found this source.",
+          "type": "string"
+        }
+      }
+    },
+    "Range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "low",
+        "high"
+      ],
+      "properties": {
+        "low": {
+          "type": "number"
+        },
+        "high": {
+          "type": "number"
+        }
+      }
+    },
+    "Figure": {
+      "description": "Any number shown to a user. Either 'value' or 'range' is set; both null means the figure is still required.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "range",
+        "unit",
+        "as_of",
+        "status",
+        "source_ids"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "range": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Range"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "description": "e.g. PHP, PHP/sqm, sqm, %, years, units, months",
+          "type": "string"
+        },
+        "scale": {
+          "type": "string",
+          "enum": [
+            "one",
+            "thousand",
+            "million",
+            "billion"
+          ],
+          "default": "one"
+        },
+        "basis": {
+          "$ref": "#/$defs/PriceBasis"
+        },
+        "as_of": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "status": {
+          "$ref": "#/$defs/VerificationStatus"
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceId"
+          }
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 300
+        }
+      }
+    },
+    "Claim": {
+      "description": "A single factual statement produced by research and checked by the fact-check node.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "text",
+        "status",
+        "source_ids",
+        "confidence"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ClaimId"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        "status": {
+          "$ref": "#/$defs/VerificationStatus"
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceId"
+          }
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence"
+        },
+        "checked_by": {
+          "description": "Fact-check node and model that checked the claim.",
+          "type": "string"
+        },
+        "conflict": {
+          "description": "Filled when sources disagree; the UI shows the range instead of one number.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "Provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node_id"
+      ],
+      "properties": {
+        "node_id": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Block": {
+      "description": "A renderable content block. The front end keeps one component per 'type'; the model can only use these types.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ParagraphBlock"
+        },
+        {
+          "$ref": "#/$defs/KpiStripBlock"
+        },
+        {
+          "$ref": "#/$defs/TableBlock"
+        },
+        {
+          "$ref": "#/$defs/ChartBlock"
+        },
+        {
+          "$ref": "#/$defs/CalloutBlock"
+        },
+        {
+          "$ref": "#/$defs/ChecklistBlock"
+        },
+        {
+          "$ref": "#/$defs/MapBlock"
+        },
+        {
+          "$ref": "#/$defs/InputsRequiredBlock"
+        }
+      ]
+    },
+    "ParagraphBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "text"
+      ],
+      "properties": {
+        "type": {
+          "const": "paragraph"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ClaimId"
+          }
+        }
+      }
+    },
+    "KpiStripBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "items"
+      ],
+      "properties": {
+        "type": {
+          "const": "kpi_strip"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "figure"
+            ],
+            "properties": {
+              "label": {
+                "type": "string",
+                "maxLength": 40
+              },
+              "figure": {
+                "$ref": "#/$defs/Figure"
+              },
+              "hint": {
+                "type": "string",
+                "maxLength": 80
+              }
+            }
+          }
+        }
+      }
+    },
+    "TableBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "title",
+        "columns",
+        "rows"
+      ],
+      "properties": {
+        "type": {
+          "const": "table"
+        },
+        "title": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        },
+        "columns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "label"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "align": {
+                "type": "string",
+                "enum": [
+                  "left",
+                  "right",
+                  "center"
+                ]
+              },
+              "format": {
+                "type": "string",
+                "enum": [
+                  "text",
+                  "currency",
+                  "number",
+                  "percent",
+                  "date",
+                  "status"
+                ]
+              }
+            }
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "null"
+                  ]
+                },
+                {
+                  "$ref": "#/$defs/Figure"
+                }
+              ]
+            }
+          }
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceId"
+          }
+        }
+      }
+    },
+    "ChartBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "chart_type",
+        "title",
+        "caption",
+        "x",
+        "series",
+        "source_ids"
+      ],
+      "properties": {
+        "type": {
+          "const": "chart"
+        },
+        "chart_type": {
+          "type": "string",
+          "enum": [
+            "line",
+            "bar",
+            "stacked_bar",
+            "range",
+            "scatter",
+            "waterfall"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "caption": {
+          "description": "Every chart is captioned and sourced.",
+          "type": "string",
+          "minLength": 1
+        },
+        "x": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "label",
+            "values"
+          ],
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            }
+          }
+        },
+        "y_unit": {
+          "type": "string"
+        },
+        "series": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "values"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "values": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "status": {
+                "$ref": "#/$defs/VerificationStatus"
+              }
+            }
+          }
+        },
+        "annotations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "at",
+              "text"
+            ],
+            "properties": {
+              "at": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "source_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/SourceId"
+          }
+        }
+      }
+    },
+    "CalloutBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "tone",
+        "text"
+      ],
+      "properties": {
+        "type": {
+          "const": "callout"
+        },
+        "tone": {
+          "type": "string",
+          "enum": [
+            "info",
+            "success",
+            "warning",
+            "risk"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "claim_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ClaimId"
+          }
+        }
+      }
+    },
+    "ChecklistBlock": {
+      "description": "Used for zoning, hazard, title, permit and due-diligence items. Each item carries its own status.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "title",
+        "items"
+      ],
+      "properties": {
+        "type": {
+          "const": "checklist"
+        },
+        "title": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "status"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "result": {
+                "type": "string"
+              },
+              "status": {
+                "$ref": "#/$defs/VerificationStatus"
+              },
+              "source_ids": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/SourceId"
+                }
+              },
+              "next_step": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "MapBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "center"
+      ],
+      "properties": {
+        "type": {
+          "const": "map"
+        },
+        "center": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lat",
+            "lng"
+          ],
+          "properties": {
+            "lat": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "lng": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            }
+          }
+        },
+        "zoom": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "layers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "site",
+              "comparables",
+              "flood",
+              "fault",
+              "landslide",
+              "amenities",
+              "infrastructure",
+              "zoning"
+            ]
+          }
+        },
+        "markers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "lat",
+              "lng",
+              "label"
+            ],
+            "properties": {
+              "lat": {
+                "type": "number"
+              },
+              "lng": {
+                "type": "number"
+              },
+              "label": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "InputsRequiredBlock": {
+      "description": "Rendered when GRID cannot fill a section honestly. Lists the inputs the owner or developer must provide.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "owner",
+        "fields"
+      ],
+      "properties": {
+        "type": {
+          "const": "inputs_required"
+        },
+        "owner": {
+          "$ref": "#/$defs/Owner"
+        },
+        "message": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "label"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "example": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "coverage",
+        "owner",
+        "blocks"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_.]+$"
+        },
+        "number": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "coverage": {
+          "$ref": "#/$defs/Coverage"
+        },
+        "owner": {
+          "$ref": "#/$defs/Owner"
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Block"
+          }
+        },
+        "subsections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Section"
+          }
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        }
+      }
+    },
+    "Subject": {
+      "description": "The property or project being studied.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "address",
+        "city_municipality",
+        "province",
+        "intended_use"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "barangay": {
+          "type": "string"
+        },
+        "city_municipality": {
+          "type": "string"
+        },
+        "province": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        },
+        "coordinates": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lat",
+            "lng"
+          ],
+          "properties": {
+            "lat": {
+              "type": "number"
+            },
+            "lng": {
+              "type": "number"
+            }
+          }
+        },
+        "lot_area": {
+          "$ref": "#/$defs/Figure"
+        },
+        "floor_area": {
+          "$ref": "#/$defs/Figure"
+        },
+        "title_ref": {
+          "description": "TCT/CCT reference if supplied by the owner. Never shown publicly.",
+          "type": "string"
+        },
+        "intended_use": {
+          "type": "string",
+          "enum": [
+            "residential_subdivision",
+            "residential_condominium",
+            "commercial",
+            "mixed_use",
+            "industrial_warehouse",
+            "hospitality_resort",
+            "agricultural",
+            "institutional",
+            "land_banking",
+            "other"
+          ]
+        },
+        "intended_use_detail": {
+          "type": "string"
+        }
+      }
+    },
+    "Meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "product",
+        "report_id",
+        "title",
+        "subject",
+        "inputs_provided",
+        "generated_at",
+        "as_of",
+        "locale",
+        "currency",
+        "run",
+        "review",
+        "disclaimer"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "pattern": "^1\\.[0-9]+\\.[0-9]+$"
+        },
+        "product": {
+          "type": "string",
+          "enum": [
+            "executive_summary",
+            "feasibility_report",
+            "quick_report"
+          ]
+        },
+        "tier": {
+          "description": "desk = public data plus owner inputs, no site investigation. full = includes site and professional reports supplied by the owner.",
+          "type": "string",
+          "enum": [
+            "desk",
+            "full"
+          ]
+        },
+        "report_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "subject": {
+          "$ref": "#/$defs/Subject"
+        },
+        "inputs_provided": {
+          "$ref": "#/$defs/InputsProvided"
+        },
+        "prepared_for": {
+          "type": "string"
+        },
+        "prepared_by": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "as_of": {
+          "description": "Data cut-off date for the whole report.",
+          "type": "string",
+          "format": "date"
+        },
+        "locale": {
+          "type": "string",
+          "default": "en-PH"
+        },
+        "currency": {
+          "type": "string",
+          "default": "PHP"
+        },
+        "run": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "run_id",
+            "dag_id",
+            "dag_version"
+          ],
+          "properties": {
+            "run_id": {
+              "type": "string"
+            },
+            "dag_id": {
+              "type": "string"
+            },
+            "dag_version": {
+              "type": "string"
+            },
+            "nodes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "node_id",
+                  "status"
+                ],
+                "properties": {
+                  "node_id": {
+                    "type": "string"
+                  },
+                  "model": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "succeeded",
+                      "failed",
+                      "skipped",
+                      "retried"
+                    ]
+                  },
+                  "started_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "finished_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "in_review",
+                "approved",
+                "rejected"
+              ]
+            },
+            "reviewer": {
+              "type": "string"
+            },
+            "reviewed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "notes": {
+              "type": "string"
+            }
+          }
+        },
+        "disclaimer": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "Verdict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rating",
+        "headline",
+        "confidence"
+      ],
+      "properties": {
+        "rating": {
+          "type": "string",
+          "enum": [
+            "feasible",
+            "conditionally_feasible",
+            "not_feasible",
+            "insufficient_data"
+          ]
+        },
+        "headline": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "thesis_breaker": {
+          "description": "The single event that would flip the verdict.",
+          "type": "string"
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence"
+        },
+        "confidence_note": {
+          "type": "string"
+        }
+      }
+    },
+    "InputLevel": {
+      "description": "How much the user supplied at intake. Decides which sections can be produced (see the capability matrix in the blueprint).",
+      "type": "string",
+      "enum": [
+        "L0_location_only",
+        "L1_property_and_use",
+        "L2_plus_owner_profile",
+        "L3_plus_cost_and_funding",
+        "L4_plus_professional_reports"
+      ]
+    },
+    "InputsProvided": {
+      "description": "Checklist of what the user supplied. The pipeline reads this to decide which nodes run and which sections become 'inputs_required'.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "level",
+        "items"
+      ],
+      "properties": {
+        "level": {
+          "$ref": "#/$defs/InputLevel"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "key",
+              "provided"
+            ],
+            "properties": {
+              "key": {
+                "type": "string",
+                "enum": [
+                  "location",
+                  "lot_area",
+                  "intended_use",
+                  "owner_developer_profile",
+                  "goals_objectives",
+                  "title_documents",
+                  "tax_declaration",
+                  "zoning_certificate",
+                  "site_survey",
+                  "geotechnical_report",
+                  "environmental_permits",
+                  "project_concept",
+                  "unit_mix_and_pricing",
+                  "development_cost",
+                  "land_cost",
+                  "funding_structure",
+                  "operating_assumptions",
+                  "timeline",
+                  "management_team",
+                  "marketing_budget"
+                ]
+              },
+              "provided": {
+                "type": "boolean"
+              },
+              "document_ref": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Limitation": {
+      "description": "Something the report could not produce, or produced only partly, and why. Rendered on the Limitations page and as a badge on the affected section.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "affects",
+        "kind",
+        "reason",
+        "missing_inputs",
+        "effect"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^L-[0-9]{2,3}$"
+        },
+        "affects": {
+          "description": "Section ids or executive-summary item keys affected.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "missing_user_input",
+            "no_public_data",
+            "unverifiable_source",
+            "out_of_scope",
+            "requires_site_visit",
+            "requires_licensed_professional",
+            "data_stale"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "missing_inputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "effect": {
+          "type": "string",
+          "enum": [
+            "section_omitted",
+            "section_partial",
+            "figures_estimated",
+            "verdict_capped",
+            "confidence_reduced"
+          ]
+        },
+        "how_to_resolve": {
+          "type": "string"
+        }
+      }
+    },
+    "QaCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "passed"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "detail": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

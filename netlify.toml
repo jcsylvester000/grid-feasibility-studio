@@ -1,0 +1,18 @@
+# GRID Feasibility Studio on Netlify (agency skill W20).
+# Environment variables are set in the Netlify UI (Site configuration > Environment variables),
+# never here. Names are listed in .env.example and README.md.
+
+[build]
+  command = "npm run build:netlify"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  included_files = ["lib/contract/schemas/**", "mock/vectorshift/payloads/**"]

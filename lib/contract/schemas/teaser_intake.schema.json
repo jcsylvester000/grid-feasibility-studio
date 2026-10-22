@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.grid.ph/feasibility-studio/v1/teaser_intake.schema.json",
+  "title": "GRID Teaser Intake",
+  "description": "Output of the Teaser Scan DAG (T00 to T10). Turns a broker's property teaser, fact sheet, listing post or video into sourced listing facts, a pre-filled intake for the Quick Report (or a fuller product), a check of the teaser's claims, red flags and questions to ask the seller. Every fact is the seller's or broker's claim (status owner_input or estimate) until checked; nothing is called verified unless it was read from an official document the user uploaded.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["meta", "files", "listing", "mapping", "claims", "red_flags", "questions_for_seller", "sources", "issues", "qa"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "product", "intake_id", "generated_at", "as_of", "locale", "currency", "relationship", "run"],
+      "properties": {
+        "schema_version": {"type": "string", "pattern": "^1\\.[0-9]+\\.[0-9]+$"},
+        "product": {"const": "teaser_intake"},
+        "intake_id": {"type": "string"},
+        "report_id": {"type": ["string", "null"], "description": "The report draft this intake pre-fills, once created."},
+        "generated_at": {"type": "string", "format": "date-time"},
+        "as_of": {"type": "string", "format": "date"},
+        "locale": {"type": "string"},
+        "currency": {"type": "string"},
+        "relationship": {"type": "string", "enum": ["own_listing_with_authority", "co_broker_with_owner_consent", "received_from_network", "owner_direct", "buyer_side_review", "unknown"], "description": "What the uploader says their relationship to the listing is."},
+        "run": {"$ref": "common.schema.json#/$defs/Meta/properties/run"}
+      }
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["doc_ref", "kind", "sha256", "readable"],
+        "properties": {
+          "doc_ref": {"type": "string"},
+          "kind": {"type": "string", "enum": ["image", "pdf", "video", "pasted_text"]},
+          "pages": {"type": ["integer", "null"]},
+          "duration_s": {"type": ["number", "null"]},
+          "sha256": {"type": "string"},
+          "near_duplicate_of": {"type": ["string", "null"], "description": "doc_ref of another upload with the same image fingerprint."},
+          "readable": {"type": "string", "enum": ["yes", "partly", "no"]},
+          "language": {"type": "string", "description": "e.g. en, fil, taglish"},
+          "content_kinds": {"type": "array", "items": {"type": "string", "enum": ["fact_sheet", "teaser_graphic", "site_photo", "vicinity_map", "title_photo", "tax_declaration_photo", "floor_plan", "listing_post_text", "video_walkthrough", "other"]}}
+        }
+      }
+    },
+    "listing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headline_as_written", "property_type", "deal", "facts", "location"],
+      "properties": {
+        "headline_as_written": {"type": "string", "maxLength": 300},
+        "property_type": {"type": "string", "description": "Open text in plain words, e.g. 'vacant commercial lot', 'warehouse with office', 'beach lot'."},
+        "canonical_intended_use": {"type": "string", "enum": ["residential_subdivision", "residential_condominium", "commercial", "mixed_use", "industrial_warehouse", "hospitality_resort", "agricultural", "institutional", "land_banking", "other", "unknown"]},
+        "deal": {"type": "string", "enum": ["sale", "lease", "sale_or_lease", "joint_venture", "unknown"]},
+        "facts": {"type": "array", "items": {"$ref": "#/$defs/ListingFact"}},
+        "location": {"$ref": "#/$defs/LocationResolution"},
+        "personal_data_redacted": {"type": "boolean", "description": "True when names, phone numbers, emails or ID numbers seen in the files were left out of the output."}
+      }
+    },
+    "mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_product", "options_version", "intake", "mapped", "unmapped", "missing_required"],
+      "properties": {
+        "target_product": {"type": "string", "enum": ["quick_report", "executive_summary", "feasibility_report"]},
+        "options_version": {"type": "string"},
+        "intake": {"type": "object", "description": "Pre-filled intake in the target wizard's own keys. Free-form by design; the broker confirms it at T08."},
+        "mapped": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["fact_key", "field_key", "value"], "properties": {"fact_key": {"type": "string"}, "field_key": {"type": "string"}, "value": {"type": ["string", "number", "boolean"]}, "note": {"type": "string"}}}},
+        "unmapped": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["fact_key", "reason"], "properties": {"fact_key": {"type": "string"}, "reason": {"type": "string"}}}},
+        "missing_required": {"type": "array", "items": {"type": "string"}, "description": "Required wizard fields the teaser did not answer."}
+      }
+    },
+    "claims": {"type": "array", "items": {"$ref": "#/$defs/ClaimCheck"}},
+    "red_flags": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["flag", "severity", "why"], "properties": {"flag": {"type": "string"}, "severity": {"type": "string", "enum": ["high", "medium", "low"]}, "why": {"type": "string"}, "fact_keys": {"type": "array", "items": {"type": "string"}}}}},
+    "questions_for_seller": {"type": "array", "items": {"type": "string", "maxLength": 200}},
+    "sources": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/Source"}},
+    "issues": {"type": "array", "items": {"$ref": "node_io.schema.json#/$defs/Issue"}},
+    "qa": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/QaCheck"}}
+  },
+  "$defs": {
+    "ListingFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "label", "value_text", "status", "source", "confidence"],
+      "properties": {
+        "key": {"type": "string", "description": "Stable key, e.g. lot_area, asking_price_total, asking_price_per_sqm, frontage, road_width, title_type, zoning_claim, terms, commission_offered."},
+        "label": {"type": "string"},
+        "value_text": {"type": "string", "description": "Exactly as written or spoken (may be Filipino or Taglish)."},
+        "figure": {"oneOf": [{"$ref": "common.schema.json#/$defs/Figure"}, {"type": "null"}]},
+        "status": {"type": "string", "enum": ["owner_input", "estimate", "verified_document"], "description": "owner_input = stated in the teaser; estimate = a band or 'about'; verified_document only for values read from an official document image the user uploaded (e.g. a title photo), and still subject to a certified true copy."},
+        "source": {"type": "object", "additionalProperties": false, "required": ["doc_ref"], "properties": {"doc_ref": {"type": "string"}, "page": {"type": ["integer", "null"]}, "timestamp_s": {"type": ["number", "null"]}, "quote": {"type": "string", "maxLength": 240}}},
+        "confidence": {"$ref": "common.schema.json#/$defs/Confidence"},
+        "conflict": {"type": ["string", "null"], "description": "Filled when two places in the teaser disagree, or the arithmetic does not add up."}
+      }
+    },
+    "LocationResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["as_written", "precision", "candidates"],
+      "properties": {
+        "as_written": {"type": "string"},
+        "landmarks": {"type": "array", "items": {"type": "string"}},
+        "precision": {"type": "string", "enum": ["exact_address", "street_or_road", "barangay", "city_municipality", "province", "region", "unknown"]},
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["region", "province", "city_municipality", "confidence"],
+            "properties": {
+              "region": {"type": "string"},
+              "province": {"type": "string"},
+              "city_municipality": {"type": "string"},
+              "barangay": {"type": ["string", "null"]},
+              "road": {"type": ["string", "null"]},
+              "coordinates": {"oneOf": [{"type": "object", "additionalProperties": false, "required": ["lat", "lng"], "properties": {"lat": {"type": "number"}, "lng": {"type": "number"}}}, {"type": "null"}]},
+              "confidence": {"$ref": "common.schema.json#/$defs/Confidence"},
+              "basis": {"type": "string", "description": "How the candidate was found, e.g. 'landmark SM City Dasmarinas + road name'."}
+            }
+          }
+        }
+      }
+    },
+    "ClaimCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "claim_text", "category", "checkable", "status", "finding", "next_step"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^T-[0-9]{2}$"},
+        "claim_text": {"type": "string", "maxLength": 300},
+        "category": {"type": "string", "enum": ["title_ownership", "zoning_land_use", "hazard", "access_road", "infrastructure", "price_value", "income_rent", "utilities", "permits", "area_measurement", "other"]},
+        "checkable": {"type": "string", "enum": ["public_source", "document_needed", "site_visit_needed", "not_checkable"]},
+        "status": {"type": "string", "enum": ["consistent", "contradicted", "partly_consistent", "unverified", "not_checked"]},
+        "finding": {"type": "string", "maxLength": 500},
+        "source_ids": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/SourceId"}},
+        "next_step": {"type": "string", "maxLength": 200}
+      }
+    },
+    "ListingSource": {
+      "description": "Optional block added to a Quick Report (schema 1.1.0) when its intake came from a teaser.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intake_id", "files_count", "relationship", "claims", "red_flags", "questions_for_seller"],
+      "properties": {
+        "intake_id": {"type": "string"},
+        "files_count": {"type": "integer", "minimum": 1},
+        "relationship": {"type": "string"},
+        "broker_confirmed_fields": {"type": "integer", "minimum": 0},
+        "broker_edited_fields": {"type": "integer", "minimum": 0},
+        "claims": {"type": "array", "items": {"$ref": "#/$defs/ClaimCheck"}},
+        "red_flags": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["flag", "severity", "why"], "properties": {"flag": {"type": "string"}, "severity": {"type": "string", "enum": ["high", "medium", "low"]}, "why": {"type": "string"}, "fact_keys": {"type": "array", "items": {"type": "string"}}}}},
+        "questions_for_seller": {"type": "array", "items": {"type": "string", "maxLength": 200}}
+      }
+    }
+  }
+}

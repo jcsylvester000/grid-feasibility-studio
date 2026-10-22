@@ -1,0 +1,711 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "product": "teaser_intake",
+    "intake_id": "TI-20261019-SAMPLE1",
+    "report_id": null,
+    "generated_at": "2026-10-19T10:00:00+08:00",
+    "as_of": "2026-10-19",
+    "locale": "en-PH",
+    "currency": "PHP",
+    "relationship": "received_from_network",
+    "run": {
+      "run_id": "run_sample_ti_01",
+      "dag_id": "grid.teaser_intake",
+      "dag_version": "0.1.0",
+      "nodes": [
+        {
+          "node_id": "T00_teaser_upload",
+          "status": "succeeded"
+        },
+        {
+          "node_id": "T01_file_triage",
+          "status": "succeeded"
+        },
+        {
+          "node_id": "T02_read_teaser",
+          "status": "succeeded"
+        },
+        {
+          "node_id": "T04_extract_facts",
+          "status": "succeeded"
+        },
+        {
+          "node_id": "T05_map_to_intake",
+          "status": "succeeded"
+        },
+        {
+          "node_id": "T06_locate",
+          "status": "succeeded"
+        },
+        {
+          "node_id": "T07_claim_research",
+          "status": "succeeded"
+        },
+        {
+          "node_id": "T08_claim_review",
+          "status": "succeeded"
+        },
+        {
+          "node_id": "T03_listen_video",
+          "status": "skipped"
+        }
+      ]
+    }
+  },
+  "files": [
+    {
+      "doc_ref": "doc-1",
+      "kind": "image",
+      "pages": 1,
+      "duration_s": null,
+      "sha256": "1ec32c5a71a7312eff7c5fdf9d5435b1ad0670805c1d1ac59364d304d868b3b7",
+      "near_duplicate_of": null,
+      "readable": "yes",
+      "language": "en",
+      "content_kinds": [
+        "teaser_graphic",
+        "site_photo"
+      ]
+    },
+    {
+      "doc_ref": "doc-2",
+      "kind": "pasted_text",
+      "pages": null,
+      "duration_s": null,
+      "sha256": "07015f31d432600f0c7fc48be2d0eadd6c32cc272450c6ba7ddc52cb9c28873a",
+      "near_duplicate_of": null,
+      "readable": "yes",
+      "language": "taglish",
+      "content_kinds": [
+        "listing_post_text"
+      ]
+    }
+  ],
+  "listing": {
+    "headline_as_written": "FOR SALE • RUSH! PRIME COMMERCIAL LOT, C6 Road, Calzada-Tipas, Taguig City",
+    "property_type": "vacant commercial lot",
+    "canonical_intended_use": "commercial",
+    "deal": "sale",
+    "facts": [
+      {
+        "key": "property_type",
+        "label": "Property type",
+        "value_text": "PRIME COMMERCIAL LOT",
+        "figure": null,
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "PRIME COMMERCIAL LOT"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "lot_area",
+        "label": "Lot area",
+        "value_text": "14,323 sqm",
+        "figure": {
+          "value": 14323,
+          "range": null,
+          "unit": "sqm",
+          "scale": "one",
+          "basis": "not_applicable",
+          "as_of": "2026-10-19",
+          "status": "owner_input",
+          "source_ids": [],
+          "note": "From the teaser graphic."
+        },
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "14,323 sqm"
+        },
+        "confidence": "high",
+        "conflict": "The Viber post says \"1.4 has more or less\" (about 14,000 sqm); the graphic says 14,323 sqm. Difference about 2.3%."
+      },
+      {
+        "key": "lot_area_post",
+        "label": "Lot area (post)",
+        "value_text": "1.4 has more or less",
+        "figure": {
+          "value": 14000,
+          "range": null,
+          "unit": "sqm",
+          "scale": "one",
+          "basis": "not_applicable",
+          "as_of": "2026-10-19",
+          "status": "estimate",
+          "source_ids": [],
+          "note": "1.4 hectares x 10,000; \"more or less\" in the post."
+        },
+        "status": "estimate",
+        "source": {
+          "doc_ref": "doc-2",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "1.4 has more or less"
+        },
+        "confidence": "medium",
+        "conflict": "Differs from the 14,323 sqm on the graphic."
+      },
+      {
+        "key": "asking_price_per_sqm",
+        "label": "Asking price per sqm",
+        "value_text": "₱42,000/sqm",
+        "figure": {
+          "value": 42000,
+          "range": null,
+          "unit": "PHP/sqm",
+          "scale": "one",
+          "basis": "asking",
+          "as_of": "2026-10-19",
+          "status": "owner_input",
+          "source_ids": [],
+          "note": ""
+        },
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "₱42,000/sqm"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "asking_price_total",
+        "label": "Asking price, total",
+        "value_text": "₱600M total",
+        "figure": {
+          "value": 600000000,
+          "range": null,
+          "unit": "PHP",
+          "scale": "one",
+          "basis": "asking",
+          "as_of": "2026-10-19",
+          "status": "owner_input",
+          "source_ids": [],
+          "note": "14,323 sqm x PHP 42,000 = PHP 601,566,000; the stated PHP 600M is 0.26% lower (rounding)."
+        },
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "₱600M total"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "location",
+        "label": "Location",
+        "value_text": "C6 Road, Calzada-Tipas, Taguig City",
+        "figure": null,
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "C6 Road, Calzada-Tipas, Taguig City"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "road_access",
+        "label": "Road access",
+        "value_text": "Along C6 Road",
+        "figure": null,
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "Along C6 Road"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "title_type",
+        "label": "Title",
+        "value_text": "Clean Title (TCT)",
+        "figure": null,
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "Clean Title (TCT)"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "zoning_claim",
+        "label": "Zoning (claimed)",
+        "value_text": "Zoned Commercial",
+        "figure": null,
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "Zoned Commercial"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "flood_claim",
+        "label": "Flooding (claimed)",
+        "value_text": "Flood-free / Hindi binabaha",
+        "figure": null,
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "Flood-free"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "infrastructure_claim",
+        "label": "Nearby project (claimed)",
+        "value_text": "Near future C6 Expressway",
+        "figure": null,
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "Near future C6 Expressway"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "price_claim",
+        "label": "Price claim",
+        "value_text": "BELOW MARKET!",
+        "figure": null,
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "BELOW MARKET!"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "suggested_uses",
+        "label": "Suggested uses",
+        "value_text": "Ideal for warehouse • showroom • mixed-use",
+        "figure": null,
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "Ideal for warehouse • showroom • mixed-use"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "terms",
+        "label": "Terms",
+        "value_text": "Cash basis, negotiable",
+        "figure": null,
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "Cash basis, negotiable"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "commission_offered",
+        "label": "Commission offered to co-brokers",
+        "value_text": "3% commission shared to co-brokers",
+        "figure": {
+          "value": 3,
+          "range": null,
+          "unit": "%",
+          "scale": "one",
+          "basis": "not_applicable",
+          "as_of": "2026-10-19",
+          "status": "owner_input",
+          "source_ids": [],
+          "note": ""
+        },
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-1",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "3% commission shared to co-brokers"
+        },
+        "confidence": "high",
+        "conflict": null
+      },
+      {
+        "key": "authority_claim",
+        "label": "Authority (claimed)",
+        "value_text": "direct sa owner via authorized broker",
+        "figure": null,
+        "status": "owner_input",
+        "source": {
+          "doc_ref": "doc-2",
+          "page": 1,
+          "timestamp_s": null,
+          "quote": "direct sa owner via authorized broker"
+        },
+        "confidence": "medium",
+        "conflict": null
+      }
+    ],
+    "location": {
+      "as_written": "C6 Road, Calzada-Tipas, Taguig City",
+      "landmarks": [
+        "C6 Road",
+        "future C6 Expressway"
+      ],
+      "precision": "barangay",
+      "candidates": [
+        {
+          "region": "NCR",
+          "province": "Metro Manila",
+          "city_municipality": "Taguig",
+          "barangay": "Calzada-Tipas",
+          "road": "C-6 Road (Laguna Lake Highway)",
+          "coordinates": null,
+          "confidence": "high",
+          "basis": "City, barangay and road named in the teaser; no street number given, coordinates left to the geocoder."
+        }
+      ]
+    },
+    "personal_data_redacted": true
+  },
+  "mapping": {
+    "target_product": "quick_report",
+    "options_version": "prototype v0.2",
+    "intake": {
+      "property": {
+        "region": "NCR",
+        "province": "Metro Manila",
+        "city": "Taguig",
+        "barangay": "Calzada-Tipas",
+        "road_access": "major_road"
+      },
+      "qd": {
+        "lot_area": 15000,
+        "floor_area": 0,
+        "ask_psqm": 40000,
+        "commission": 3,
+        "title_copy": "no",
+        "tax_dec": "no",
+        "mi": "no"
+      }
+    },
+    "mapped": [
+      {
+        "fact_key": "location",
+        "field_key": "property.region",
+        "value": "NCR"
+      },
+      {
+        "fact_key": "location",
+        "field_key": "property.province",
+        "value": "Metro Manila"
+      },
+      {
+        "fact_key": "location",
+        "field_key": "property.city",
+        "value": "Taguig"
+      },
+      {
+        "fact_key": "road_access",
+        "field_key": "property.road_access",
+        "value": "major_road",
+        "note": "'Along C6 Road' mapped to 'Fronts a major road or highway'."
+      },
+      {
+        "fact_key": "lot_area",
+        "field_key": "qd.lot_area",
+        "value": 15000,
+        "note": "14,323 sqm snapped to the nearest band 'about 15,000 sqm'."
+      },
+      {
+        "fact_key": "asking_price_per_sqm",
+        "field_key": "qd.ask_psqm",
+        "value": 40000,
+        "note": "PHP 42,000 snapped to the nearest band 'PHP 40,000 per sqm'; the exact figure is kept in the facts."
+      },
+      {
+        "fact_key": "commission_offered",
+        "field_key": "qd.commission",
+        "value": 3
+      },
+      {
+        "fact_key": "title_type",
+        "field_key": "qd.title_copy",
+        "value": "no",
+        "note": "The teaser claims a clean title but no copy was uploaded."
+      }
+    ],
+    "unmapped": [
+      {
+        "fact_key": "zoning_claim",
+        "reason": "The Quick Report does not ask for zoning; kept as a claim (T-02)."
+      },
+      {
+        "fact_key": "flood_claim",
+        "reason": "Kept as a claim (T-03)."
+      },
+      {
+        "fact_key": "terms",
+        "reason": "No Quick Report field for terms."
+      }
+    ],
+    "missing_required": [
+      "qd.comp_low",
+      "qd.comp_high"
+    ]
+  },
+  "claims": [
+    {
+      "id": "T-01",
+      "claim_text": "Clean title (TCT)",
+      "category": "title_ownership",
+      "checkable": "document_needed",
+      "status": "unverified",
+      "finding": "No title copy was uploaded. A teaser statement cannot show that the title is clean or that the seller is the registered owner.",
+      "source_ids": [],
+      "next_step": "Ask for a certified true copy of the TCT from the Registry of Deeds, dated within the last 30 days, and check the registered owner and annotations."
+    },
+    {
+      "id": "T-02",
+      "claim_text": "Zoned commercial",
+      "category": "zoning_land_use",
+      "checkable": "public_source",
+      "status": "unverified",
+      "finding": "The public listing describes the property as a commercial lot, but no public zoning map placing this lot in a commercial zone was found in this run.",
+      "source_ids": [
+        "S-001"
+      ],
+      "next_step": "Get a zoning certification for the lot from the Taguig City zoning office."
+    },
+    {
+      "id": "T-03",
+      "claim_text": "Flood-free (hindi binabaha)",
+      "category": "hazard",
+      "checkable": "public_source",
+      "status": "contradicted",
+      "finding": "Lowland areas along Laguna de Bay in Taguig are documented as flood-susceptible, and lakeside Taguig villages were badly flooded after Typhoon Ondoy (2009). This is area-level evidence; it does not prove this lot floods, but it contradicts a blanket 'flood-free' claim.",
+      "source_ids": [
+        "S-005",
+        "S-010"
+      ],
+      "next_step": "Check the exact pin on HazardHunterPH and ask the seller for the lot's flood history and any elevation survey."
+    },
+    {
+      "id": "T-04",
+      "claim_text": "Near future C6 Expressway",
+      "category": "infrastructure",
+      "checkable": "public_source",
+      "status": "partly_consistent",
+      "finding": "The C-6 road was widened to four lanes and opened in February 2017. The 32.7 km C6 Expressway by San Miguel Corp. targeted its first phase two to three years from February 2025; it is planned, not yet open.",
+      "source_ids": [
+        "S-006",
+        "S-007",
+        "S-008"
+      ],
+      "next_step": "Describe the expressway as planned, with its target date, when presenting to clients."
+    },
+    {
+      "id": "T-05",
+      "claim_text": "Along C6 Road",
+      "category": "access_road",
+      "checkable": "public_source",
+      "status": "consistent",
+      "finding": "A public listing for a 14,323 sqm commercial lot in Calzada-Tipas describes C6 Road frontage. Frontage length is not stated.",
+      "source_ids": [
+        "S-001"
+      ],
+      "next_step": "Ask for the frontage in metres and a vicinity map or survey plan."
+    },
+    {
+      "id": "T-06",
+      "claim_text": "Below market",
+      "category": "price_value",
+      "checkable": "public_source",
+      "status": "not_checked",
+      "finding": "Left to the Quick Report, which compares the asking price with comparable listings.",
+      "source_ids": [],
+      "next_step": "See the Quick Report price position."
+    },
+    {
+      "id": "T-07",
+      "claim_text": "Direct to owner via authorized broker",
+      "category": "title_ownership",
+      "checkable": "document_needed",
+      "status": "unverified",
+      "finding": "No authority to sell or broker licence number is shown.",
+      "source_ids": [],
+      "next_step": "Ask for the written authority to sell and the broker's PRC licence number."
+    }
+  ],
+  "red_flags": [
+    {
+      "flag": "Two different lot areas",
+      "severity": "medium",
+      "why": "The graphic says 14,323 sqm and the Viber post says 1.4 hectares more or less (about 14,000 sqm). Confirm against the title and survey.",
+      "fact_keys": [
+        "lot_area",
+        "lot_area_post"
+      ]
+    },
+    {
+      "flag": "'Flood-free' claim against documented area flooding",
+      "severity": "high",
+      "why": "Area-level evidence for lakeside Taguig contradicts a blanket flood-free claim; buyers relying on it could be misled.",
+      "fact_keys": [
+        "flood_claim"
+      ]
+    },
+    {
+      "flag": "No PRC licence number or authority to sell shown",
+      "severity": "medium",
+      "why": "The teaser names a broker and a phone number only. Truth in advertising and a written authority to sell are expected of licensed brokers.",
+      "fact_keys": [
+        "authority_claim"
+      ]
+    },
+    {
+      "flag": "'Below market' and 'Rush' wording without support",
+      "severity": "low",
+      "why": "Pressure and value claims with no comparables given; check the price position before repeating them to a client.",
+      "fact_keys": [
+        "price_claim"
+      ]
+    }
+  ],
+  "questions_for_seller": [
+    "Can you send a certified true copy of the TCT, dated within the last 30 days?",
+    "Who signs the authority to sell, is it exclusive, and is co-brokering allowed?",
+    "What is the broker's PRC licence number?",
+    "Is the lot area 14,323 sqm or about 1.4 hectares? Please share the survey or lot plan.",
+    "How many metres of frontage does the lot have on C6 Road?",
+    "Is there a zoning certification for commercial use from the Taguig zoning office?",
+    "Has the lot flooded in the last five years, and how high was the water?",
+    "Are taxes (real property tax) paid up to date, and is there a recent tax declaration?",
+    "Is the PHP 600M total firm, and what does 'negotiable' cover (price, terms, commission)?"
+  ],
+  "sources": [
+    {
+      "id": "S-001",
+      "title": "Lamudi listing: 14,323 sqm Commercial Lot for Sale, C6 Road, Calzada–Tipas, Taguig City (listed by Grid Property Ventures, Inc.)",
+      "publisher": "Lamudi",
+      "url": "https://www.lamudi.com.ph/property/41032-73-741b85125d82-8be2-19db429-8957-77ba",
+      "type": "listing_portal",
+      "tier": "B",
+      "accessed_on": "2026-10-19",
+      "url_status": "live"
+    },
+    {
+      "id": "S-005",
+      "title": "Taguig (2024 census population; Calzada-Tipas barangay profile; Laguna de Bay flood susceptibility)",
+      "publisher": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Taguig",
+      "type": "other",
+      "tier": "C",
+      "accessed_on": "2026-10-19",
+      "url_status": "live"
+    },
+    {
+      "id": "S-006",
+      "title": "Circumferential Road 6 (Laguna Lake Highway; C-6 expressway plans)",
+      "publisher": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Circumferential_Road_6",
+      "type": "other",
+      "tier": "C",
+      "accessed_on": "2026-10-19",
+      "url_status": "live"
+    },
+    {
+      "id": "S-007",
+      "title": "DPWH: Phase 1 of Laguna Lake Highway opens on February 9 (2017)",
+      "publisher": "AutoIndustriya",
+      "url": "https://www.autoindustriya.com/auto-industry-news/dpwh-phase-1-of-laguna-lake-highway-opens-on-february-9.html",
+      "type": "news",
+      "tier": "B",
+      "accessed_on": "2026-10-19",
+      "url_status": "live"
+    },
+    {
+      "id": "S-008",
+      "title": "SMC to complete C6 Expressway in 2 or 3 years, 3 Feb 2025",
+      "publisher": "Context.ph",
+      "url": "https://context.ph/2025/02/03/smc-to-complete-c6-expressway-in-2-or-3-years/",
+      "type": "news",
+      "tier": "B",
+      "accessed_on": "2026-10-19",
+      "url_status": "live"
+    },
+    {
+      "id": "S-010",
+      "title": "Still flooded, lakeside Taguig village cries out in the breeze (c. Sep 2012)",
+      "publisher": "Philippine Daily Inquirer",
+      "url": "https://newsinfo.inquirer.net/279710/still-flooded-lakeside-taguig-village-cries-out-in-the-breeze/amp",
+      "type": "news",
+      "tier": "B",
+      "accessed_on": "2026-10-19",
+      "url_status": "live"
+    }
+  ],
+  "issues": [
+    {
+      "type": "other",
+      "detail": "Contact name and mobile number on the teaser were redacted.",
+      "where": "doc-1"
+    }
+  ],
+  "qa": [
+    {
+      "id": "TQ-01",
+      "name": "Every fact has a quote and a source file",
+      "passed": true
+    },
+    {
+      "id": "TQ-02",
+      "name": "Arithmetic checked (per sqm x area vs total)",
+      "passed": true,
+      "detail": "PHP 601,566,000 vs stated PHP 600M: 0.26%, rounding."
+    },
+    {
+      "id": "TQ-03",
+      "name": "No personal phone numbers or names in the output",
+      "passed": true
+    },
+    {
+      "id": "TQ-04",
+      "name": "No claim marked verified",
+      "passed": true
+    }
+  ]
+}

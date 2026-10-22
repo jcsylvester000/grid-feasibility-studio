@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/* GRID brand tokens (BRD v2.0 section 12; prototype css/grid.css).
+   Contrast checked to WCAG 2.2 AA in tests/unit/contrast.test.ts:
+   - text on cream: navy 16.5:1, muted 5.7:1, bronze-ink 5.3:1
+   - primary button: navy on bronze 5.6:1 (white on bronze is only 3.1:1, so it is not used)
+   - gold on navy 9.6:1 */
+@theme {
+  --color-navy: #0e192f;
+  --color-navy-2: #152447;
+  --color-panel: #1c335e;
+  --color-bronze: #be8562;
+  --color-bronze-ink: #8e5b3b;
+  --color-bronze-soft: #f6ece4;
+  --color-gold: #e2b985;
+  --color-cream: #fbf8f3;
+  --color-sand: #f4f1ec;
+  --color-ink: #0e192f;
+  --color-ink-2: #243447;
+  --color-muted: #5b6472;
+  --color-line: #e3ddd3;
+  --color-line-2: #d2d2d2;
+  --color-mist: #c4d0e4;
+  --color-ok: #2e7d4f;
+  --color-ok-soft: #e2f2e8;
+  --color-warn: #a8660b;
+  --color-warn-soft: #fbefd9;
+  --color-bad: #b23a3a;
+  --color-bad-soft: #f8e3e3;
+  --color-info: #1c5fa8;
+  --color-info-soft: #e3eefa;
+  --color-na: #5f6b78;
+  --color-na-soft: #eceff2;
+
+  --font-display: var(--font-cantata), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-poppins), "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+
+  --radius-card: 14px;
+  --shadow-card: 0 1px 2px rgb(14 25 47 / 0.06), 0 8px 24px -12px rgb(14 25 47 / 0.18);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-normal text-balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-panel);
+    outline-offset: 2px;
+  }
+  a {
+    @apply text-bronze-ink underline-offset-2;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-bronze-ink;
+  }
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+}

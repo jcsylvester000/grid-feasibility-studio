@@ -1,0 +1,330 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.grid.ph/feasibility-studio/v1/quick_report.schema.json",
+  "title": "GRID Quick Report (broker / agent indicative screen)",
+  "description": "Final output of the Quick Report DAG (Q00 to Q08, v0.2). Every input is a dropdown selection of an item a broker can usually provide. The screen rates the asking price against comparable listings. Every metric carries low/base/high and status 'estimate' (dropdown values are approximate). The rating is indicative (promising / marginal / weak / cannot_tell) and must never be presented as a feasibility verdict. Schema 1.1.0 adds the optional 'listing_source' block for reports pre-filled from a teaser (additive, CR-05).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "meta",
+    "model",
+    "indicative",
+    "metrics",
+    "screening_rule",
+    "inputs",
+    "input_tag_summary",
+    "flags",
+    "notes",
+    "upgrade_path",
+    "limitations",
+    "sources",
+    "word_count",
+    "qa"
+  ],
+  "properties": {
+    "meta": {
+      "$ref": "common.schema.json#/$defs/Meta"
+    },
+    "model": {
+      "type": "string",
+      "enum": [
+        "sale",
+        "lease",
+        "landbank"
+      ]
+    },
+    "indicative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rating",
+        "label",
+        "headline",
+        "confidence"
+      ],
+      "properties": {
+        "rating": {
+          "type": "string",
+          "enum": [
+            "promising",
+            "marginal",
+            "weak",
+            "cannot_tell"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "headline": {
+          "type": "string",
+          "maxLength": 260
+        },
+        "confidence": {
+          "$ref": "common.schema.json#/$defs/Confidence"
+        }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "label",
+          "low",
+          "base",
+          "high",
+          "unit",
+          "status",
+          "formula",
+          "better"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "low": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "base": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "high": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": "string"
+          },
+          "status": {
+            "const": "estimate"
+          },
+          "formula": {
+            "type": "string"
+          },
+          "better": {
+            "type": "string",
+            "enum": [
+              "higher",
+              "lower"
+            ]
+          },
+          "compare": {
+            "$ref": "common.schema.json#/$defs/Range"
+          }
+        }
+      }
+    },
+    "screening_rule": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "metric",
+            "label",
+            "promising_at",
+            "marginal_at",
+            "note"
+          ],
+          "properties": {
+            "metric": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "promising_at": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "marginal_at": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "label",
+          "value",
+          "provider_tag",
+          "status"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "provider_tag": {
+            "type": "string",
+            "enum": [
+              "can",
+              "idea",
+              "cant",
+              "system"
+            ]
+          },
+          "status": {
+            "$ref": "common.schema.json#/$defs/VerificationStatus"
+          }
+        }
+      }
+    },
+    "input_tag_summary": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "label",
+          "tone"
+        ],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "tone": {
+            "type": "string",
+            "enum": [
+              "info",
+              "warning",
+              "risk"
+            ]
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "upgrade_path": {
+      "description": "Items brokers usually can't provide, with who does. Supplying them (plus the estimates) upgrades the job to the full Feasibility Report.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "label",
+          "who_provides",
+          "why"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "who_provides": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/Limitation"
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "common.schema.json#/$defs/Source"
+      }
+    },
+    "word_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 350
+    },
+    "qa": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/QaCheck"
+      }
+    },
+    "estimates_next": {
+      "description": "Items a broker has an idea of but which the dropdown-only Quick Report does not ask for. Listed as the next estimates to add.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "label",
+          "who_provides",
+          "why"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "who_provides": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "listing_source": {
+      "description": "Optional (added in schema 1.1.0). Present when the Quick Report intake came from an uploaded teaser or fact sheet (Teaser Scan DAG). Shows the teaser's claims and how they were checked, red flags and questions for the seller.",
+      "$ref": "teaser_intake.schema.json#/$defs/ListingSource"
+    }
+  }
+}
