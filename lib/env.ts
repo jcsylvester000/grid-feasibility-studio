@@ -23,7 +23,7 @@ const schema = z.object({
   VS_TIMEOUT_MS_FEASIBILITY_REPORT: z.coerce.number().int().positive().optional(),
   VS_TIMEOUT_MS_TEASER_INTAKE: z.coerce.number().int().positive().optional(),
   VS_MAX_CONCURRENT: z.coerce.number().int().positive().default(10),
-  RUN_DISPATCH: z.enum(["inline", "netlify"]).default("inline"),
+  RUN_DISPATCH: z.enum(["inline", "netlify", "none"]).default("inline"),
   INTERNAL_DISPATCH_SECRET: z.string().optional(),
   FEATURE_TEASER_SCAN: z
     .enum(["true", "false"])

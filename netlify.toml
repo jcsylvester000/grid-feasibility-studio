@@ -16,3 +16,5 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
   included_files = ["lib/contract/schemas/**", "mock/vectorshift/payloads/**"]
+  # Not needed by the worker; keeps them out of the function bundle (PGlite is test-only).
+  external_node_modules = ["@electric-sql/pglite", "@node-rs/argon2"]

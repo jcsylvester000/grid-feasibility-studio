@@ -22,6 +22,13 @@
       "when": 1792653302297,
       "tag": "0002_username_lower_index",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792655849980,
+      "tag": "0003_run_phase",
+      "breakpoints": true
     }
   ]
 }

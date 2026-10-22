@@ -1,0 +1,1 @@
+ALTER TABLE "runs" ADD COLUMN "phase" text DEFAULT 'request_sent' NOT NULL;

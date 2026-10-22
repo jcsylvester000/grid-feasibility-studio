@@ -27,6 +27,10 @@ export const USER_STATUSES = ["active", "suspended"] as const;
 export const PRODUCTS = ["quick_report", "executive_summary", "feasibility_report", "teaser_intake"] as const;
 export const REPORT_STATUSES = ["draft", "queued", "running", "ready", "failed", "needs_confirmation"] as const;
 export const RUN_STATUSES = ["queued", "running", "succeeded", "failed", "cancelled"] as const;
+/** Run status page steps (BRD S-04): the first two and last two are real app states. */
+export const RUN_PHASES = ["request_sent", "files_attached", "pipeline_working", "checking", "done"] as const;
+export type RunPhase = (typeof RUN_PHASES)[number];
+
 export const AUTH_ATTEMPT_KINDS = ["login", "login_address", "register", "availability"] as const;
 
 export type Product = (typeof PRODUCTS)[number];
@@ -125,6 +129,7 @@ export const runs = pgTable(
     pipelineId: text("pipeline_id").notNull(),
     vsRunId: text("vs_run_id"),
     status: text("status", { enum: RUN_STATUSES }).notNull().default("queued"),
+    phase: text("phase", { enum: RUN_PHASES }).notNull().default("request_sent"),
     errorCode: text("error_code"),
     attempt: integer("attempt").notNull().default(1),
     httpStatus: integer("http_status"),

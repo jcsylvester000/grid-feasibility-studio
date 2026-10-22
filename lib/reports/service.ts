@@ -102,7 +102,7 @@ export const STATUS_TONE = {
 
 /** Where a report row opens (S-01 rule 3). */
 export function reportHref(r: { id: string; product: Product; status: string }) {
-  if (r.status === "queued" || r.status === "running") return `/app/reports/${r.id}/run`;
+  if (r.status === "queued" || r.status === "running" || r.status === "failed") return `/app/reports/${r.id}/run`;
   if (r.status === "draft") return `/app/new/${r.product}?id=${r.id}`;
   return `/app/reports/${r.id}`;
 }

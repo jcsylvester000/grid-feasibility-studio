@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { ReportForm } from "@/components/forms/report-form";
+import { FORMS } from "@/lib/forms";
+import { quickReportNotAsked } from "@/lib/forms/quick-report";
+import { getOptions } from "@/lib/options";
+import type { Product } from "@/lib/db/schema";
 import { StatusBadge } from "@/components/app/status-badge";
 import { buttonVariants } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/session";
@@ -36,6 +41,8 @@ export default async function ReportFormPage({ params, searchParams }: Props) {
 
   const report = await getReportForUser(user.id, id);
   if (!report || report.product !== product) notFound();
+  if (report.status === "queued" || report.status === "running") redirect(`/app/reports/${report.id}/run`);
+  const form = FORMS[product as Product];
 
   return (
     <div className="space-y-6" data-testid="report-form" data-report-id={report.id}>
@@ -46,10 +53,23 @@ export default async function ReportFormPage({ params, searchParams }: Props) {
           <StatusBadge status={report.status} />
         </div>
       </header>
-      <div className="rounded-[var(--radius-card)] border border-dashed border-line-2 bg-white p-6">
-        <p className="font-medium">The {info.name} form arrives in the next batch.</p>
-        <p className="mt-1 text-sm text-muted">This draft is saved. It needs: {info.needs.toLowerCase()}.</p>
-      </div>
+      {form ? (
+        <ReportForm
+          reportId={report.id}
+          productName={info.name}
+          steps={form.steps}
+          fields={getOptions(product as Product).fields}
+          locations={getOptions(product as Product).locations}
+          initialIntake={report.intake}
+          notAsked={product === "quick_report" ? quickReportNotAsked : []}
+          titleFor={{ prefix: info.name, fallback: report.title }}
+        />
+      ) : (
+        <div className="rounded-[var(--radius-card)] border border-dashed border-line-2 bg-white p-6">
+          <p className="font-medium">The {info.name} form arrives in batch B6.</p>
+          <p className="mt-1 text-sm text-muted">This draft is saved. It needs: {info.needs.toLowerCase()}.</p>
+        </div>
+      )}
       <Link href="/app/reports" className="text-sm">Back to my reports</Link>
     </div>
   );

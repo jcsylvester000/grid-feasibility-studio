@@ -43,6 +43,9 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    /* Keep scrolled-to elements clear of the sticky header (and the phone bottom bar in the app). */
+    scroll-padding-top: 5rem;
+    scroll-padding-bottom: 5rem;
   }
   body {
     @apply bg-cream text-ink font-sans antialiased;

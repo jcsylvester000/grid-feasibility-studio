@@ -7,6 +7,7 @@
  * Pipeline ids: "mock-<product>" or "mock-<product>--<scenario>". Scenarios:
  *   success (default) · failed · bad_request · auth · server_error · unavailable · timeout
  *   missing_output · invalid_json · schema_invalid · envelope_failed · slow
+ * Tests: POST /__control/{reportId} { scenario } forces a scenario for one report; DELETE clears it.
  * Env: MOCK_VS_DELAY_MS (default 2500) adds a delay to every run; MOCK_VS_SCENARIO forces a scenario.
  */
 import { readFileSync } from "node:fs";
@@ -32,6 +33,9 @@ const json = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/** Per-report scenario overrides for end-to-end tests: POST /__control/{reportId} { scenario }. */
+const overrides = new Map<string, string>();
+
 export type MockLogEntry = { pipelineId: string; scenario: string; product?: string; files: string[]; at: string };
 export const mockLog: MockLogEntry[] = [];
 
@@ -39,15 +43,21 @@ export async function handleMockRequest(req: Request, opts: { delayMs?: number }
   const url = new URL(req.url);
   const match = url.pathname.match(/^\/v1\/pipeline\/([^/]+)\/run$/);
   if (req.method === "GET" && url.pathname === "/health") return json(200, { ok: true });
+  const control = url.pathname.match(/^\/__control\/([^/]+)$/);
+  if (control) {
+    if (req.method === "DELETE") overrides.delete(control[1]!);
+    else overrides.set(control[1]!, String(((await req.json().catch(() => ({}))) as { scenario?: string }).scenario ?? "success"));
+    return json(200, { ok: true, overrides: Object.fromEntries(overrides) });
+  }
   if (req.method !== "POST" || !match) return json(404, { error: "Not found" });
 
   const pipelineId = decodeURIComponent(match[1]!);
   const [base, suffix] = pipelineId.split("--");
-  const scenario = process.env.MOCK_VS_SCENARIO || suffix || "success";
+  let scenario = process.env.MOCK_VS_SCENARIO || suffix || "success";
   const product = base?.replace(/^mock-/, "") as Product;
 
   const auth = req.headers.get("authorization") ?? "";
-  if (scenario === "auth" || !/^Bearer\s+\S+/.test(auth)) return json(401, { error: "Invalid API key" });
+  if (!/^Bearer\s+\S+/.test(auth)) return json(401, { error: "Invalid API key" });
   if (!PRODUCTS.includes(product)) return json(400, { status: "failed", error: `Unknown pipeline ${pipelineId}` });
 
   // Read inputs (JSON or multipart).
@@ -71,11 +81,14 @@ export async function handleMockRequest(req: Request, opts: { delayMs?: number }
   } catch {
     return json(400, { status: "failed", error: "Input run_request is missing or not JSON" });
   }
+  const override = runRequest.report_id ? overrides.get(runRequest.report_id) : undefined;
+  if (override) scenario = override;
   mockLog.push({ pipelineId, scenario, product: runRequest.product, files, at: new Date().toISOString() });
 
   const delay = opts.delayMs ?? Number(process.env.MOCK_VS_DELAY_MS ?? 2500);
   await sleep(scenario === "slow" ? delay * 10 : delay);
 
+  if (scenario === "auth") return json(401, { error: "Invalid API key" });
   const reportId = runRequest.report_id ?? "unknown";
   const runId = `mockrun_${Date.now().toString(36)}`;
   switch (scenario) {
