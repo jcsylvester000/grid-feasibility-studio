@@ -12,6 +12,8 @@ import { latestEnvelopeForReport } from "@/lib/db/repos/runs";
 import { formatDate } from "@/lib/format";
 import { productInfo } from "@/lib/options/products";
 import { track } from "@/lib/usage/track";
+import { PrototypeReportNotice } from "@/components/app/prototype-banner";
+import { isStandInPipeline } from "@/lib/flags";
 
 export const metadata: Metadata = { title: "Report" };
 
@@ -65,7 +67,8 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
       </header>
 
       {env?.report ? (
-        <div data-testid="report-view" data-product={report.product}>
+        <div data-testid="report-view" data-product={report.product} className="space-y-6">
+          {isStandInPipeline(stored?.run.pipelineId) && <PrototypeReportNotice />}
           <ProductView product={report.product} payload={env.report} intake={report.intake} />
         </div>
       ) : report.status === "failed" || report.status === "queued" || report.status === "running" ? (

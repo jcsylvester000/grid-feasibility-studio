@@ -228,3 +228,41 @@ export async function latestEnvelopeForReport(reportId: string) {
     .limit(1);
   return e ?? null;
 }
+
+/**
+ * Demo scenarios: stores a finished run with its envelope and marks the report ready, in one transaction.
+ * Only lib/demo/seed.ts calls this (prototype demo data, never real pipeline output).
+ */
+export async function insertFinishedRun(values: {
+  reportId: string;
+  product: Product;
+  pipelineId: string;
+  vsRunId: string;
+  durationMs: number;
+  envelope: { schemaVersion: string; envelope: Record<string, unknown> };
+  at: Date;
+}) {
+  const db = await getDb();
+  return db.transaction(async (tx) => {
+    const [run] = await tx
+      .insert(runs)
+      .values({
+        reportId: values.reportId,
+        product: values.product,
+        pipelineId: values.pipelineId,
+        attempt: 1,
+        status: "succeeded",
+        phase: "done",
+        vsRunId: values.vsRunId,
+        httpStatus: 200,
+        durationMs: values.durationMs,
+        queuedAt: new Date(values.at.getTime() - values.durationMs),
+        startedAt: new Date(values.at.getTime() - values.durationMs),
+        finishedAt: values.at,
+      })
+      .returning();
+    await tx.insert(envelopes).values({ runId: run!.id, product: values.product, ...values.envelope });
+    await tx.update(reports).set({ status: "ready", updatedAt: values.at }).where(eq(reports.id, values.reportId));
+    return run!;
+  });
+}

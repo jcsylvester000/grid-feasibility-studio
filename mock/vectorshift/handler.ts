@@ -13,6 +13,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { buildEnvelope } from "../../lib/contract/envelope";
+import { prototypePayload } from "../../lib/demo/engine";
 import type { Product } from "../../lib/db/schema";
 
 const PRODUCTS: Product[] = ["quick_report", "executive_summary", "feasibility_report", "teaser_intake"];
@@ -27,6 +28,22 @@ function goldenPayload(product: Product, reportId: string) {
   const meta = copy.meta as Record<string, unknown>;
   if (product !== "teaser_intake") meta.report_id = reportId;
   return copy;
+}
+
+/**
+ * MOCK_VS_PAYLOADS=prototype (the default for `npm run mock:vs`): reports are built from the run's own
+ * inputs by GRID's prototype engine (lib/demo/engine.ts), so demos show input-specific results.
+ * Otherwise (tests): the C6 Calzada-Tipas golden payloads.
+ */
+function stubPayload(product: Product, reportId: string, intake: Record<string, unknown>) {
+  if (process.env.MOCK_VS_PAYLOADS === "prototype" && product !== "teaser_intake") {
+    try {
+      return prototypePayload(product, intake, { reportId });
+    } catch (err) {
+      console.error("prototype engine failed; using the golden payload:", err instanceof Error ? err.message : err);
+    }
+  }
+  return goldenPayload(product, reportId);
 }
 
 const json = (status: number, body: unknown) =>
@@ -124,7 +141,7 @@ export async function handleMockRequest(req: Request, opts: { delayMs?: number }
       return json(200, { status: "success", run_id: runId, outputs: { result_envelope: JSON.stringify(env) } });
     }
     default: {
-      const payload = goldenPayload(product, reportId);
+      const payload = stubPayload(product, reportId, runRequest.intake ?? {});
       // A Quick Report from a confirmed teaser echoes listing_source (quick_report 1.1.0).
       if (product === "quick_report" && runRequest.intake?.listing_source) {
         payload.listing_source = runRequest.intake.listing_source;

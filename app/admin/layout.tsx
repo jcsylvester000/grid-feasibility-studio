@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { Logo } from "@/components/site/logo";
 import { requireAdmin } from "@/lib/auth/session";
+import { PrototypeBanner } from "@/components/app/prototype-banner";
+import { isPrototypeMode } from "@/lib/flags";
 
 export const metadata: Metadata = { title: { default: "Admin", template: "%s · Admin · GRID" }, robots: { index: false, follow: false } };
 
@@ -29,6 +31,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
         </div>
       </header>
+      {isPrototypeMode() && <PrototypeBanner />}
       <AdminNav />
       <main id="main" className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         {children}

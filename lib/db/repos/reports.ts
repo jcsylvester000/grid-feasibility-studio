@@ -14,6 +14,12 @@ export async function createDraftReport(userId: string, product: Product, title:
   return r!;
 }
 
+export async function listReportTitles(userId: string) {
+  const db = await getDb();
+  const rows = await db.select({ title: reports.title }).from(reports).where(eq(reports.userId, userId));
+  return rows.map((r) => r.title);
+}
+
 export async function getReportForUser(userId: string, id: string) {
   if (!isUuid(id)) return null;
   const db = await getDb();

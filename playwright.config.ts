@@ -68,9 +68,9 @@ export default defineConfig({
       command: "npx tsx mock/vectorshift/server.ts",
       port: 4010,
       reuseExistingServer: false,
-      env: { MOCK_VS_PORT: "4010", MOCK_VS_DELAY_MS: "1500" },
+      env: { MOCK_VS_PORT: "4010", MOCK_VS_DELAY_MS: "1500", MOCK_VS_PAYLOADS: "golden" },
     },
     app(port, {}),
-    app(teaserPort, { FEATURE_TEASER_SCAN: "true" }),
+    app(teaserPort, { FEATURE_TEASER_SCAN: "true", DEMO_MODE: "true" }),
   ],
 });

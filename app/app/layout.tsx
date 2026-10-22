@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Logo } from "@/components/site/logo";
 import { AppNav } from "@/components/app/app-nav";
 import { requireUser } from "@/lib/auth/session";
+import { PrototypeBanner } from "@/components/app/prototype-banner";
+import { isPrototypeMode } from "@/lib/flags";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -35,6 +37,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </div>
       </header>
+      {isPrototypeMode() && <PrototypeBanner />}
       <div className="mx-auto flex max-w-7xl gap-8 px-4 pb-24 pt-6 sm:px-6 md:pb-12 md:pt-8 print:block print:max-w-none print:p-0">
         <AppNav />
         <main id="main" className="min-w-0 flex-1">

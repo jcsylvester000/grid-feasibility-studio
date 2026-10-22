@@ -23,7 +23,8 @@
     "check:budgets": "tsx scripts/check-budgets.ts",
     "admin:create": "tsx scripts/admin-create.ts",
     "scan:secrets": "tsx scripts/secret-scan.ts",
-    "audit:prod": "npm audit --omit=dev --audit-level=critical"
+    "audit:prod": "npm audit --omit=dev --audit-level=critical",
+    "demo:seed": "tsx scripts/demo-seed.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "~1.2.0",

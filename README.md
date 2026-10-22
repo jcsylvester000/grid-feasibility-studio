@@ -42,6 +42,7 @@ Secrets live in `.env.local` (git-ignored). `.env.example` lists every variable 
 | `npm run lint` · `npm run typecheck` | ESLint and TypeScript checks |
 | `npm run scan:secrets` · `npm run audit:prod` | Secret scan (repository and browser bundles) · production dependency audit |
 | `npm run admin:create -- --username <name>` | Creates an admin account (password and key printed once) |
+| `npm run demo:seed -- --username <name>` | Loads the 20 demo scenarios into an account (or use the dashboard button in development / DEMO_MODE) |
 
 ## Layout
 

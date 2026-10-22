@@ -7,6 +7,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { listReports } from "@/lib/db/repos/reports";
 import { requireUser } from "@/lib/auth/session";
 import { productsWithTypicalTimes } from "@/lib/reports/service";
+import { DemoLoader } from "@/components/app/demo-loader";
+import { listReportTitles } from "@/lib/db/repos/reports";
+import { demoEnabled } from "@/lib/demo/seed";
+import { SCENARIOS } from "@/lib/demo/scenarios";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -25,6 +29,8 @@ async function Recent({ userId }: { userId: string }) {
 export default async function Dashboard() {
   const { user } = await requireUser("/app");
   const products = await productsWithTypicalTimes();
+  const demo = demoEnabled();
+  const demoLoaded = demo ? (await listReportTitles(user.id)).filter((t) => SCENARIOS.some((s) => s.title === t)).length : 0;
   return (
     <div className="space-y-10">
       <header>
@@ -36,6 +42,7 @@ export default async function Dashboard() {
           <ProductCard key={p.key} p={p} />
         ))}
       </section>
+      {demo && <DemoLoader loaded={demoLoaded} />}
       <section aria-labelledby="recent" className="space-y-3">
         <div className="flex items-baseline justify-between">
           <h2 id="recent" className="text-2xl">Recent reports</h2>
