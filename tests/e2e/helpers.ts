@@ -27,3 +27,32 @@ export async function login(page: Page, username: string, password = PASSWORD) {
   await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Log in" }).click();
 }
+
+export async function signUpAndStartQuick(page: Page) {
+  await freshAddress(page);
+  await register(page);
+  await page.getByLabel("I have saved my recovery key.").check();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.waitForURL("**/app");
+  await page.getByRole("button", { name: "Start Quick Report" }).click();
+  await page.waitForURL(/\/app\/new\/quick_report\?id=/);
+  return new URL(page.url()).searchParams.get("id")!;
+}
+
+export async function choose(page: Page, label: string | RegExp, option: string) {
+  await page.getByLabel(label).selectOption({ label: option });
+}
+
+export async function fillQuickReport(page: Page) {
+  await choose(page, "Region", "NCR");
+  await choose(page, "Province", "Metro Manila");
+  await choose(page, "City or municipality", "Taguig");
+  await choose(page, "Lot area", "about 15,000 sqm");
+  await page.getByRole("button", { name: "Next" }).click();
+  await page.getByRole("button", { name: "Next" }).click();
+  await choose(page, "Asking price per sqm", "₱40,000 per sqm");
+  await choose(page, "Comparable listings, lowest", "₱30,000 per sqm");
+  await choose(page, "Comparable listings, highest", "₱50,000 per sqm");
+  await page.getByRole("button", { name: "Next" }).click();
+}
+

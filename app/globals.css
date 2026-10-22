@@ -74,9 +74,65 @@
   }
 }
 
+/* Print (BRD S-05, AC-032): A4, GRID running header, "Page X of Y" footer (CSS paged-media margin boxes). */
+@page {
+  size: A4;
+  margin: 20mm 14mm 18mm;
+  @top-left {
+    content: "GRID Feasibility Studio";
+    font: 600 8pt/1 system-ui, sans-serif;
+    color: #6b5232;
+  }
+  @top-right {
+    content: "GRID Property Ventures";
+    font: 8pt/1 system-ui, sans-serif;
+    color: #5b6476;
+  }
+  @bottom-left {
+    content: "Research to support decisions. Not an appraisal or legal, tax or financial advice.";
+    font: 7pt/1.2 system-ui, sans-serif;
+    color: #5b6476;
+  }
+  @bottom-right {
+    content: "Page " counter(page) " of " counter(pages);
+    font: 8pt/1 system-ui, sans-serif;
+    color: #5b6476;
+  }
+}
 @media print {
+  html {
+    font-size: 10.5pt;
+  }
   body {
     background: #fff;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  [data-print="hide"] {
+    display: none !important;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  table {
+    break-inside: auto;
+  }
+  tr,
+  figure,
+  h2,
+  h3 {
+    break-inside: avoid;
+  }
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+  .overflow-x-auto {
+    overflow: visible !important;
+  }
+  .overflow-x-auto > table {
+    min-width: 0 !important;
   }
 }
 

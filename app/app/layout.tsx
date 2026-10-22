@@ -9,14 +9,14 @@ export const metadata: Metadata = { robots: { index: false, follow: false } };
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { user } = await requireUser("/app");
   return (
-    <div className="min-h-dvh bg-cream">
+    <div className="min-h-dvh bg-cream print:min-h-0 print:bg-white">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2"
       >
         Skip to content
       </a>
-      <header className="sticky top-0 z-30 border-b-[3px] border-bronze bg-navy text-white">
+      <header data-print="hide" className="sticky top-0 z-30 border-b-[3px] border-bronze bg-navy text-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
           <Logo />
           <div className="ml-auto flex items-center gap-3">
@@ -35,7 +35,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </div>
       </header>
-      <div className="mx-auto flex max-w-7xl gap-8 px-4 pb-24 pt-6 sm:px-6 md:pb-12 md:pt-8">
+      <div className="mx-auto flex max-w-7xl gap-8 px-4 pb-24 pt-6 sm:px-6 md:pb-12 md:pt-8 print:block print:max-w-none print:p-0">
         <AppNav />
         <main id="main" className="min-w-0 flex-1">
           {children}

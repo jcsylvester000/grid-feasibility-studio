@@ -16,7 +16,16 @@ const isActive = (pathname: string, href: string) =>
 
 function Icon({ d }: { d: string }) {
   return (
-    <svg aria-hidden viewBox="0 0 24 24" className="size-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      className="size-5 shrink-0"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d={d} />
     </svg>
   );
@@ -27,7 +36,7 @@ export function AppNav() {
   const pathname = usePathname();
   return (
     <>
-      <nav aria-label="App" className="hidden w-56 shrink-0 md:block">
+      <nav aria-label="App" data-print="hide" className="hidden w-56 shrink-0 md:block">
         <ul className="sticky top-20 space-y-1">
           {items.map((i) => (
             <li key={i.href}>
@@ -36,7 +45,8 @@ export function AppNav() {
                 aria-current={isActive(pathname, i.href) ? "page" : undefined}
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-ink-2 no-underline hover:bg-sand",
-                  isActive(pathname, i.href) && "bg-white text-navy shadow-[var(--shadow-card)] ring-1 ring-line",
+                  isActive(pathname, i.href) &&
+                    "bg-white text-navy shadow-[var(--shadow-card)] ring-1 ring-line",
                 )}
               >
                 <Icon d={i.icon} />
@@ -47,6 +57,7 @@ export function AppNav() {
         </ul>
       </nav>
       <nav
+        data-print="hide"
         aria-label="App"
         className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
       >

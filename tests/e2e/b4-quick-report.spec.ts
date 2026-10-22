@@ -1,35 +1,7 @@
-import { expect, test, type Page } from "@playwright/test";
-import { freshAddress, register } from "./helpers";
+import { expect, test } from "@playwright/test";
+import { choose, fillQuickReport, signUpAndStartQuick } from "./helpers";
 
 const MOCK = "http://localhost:4010";
-
-async function signUpAndStartQuick(page: Page) {
-  await freshAddress(page);
-  await register(page);
-  await page.getByLabel("I have saved my recovery key.").check();
-  await page.getByRole("button", { name: "Continue" }).click();
-  await page.waitForURL("**/app");
-  await page.getByRole("button", { name: "Start Quick Report" }).click();
-  await page.waitForURL(/\/app\/new\/quick_report\?id=/);
-  return new URL(page.url()).searchParams.get("id")!;
-}
-
-async function choose(page: Page, label: string | RegExp, option: string) {
-  await page.getByLabel(label).selectOption({ label: option });
-}
-
-async function fillQuickReport(page: Page) {
-  await choose(page, "Region", "NCR");
-  await choose(page, "Province", "Metro Manila");
-  await choose(page, "City or municipality", "Taguig");
-  await choose(page, "Lot area", "about 15,000 sqm");
-  await page.getByRole("button", { name: "Next" }).click();
-  await page.getByRole("button", { name: "Next" }).click();
-  await choose(page, "Asking price per sqm", "₱40,000 per sqm");
-  await choose(page, "Comparable listings, lowest", "₱30,000 per sqm");
-  await choose(page, "Comparable listings, highest", "₱50,000 per sqm");
-  await page.getByRole("button", { name: "Next" }).click();
-}
 
 test("AC-023: the Quick Report form has no free-text or number inputs (and fits the screen)", async ({ page }) => {
   await signUpAndStartQuick(page);
@@ -85,7 +57,7 @@ test("AC-029: Generate runs the pipeline (mock) and the report opens when ready"
   await expect(page.getByTestId("run-headline")).toHaveText(/being prepared|free slot/);
   await expect(page.getByRole("progressbar")).toBeVisible();
   await page.waitForURL(`**/app/reports/${id}`, { timeout: 20_000 });
-  await expect(page.getByTestId("report-summary")).toContainText("Marginal");
+  await expect(page.getByTestId("verdict")).toContainText("Marginal");
   await page.goto("/app/reports");
   await expect(page.getByTestId("reports-table")).toContainText("Ready");
 });
@@ -103,7 +75,7 @@ test("AC-028: a SCHEMA_INVALID run shows the plain message and Retry, and no rep
   await request.delete(`${MOCK}/__control/${id}`);
   await page.getByRole("button", { name: "Retry" }).click();
   await page.waitForURL(`**/app/reports/${id}`, { timeout: 20_000 });
-  await expect(page.getByTestId("report-summary")).toContainText("Marginal");
+  await expect(page.getByTestId("verdict")).toContainText("Marginal");
 });
 
 test("AC-027: leaving and coming back shows the same run without starting a new one; Cancel works", async ({ page, request }) => {

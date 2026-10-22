@@ -43,6 +43,7 @@ export default defineConfig({
         VS_PIPELINE_TEASER_INTAKE: "mock-teaser_intake",
         RUN_DISPATCH: "inline",
         VS_MAX_CONCURRENT: "50",
+        DESIGN_SAMPLES: "true",
       },
     },
   ],
