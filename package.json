@@ -19,7 +19,8 @@
     "typegen": "tsx scripts/typegen.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/db-migrate.ts",
-    "mock:vs": "tsx mock/vectorshift/server.ts"
+    "mock:vs": "tsx mock/vectorshift/server.ts",
+    "check:budgets": "tsx scripts/check-budgets.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "~1.2.0",

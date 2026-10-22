@@ -76,3 +76,47 @@
     background: #fff;
   }
 }
+
+/* Hero background: CSS-only depth (no WebGL; PF-03 public JS budget). */
+.hero-bg {
+  background-image:
+    radial-gradient(60rem 30rem at 85% -10%, rgb(226 185 133 / 0.18), transparent 60%),
+    radial-gradient(40rem 24rem at -10% 110%, rgb(28 51 94 / 0.9), transparent 60%),
+    linear-gradient(180deg, #0e192f 0%, #111f3b 100%);
+}
+.hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: linear-gradient(rgb(255 255 255 / 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.5) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 70% 30%, black 10%, transparent 70%);
+}
+.hero-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+.legal-prose h2 {
+  @apply mt-8 mb-2 text-2xl;
+}
+.legal-prose p,
+.legal-prose li {
+  @apply text-ink-2 leading-relaxed;
+}
+.legal-prose p + p {
+  @apply mt-3;
+}
+.legal-prose ul {
+  @apply mt-2 list-disc space-y-1 pl-6;
+}
+.legal-prose table {
+  @apply mt-3 w-full text-left text-sm;
+}
+.legal-prose th,
+.legal-prose td {
+  @apply border-t border-line py-2 pr-4 align-top;
+}
