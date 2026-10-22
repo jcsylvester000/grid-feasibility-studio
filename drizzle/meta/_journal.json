@@ -36,6 +36,13 @@
       "when": 1792659783285,
       "tag": "0004_files_doc_type",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792663415432,
+      "tag": "0005_admin_views",
+      "breakpoints": true
     }
   ]
 }

@@ -9,10 +9,17 @@ export const palette = {
   sand: "#f4f1ec",
   muted: "#5b6472",
   line: "#e3ddd3",
-  ok: "#2e7d4f",
-  warn: "#a8660b",
+  ok: "#2a744a",
+  warn: "#94590a",
   bad: "#b23a3a",
   info: "#1c5fa8",
+  na: "#5f6b78",
+  "ok-soft": "#e2f2e8",
+  "warn-soft": "#fbefd9",
+  "bad-soft": "#f8e3e3",
+  "info-soft": "#e3eefa",
+  "na-soft": "#eceff2",
+  "bronze-soft": "#f6ece4",
   white: "#ffffff",
 } as const;
 
@@ -32,6 +39,13 @@ export const usedPairs: [fg: keyof typeof palette, bg: keyof typeof palette, use
   ["warn", "white", "Warning text"],
   ["bad", "white", "Error text"],
   ["info", "white", "Info text"],
+  ["ok", "ok-soft", "Success badge and banner"],
+  ["warn", "warn-soft", "Warning badge, callout and notice"],
+  ["bad", "bad-soft", "Error badge and alert"],
+  ["info", "info-soft", "Info badge and banner"],
+  ["na", "na-soft", "Neutral badge"],
+  ["bronze-ink", "bronze-soft", "Brand badge"],
+  ["muted", "sand", "Table headers"],
 ];
 
 function luminance(hex: string) {

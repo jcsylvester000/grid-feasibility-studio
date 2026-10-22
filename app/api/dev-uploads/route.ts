@@ -1,6 +1,6 @@
 import { apiSession, json, jsonError } from "@/lib/http";
 import { randomToken } from "@/lib/auth/crypto";
-import { DOCUMENT_RULES } from "@/lib/files/config";
+import { TEASER_RULES } from "@/lib/files/config";
 import { authorizeUpload, fileView, recordUpload } from "@/lib/files/service";
 import { uploadDriver, writeLocalFile } from "@/lib/files/storage";
 
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   const a = await apiSession({ mutating: true });
   if ("error" in a) return a.error;
   const len = Number(req.headers.get("content-length") ?? 0);
-  if (len > DOCUMENT_RULES.maxBytes + 64 * 1024) return jsonError(413, "TOO_LARGE", "Files must be 25 MB or smaller");
+  if (len > TEASER_RULES.maxVideoBytes + 64 * 1024) return jsonError(413, "TOO_LARGE", "The file is too large");
   const form = await req.formData().catch(() => null);
   const file = form?.get("file");
   const reportId = String(form?.get("reportId") ?? "");

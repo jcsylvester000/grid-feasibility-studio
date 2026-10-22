@@ -6,6 +6,7 @@
 import { isRequired, isShown, type FormContext, type FormDefinition, type FormField, type Intake, type Issue, type ValidationResult } from "./types";
 
 export const TEXT_MAX = 200;
+export const TEXTAREA_MAX = 5000;
 export const NUMBER_MAX = 1e13;
 
 export function choiceOptions(ctx: FormContext, f: FormField, intake: Intake) {
@@ -22,7 +23,7 @@ export function locationOptions(ctx: FormContext, kind: FormField["kind"], intak
   return [];
 }
 
-const verb = (f: FormField) => (f.kind === "text" || f.kind === "number" || f.kind === "date" ? "Enter" : "Choose");
+const verb = (f: FormField) => (f.kind === "text" || f.kind === "textarea" || f.kind === "number" || f.kind === "date" ? "Enter" : "Choose");
 
 export function validateForm(def: FormDefinition, raw: Intake, ctx: FormContext): ValidationResult {
   const issues: Issue[] = [];
@@ -39,6 +40,7 @@ export function validateForm(def: FormDefinition, raw: Intake, ctx: FormContext)
       if (empty) {
         if (kind === "toggle") {
           if (v === false) intake[f.key] = false;
+          if (isRequired(f, raw)) add(f, step.key, f.hint ?? `Tick “${f.label}”.`);
         } else if (isRequired(f, raw)) add(f, step.key, `${verb(f)} ${f.label.toLowerCase()}.`);
         continue;
       }
@@ -48,6 +50,10 @@ export function validateForm(def: FormDefinition, raw: Intake, ctx: FormContext)
           break;
         case "text":
           if (String(v).length > TEXT_MAX) add(f, step.key, `${f.label} must be ${TEXT_MAX} characters or fewer.`);
+          else intake[f.key] = String(v);
+          break;
+        case "textarea":
+          if (String(v).length > TEXTAREA_MAX) add(f, step.key, `${f.label} must be ${TEXTAREA_MAX} characters or fewer.`);
           else intake[f.key] = String(v);
           break;
         case "number": {

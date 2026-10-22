@@ -1,11 +1,13 @@
 /** Starting, reading and cancelling runs (BRD 7.3, S-04, section 13). */
 import { isUniqueViolation } from "@/lib/db/client";
 import { getReportForUser } from "@/lib/db/repos/reports";
+import { fileTotalsForReport } from "@/lib/db/repos/files";
 import {
   cancelRun as cancelRunRow,
   countActiveRunsForUser,
   countActiveRunsGlobal,
   createQueuedRun,
+  RunLimitError,
   failStaleRun,
   getRunForUser,
   lastAttemptForReport,
@@ -33,6 +35,8 @@ export async function startRun(user: UserRow, reportId: string): Promise<StartRe
   const checked = validateIntake(product, report.intake);
   if (!checked) return { ok: false, status: 400, code: "INPUT_INVALID", message: "This report form is not available yet." };
   if (!checked.ok) return { ok: false, status: 400, code: "INPUT_INVALID", message: "Some required answers are missing.", issues: checked.issues };
+  if (product === "teaser_intake" && !checked.intake["teaser.pasted_text"] && (await fileTotalsForReport(report.id)).count === 0)
+    return { ok: false, status: 400, code: "INPUT_INVALID", message: "Upload a file or paste the post text." };
 
   if ((await countActiveRunsForUser(user.id)) >= MAX_ACTIVE_PER_USER)
     return { ok: false, status: 429, code: "RATE_LIMITED", message: describeError("RATE_LIMITED").message };
@@ -40,15 +44,25 @@ export async function startRun(user: UserRow, reportId: string): Promise<StartRe
     return { ok: false, status: 429, code: "RATE_LIMITED", message: "Many reports are running right now. Try again in a minute." };
 
   try {
-    const run = await createQueuedRun({
-      reportId: report.id,
-      product,
-      pipelineId: pipelineId(product),
-      attempt: (await lastAttemptForReport(report.id)) + 1,
-    });
+    const run = await createQueuedRun(
+      {
+        reportId: report.id,
+        product,
+        pipelineId: pipelineId(product),
+        attempt: (await lastAttemptForReport(report.id)) + 1,
+      },
+      { userId: user.id, perUser: MAX_ACTIVE_PER_USER, global: maxConcurrent() },
+    );
     await track(user.publicId, "run.started", { product, pipelineId: run.pipelineId, status: "queued" });
     return { ok: true, runId: run.id };
   } catch (err) {
+    if (err instanceof RunLimitError)
+      return {
+        ok: false,
+        status: 429,
+        code: "RATE_LIMITED",
+        message: err.scope === "user" ? describeError("RATE_LIMITED").message : "Many reports are running right now. Try again in a minute.",
+      };
     if (isUniqueViolation(err))
       return { ok: false, status: 409, code: "RUN_IN_PROGRESS", message: "This report is already being prepared." };
     throw err;

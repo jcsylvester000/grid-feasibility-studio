@@ -15,6 +15,7 @@ export type FieldKind =
   | "location.province"
   | "location.city"
   | "text"
+  | "textarea"
   | "number"
   | "date"
   | "toggle";

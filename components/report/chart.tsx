@@ -13,7 +13,7 @@ type Props = {
   yUnit?: string;
 };
 
-const COLORS = ["#1c335e", "#be8562", "#2e7d4f", "#a8660b", "#5b6472", "#b23a3a"];
+const COLORS = ["#1c335e", "#be8562", "#2a744a", "#94590a", "#5b6472", "#b23a3a"];
 const W = 640;
 const H = 260;
 const PAD = { l: 64, r: 16, t: 16, b: 40 };
@@ -38,12 +38,14 @@ export function SvgChart({ chartType, title, x, series, yUnit = "" }: Props) {
   const span = max - min || 1;
   const Y = (v: number) => PAD.t + (H - PAD.t - PAD.b) * (1 - (v - min) / span);
   const band = (W - PAD.l - PAD.r) / Math.max(n, 1);
+  // Thin the x labels so they never overlap (about 60 px per label).
+  const labelEvery = Math.max(1, Math.ceil(n / Math.floor((W - PAD.l - PAD.r) / 60)));
   const X = (i: number) => PAD.l + band * i + band / 2;
   const ticks = [min, min + span / 2, max];
   const fmt = (v: number) => formatValue(Math.round(v * 100) / 100, yUnit);
 
   return (
-    <figure className="overflow-x-auto">
+    <figure className="overflow-x-auto" tabIndex={0}>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={title} className="h-auto w-full min-w-[480px]">
         {ticks.map((t) => (
           <g key={t}>
@@ -54,11 +56,11 @@ export function SvgChart({ chartType, title, x, series, yUnit = "" }: Props) {
           </g>
         ))}
         <line x1={PAD.l} x2={W - PAD.r} y1={Y(0)} y2={Y(0)} stroke="#5b6472" />
-        {x.values.map((label, i) => (
+        {x.values.map((label, i) => (i % labelEvery !== 0 ? null : (
           <text key={i} x={X(i)} y={H - PAD.b + 16} textAnchor="middle" fontSize="10" fill="#5b6472">
             {String(label)}
           </text>
-        ))}
+        )))}
 
         {(chartType === "bar" || chartType === "range") &&
           series.map((s, si) =>
@@ -84,7 +86,7 @@ export function SvgChart({ chartType, title, x, series, yUnit = "" }: Props) {
           })}
         {chartType === "waterfall" &&
           waterfall.map((w, i) => (
-            <rect key={i} x={PAD.l + band * i + band * 0.2} width={band * 0.6} y={Math.min(Y(w.start), Y(w.end))} height={Math.max(1, Math.abs(Y(w.end) - Y(w.start)))} fill={w.end >= w.start ? "#2e7d4f" : "#b23a3a"} />
+            <rect key={i} x={PAD.l + band * i + band * 0.2} width={band * 0.6} y={Math.min(Y(w.start), Y(w.end))} height={Math.max(1, Math.abs(Y(w.end) - Y(w.start)))} fill={w.end >= w.start ? "#2a744a" : "#b23a3a"} />
           ))}
         {(chartType === "line" || chartType === "scatter") &&
           series.map((s, si) => {

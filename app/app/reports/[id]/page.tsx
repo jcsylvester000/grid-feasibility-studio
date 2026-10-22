@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ConfirmDelete } from "@/components/app/confirm-delete";
 import { StatusBadge } from "@/components/app/status-badge";
 import { PrintButton, RunAgainButton } from "@/components/report/report-actions";
-import { ExecutiveSummaryView, FeasibilityReportView, QuickReportView } from "@/components/report/views";
+import { ExecutiveSummaryView, FeasibilityReportView, QuickReportView, TeaserScanView } from "@/components/report/views";
 import { buttonVariants } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/session";
 import { getReportForUser } from "@/lib/db/repos/reports";
@@ -16,10 +16,11 @@ import { track } from "@/lib/usage/track";
 export const metadata: Metadata = { title: "Report" };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-function ProductView({ product, payload }: { product: string; payload: any }) {
+function ProductView({ product, payload, intake }: { product: string; payload: any; intake: Record<string, unknown> }) {
+  if (product === "teaser_intake") return <TeaserScanView p={payload} confirmedReportId={(intake["teaser.confirmed_report_id"] as string) ?? null} />;
   if (product === "executive_summary") return <ExecutiveSummaryView p={payload} />;
   if (product === "feasibility_report") return <FeasibilityReportView p={payload} />;
-  return <QuickReportView p={payload} />; // quick_report and teaser_intake (Quick Report 1.1 with listing_source)
+  return <QuickReportView p={payload} />; // Quick Report 1.0 or 1.1 (with listing_source after a Teaser Scan)
 }
 
 /**
@@ -31,6 +32,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   const { user } = await requireUser(`/app/reports/${id}`);
   const report = await getReportForUser(user.id, id);
   if (!report) notFound();
+  if (report.product === "teaser_intake" && report.status === "needs_confirmation") redirect(`/app/reports/${report.id}/confirm`);
   const stored = report.status === "ready" ? await latestEnvelopeForReport(report.id) : null;
   const env = stored?.envelope.envelope as { report?: unknown; generated_at?: string } | undefined;
   if (env?.report) await track(user.publicId, "report.viewed", { product: report.product });
@@ -64,7 +66,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
 
       {env?.report ? (
         <div data-testid="report-view" data-product={report.product}>
-          <ProductView product={report.product} payload={env.report} />
+          <ProductView product={report.product} payload={env.report} intake={report.intake} />
         </div>
       ) : report.status === "failed" || report.status === "queued" || report.status === "running" ? (
         <Link href={`/app/reports/${report.id}/run`} className={buttonVariants({ variant: "outline" })}>

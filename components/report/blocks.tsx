@@ -58,7 +58,7 @@ function Table({ b }: { b: Block }) {
         {b.title}
         <SourceRefs ids={b.source_ids} />
       </figcaption>
-      <div className="overflow-x-auto rounded-xl border border-line bg-white">
+      <div tabIndex={0} className="overflow-x-auto rounded-xl border border-line bg-white">
         <table className="w-full min-w-[420px] text-left text-sm">
           <thead className="bg-sand text-muted">
             <tr>

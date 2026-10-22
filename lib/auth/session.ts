@@ -44,7 +44,12 @@ export async function currentToken() {
 /** For pages and Server Actions: signed-in user or a redirect to /login (AU-12). */
 export async function requireUser(nextPath?: string) {
   const s = await getCurrentSession();
-  if (!s) redirect(nextPath ? `/login?next=${encodeURIComponent(nextPath)}` : "/login");
+  if (!s) {
+    // A cookie whose session is gone: expired, logged out elsewhere or suspended (AC-040). Say so on the login page.
+    const ended = !!(await cookies()).get(SESSION_COOKIE)?.value;
+    const q = new URLSearchParams({ ...(ended ? { ended: "1" } : {}), ...(nextPath ? { next: nextPath } : {}) }).toString();
+    redirect(q ? `/login?${q}` : "/login");
+  }
   return s;
 }
 

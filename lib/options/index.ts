@@ -9,6 +9,7 @@ import executiveSummary from "./catalog/executive_summary.json";
 import feasibilityReport from "./catalog/feasibility_report.json";
 import locations from "./catalog/locations.json";
 import quickReport from "./catalog/quick_report.json";
+import teaserIntake from "./catalog/teaser_intake.json";
 
 export const OPTIONS_VERSION = "2026-10-19";
 
@@ -39,7 +40,7 @@ const dictionaries: Partial<Record<Product, FieldEntry[]>> = {
   quick_report: quickReport as FieldEntry[],
   executive_summary: executiveSummary as FieldEntry[],
   feasibility_report: feasibilityReport as FieldEntry[],
-  // teaser_intake: its fields (files, pasted text, relationship) are added in batch B7.
+  teaser_intake: teaserIntake as FieldEntry[],
 };
 
 /** The field dictionary sent to the pipeline inside every RunRequest (VS-02). */

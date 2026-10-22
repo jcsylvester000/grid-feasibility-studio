@@ -46,7 +46,7 @@ export default function FeasibilityStudyPage() {
           <Info aria-hidden className="mt-0.5 size-4 shrink-0 text-bronze-ink" />
           <span>{site.disclaimer}</span>
         </p>
-        <div className="mt-6 overflow-x-auto rounded-[var(--radius-card)] border border-line bg-white">
+        <div tabIndex={0} className="mt-6 overflow-x-auto rounded-[var(--radius-card)] border border-line bg-white">
           <table className="w-full min-w-[560px] text-left text-sm">
             <thead className="bg-sand text-muted">
               <tr>

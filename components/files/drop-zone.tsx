@@ -6,11 +6,18 @@
  */
 import { FileText, UploadCloud, X } from "lucide-react";
 import { useId, useState } from "react";
-import { DOC_TYPES, DOCUMENT_RULES, formatBytes } from "@/lib/files/config";
+import { DOC_TYPES, DOCUMENT_RULES, formatBytes, TEASER_RULES } from "@/lib/files/config";
 import { cn } from "@/lib/utils";
 import type { UploadItem, Uploads } from "./use-uploads";
 
-const ACCEPT = [...DOCUMENT_RULES.mimes, ...DOCUMENT_RULES.extensions].join(",");
+const ACCEPT = {
+  documents: [...DOCUMENT_RULES.mimes, ...DOCUMENT_RULES.extensions].join(","),
+  teaserMedia: [...TEASER_RULES.mimes, ...TEASER_RULES.extensions].join(","),
+};
+const HELP = {
+  documents: "PDF, JPG, PNG or HEIC · up to 25 MB each",
+  teaserMedia: "Images or PDF up to 25 MB · MP4 or MOV video up to 200 MB and 3 minutes",
+};
 
 export function DropZone({ uploads }: { uploads: Uploads }) {
   const inputId = useId();
@@ -45,13 +52,13 @@ export function DropZone({ uploads }: { uploads: Uploads }) {
           or drop them here
         </p>
         <p className="text-xs text-muted">
-          PDF, JPG, PNG or HEIC · up to 25 MB each · up to {DOCUMENT_RULES.maxFiles} files ({uploads.remaining} left)
+          {HELP[uploads.route]} · up to {DOCUMENT_RULES.maxFiles} files ({uploads.remaining} left)
         </p>
         <input
           id={inputId}
           type="file"
           multiple
-          accept={ACCEPT}
+          accept={ACCEPT[uploads.route]}
           disabled={disabled}
           className="sr-only"
           data-testid="file-input"
@@ -113,7 +120,7 @@ function FileRow({ item, uploads }: { item: UploadItem; uploads: Uploads }) {
           <div className="h-full bg-bronze transition-[width]" style={{ width: `${item.progress}%` }} />
         </div>
       )}
-      {item.status !== "rejected" && (
+      {item.status !== "rejected" && uploads.route === "documents" && (
         <div className="pl-6">
           <label htmlFor={selectId} className="sr-only">
             What is {item.name}?

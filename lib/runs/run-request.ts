@@ -77,7 +77,8 @@ export function buildRunRequest(opts: {
   documents?: RunDocument[];
   now?: Date;
 }) {
-  const dict = fieldDictionary(opts.product);
+  // The Teaser Scan maps facts onto the Quick Report's own options (TS-AC-07: new bands need no prompt change).
+  const dict = opts.product === "teaser_intake" ? [...fieldDictionary("quick_report"), ...fieldDictionary("teaser_intake")] : fieldDictionary(opts.product);
   const caps = providedCapabilities(opts.intake, dict);
   // Executive Summary and Feasibility Report: the form's level rules (lib/forms/levels.ts), so the meter
   // the user saw and the level the pipeline receives agree.

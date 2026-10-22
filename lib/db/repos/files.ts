@@ -22,6 +22,12 @@ export async function countFilesForReport(reportId: string) {
   return Number(r?.n ?? 0);
 }
 
+export async function fileTotalsForReport(reportId: string) {
+  const db = await getDb();
+  const [r] = await db.select({ n: count(), bytes: sql<number>`coalesce(sum(${files.sizeBytes}), 0)::bigint` }).from(files).where(eq(files.reportId, reportId));
+  return { count: Number(r?.n ?? 0), bytes: Number(r?.bytes ?? 0) };
+}
+
 export async function listFilesForReport(reportId: string) {
   const db = await getDb();
   return db.select().from(files).where(eq(files.reportId, reportId)).orderBy(asc(files.createdAt), asc(files.id));

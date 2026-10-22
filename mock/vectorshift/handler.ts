@@ -80,7 +80,7 @@ export async function handleMockRequest(req: Request, opts: { delayMs?: number }
   } catch {
     return json(400, { status: "failed", error: "Malformed request body" });
   }
-  let runRequest: { report_id?: string; product?: string; documents?: { doc_ref: string; capability?: string }[] };
+  let runRequest: { report_id?: string; product?: string; documents?: { doc_ref: string; capability?: string }[]; intake?: Record<string, unknown> };
   try {
     runRequest = JSON.parse(String(inputs.run_request ?? ""));
   } catch {
@@ -124,7 +124,13 @@ export async function handleMockRequest(req: Request, opts: { delayMs?: number }
       return json(200, { status: "success", run_id: runId, outputs: { result_envelope: JSON.stringify(env) } });
     }
     default: {
-      const env = buildEnvelope({ product, reportId, runId, status: "succeeded", payload: goldenPayload(product, reportId) });
+      const payload = goldenPayload(product, reportId);
+      // A Quick Report from a confirmed teaser echoes listing_source (quick_report 1.1.0).
+      if (product === "quick_report" && runRequest.intake?.listing_source) {
+        payload.listing_source = runRequest.intake.listing_source;
+        (payload.meta as Record<string, unknown>).schema_version = "1.1.0";
+      }
+      const env = buildEnvelope({ product, reportId, runId, status: "succeeded", payload });
       return json(200, {
         status: "success",
         run_id: runId,

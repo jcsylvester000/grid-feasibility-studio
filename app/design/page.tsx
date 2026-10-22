@@ -36,7 +36,7 @@ export default function DesignBoard() {
 
       <section aria-labelledby="contrast" className="space-y-4">
         <h2 id="contrast" className="text-2xl">Contrast (WCAG 2.2 AA needs 4.5:1)</h2>
-        <div className="overflow-x-auto">
+        <div tabIndex={0} className="overflow-x-auto">
           <table className="w-full min-w-[520px] text-left text-sm">
             <thead className="text-muted">
               <tr><th className="py-2">Use</th><th>Sample</th><th>Ratio</th></tr>

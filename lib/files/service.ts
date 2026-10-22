@@ -7,7 +7,7 @@ import { getReportForUser } from "@/lib/db/repos/reports";
 import {
   bumpPendingDeletions,
   clearPendingDeletions,
-  countFilesForReport,
+  fileTotalsForReport,
   deleteFileRow,
   expireFiles,
   getFileForUser,
@@ -18,7 +18,7 @@ import {
 } from "@/lib/db/repos/files";
 import type { UserRow } from "@/lib/db/repos/users";
 import { track } from "@/lib/usage/track";
-import { checkFile, DOCUMENT_RULES, isDocType, mimeOf, MESSAGES } from "./config";
+import { checkFile, DOCUMENT_RULES, isDocType, mimeOf, MESSAGES, routeFor, type UploadRoute } from "./config";
 import { storage } from "./storage";
 
 export type Incoming = { name: string; size: number; type: string };
@@ -27,18 +27,21 @@ export type UploadDenied = { ok: false; status: number; message: string };
 const LOCKED = new Set(["queued", "running"]);
 
 /** UP-02: session (caller), report ownership, product, report not running, type, size and count. */
-export async function authorizeUpload(user: UserRow, reportId: string, incoming: Incoming[]) {
+export async function authorizeUpload(user: UserRow, reportId: string, incoming: Incoming[], route?: UploadRoute) {
   const report = await getReportForUser(user.id, reportId);
   if (!report) return { ok: false, status: 404, message: "Report not found" } satisfies UploadDenied;
-  if (!(DOCUMENT_RULES.products as readonly string[]).includes(report.product))
-    return { ok: false, status: 400, message: "This report does not take documents" } satisfies UploadDenied;
-  if (LOCKED.has(report.status)) return { ok: false, status: 409, message: "Files cannot change while the report is being prepared" } satisfies UploadDenied;
-  const existing = await countFilesForReport(report.id);
+  const expected = routeFor(report.product);
+  if (!expected || (route && route !== expected)) return { ok: false, status: 400, message: "This report does not take these files" } satisfies UploadDenied;
+  if (LOCKED.has(report.status) || report.status === "needs_confirmation")
+    return { ok: false, status: 409, message: "Files cannot change while the report is being prepared" } satisfies UploadDenied;
+  const totals = await fileTotalsForReport(report.id);
+  let bytes = totals.bytes;
   for (let i = 0; i < incoming.length; i++) {
-    const reason = checkFile(incoming[i]!, existing + i + 1);
+    const reason = checkFile(incoming[i]!, totals.count + i + 1, expected, bytes);
     if (reason) return { ok: false, status: reason === MESSAGES.tooMany ? 409 : 400, message: reason } satisfies UploadDenied;
+    bytes += incoming[i]!.size;
   }
-  return { ok: true as const, report };
+  return { ok: true as const, report, route: expected };
 }
 
 /** UP-03: files row (delete_after) and a file.uploaded event with the byte size. */

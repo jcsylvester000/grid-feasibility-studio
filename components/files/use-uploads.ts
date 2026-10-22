@@ -6,7 +6,7 @@
  * the first file is added). driver "local" posts to /api/dev-uploads (tests and offline work).
  */
 import { useCallback, useMemo, useRef, useState } from "react";
-import { checkFile, DOCUMENT_RULES, type DocType } from "@/lib/files/config";
+import { checkFile, rulesFor, type DocType, type UploadRoute } from "@/lib/files/config";
 import type { UploadRouter } from "@/lib/files/uploadthing-router";
 
 export type ServerFile = { id: string; name: string; mimeType: string; sizeBytes: number; docType: string | null; createdAt: string };
@@ -27,10 +27,10 @@ type Abort = { abort: () => void };
 let seq = 0;
 const nextId = () => `u${++seq}`;
 
-async function uploadThing(file: File, input: { reportId: string; docType: DocType | null }, signal: AbortSignal, onProgress: (p: number) => void) {
+async function uploadThing(route: UploadRoute, file: File, input: { reportId: string; docType: DocType | null }, signal: AbortSignal, onProgress: (p: number) => void) {
   const { genUploader } = await import("uploadthing/client");
   const { uploadFiles } = genUploader<UploadRouter>({ url: "/api/uploadthing", package: "@uploadthing/react" });
-  const [res] = await uploadFiles("documents", { files: [file], input, signal, onUploadProgress: ({ progress }) => onProgress(progress) });
+  const [res] = await uploadFiles(route, { files: [file], input, signal, onUploadProgress: ({ progress }) => onProgress(progress) });
   const fileId = (res?.serverData as { fileId?: string | null } | undefined)?.fileId ?? null;
   if (!fileId) throw new Error("The upload finished but was not recorded. Try again.");
   return fileId;
@@ -63,7 +63,9 @@ function uploadLocal(file: File, input: { reportId: string; docType: DocType | n
   return Object.assign(p, { abort: () => xhr.abort() });
 }
 
-export function useUploads(opts: { reportId: string; driver: "uploadthing" | "local"; initial: ServerFile[]; locked?: boolean }) {
+export function useUploads(opts: { reportId: string; driver: "uploadthing" | "local"; initial: ServerFile[]; locked?: boolean; route?: UploadRoute }) {
+  const route: UploadRoute = opts.route ?? "documents";
+  const rules = rulesFor(route);
   const [items, setItems] = useState<UploadItem[]>(() =>
     opts.initial.map((f) => ({ localId: nextId(), fileId: f.id, name: f.name, size: f.sizeBytes, docType: f.docType, status: "done", progress: 100, error: null })),
   );
@@ -73,14 +75,17 @@ export function useUploads(opts: { reportId: string; driver: "uploadthing" | "lo
 
   const add = useCallback(
     (files: File[], docType: DocType | null = null) => {
-      let count = items.filter((i) => i.status === "done" || i.status === "uploading").length;
+      const live = items.filter((i) => i.status === "done" || i.status === "uploading");
+      let count = live.length;
+      let bytes = live.reduce((a, i) => a + i.size, 0);
       const added: UploadItem[] = [];
       for (const file of files) {
-        const reason = checkFile(file, count + 1);
+        const reason = checkFile(file, count + 1, route, bytes);
         const item: UploadItem = { localId: nextId(), fileId: null, name: file.name, size: file.size, docType, status: reason ? "rejected" : "uploading", progress: 0, error: reason };
         added.push(item);
         if (reason) continue;
         count++;
+        bytes += file.size;
         const input = { reportId: opts.reportId, docType };
         const onProgress = (p: number) => patch(item.localId, { progress: Math.min(99, p) });
         const finish = (job: Promise<string>) =>
@@ -98,12 +103,12 @@ export function useUploads(opts: { reportId: string; driver: "uploadthing" | "lo
         } else {
           const ctrl = new AbortController();
           aborts.current.set(item.localId, { abort: () => ctrl.abort() });
-          void finish(uploadThing(file, input, ctrl.signal, onProgress));
+          void finish(uploadThing(route, file, input, ctrl.signal, onProgress));
         }
       }
       setItems((list) => [...list, ...added]);
     },
-    [items, opts.reportId, opts.driver, patch],
+    [items, opts.reportId, opts.driver, patch, route],
   );
 
   const remove = useCallback(
@@ -144,7 +149,7 @@ export function useUploads(opts: { reportId: string; driver: "uploadthing" | "lo
   const busy = items.some((i) => i.status === "uploading");
   const docs = useMemo(() => Object.fromEntries(items.filter((i) => i.status === "done" && i.docType).map((i) => [i.docType!, true])), [items]);
   const stored = items.filter((i) => i.status === "done").length;
-  return { items, add, remove, setDocType, busy, docs, stored, remaining: DOCUMENT_RULES.maxFiles - stored, locked: !!opts.locked };
+  return { items, add, remove, setDocType, busy, docs, stored, remaining: rules.maxFiles - stored, locked: !!opts.locked, route };
 }
 
 export type Uploads = ReturnType<typeof useUploads>;

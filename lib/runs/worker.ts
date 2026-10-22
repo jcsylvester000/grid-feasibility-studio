@@ -22,6 +22,11 @@ export function setFileLoader(fn: RunFiles) {
   loadFiles = fn;
 }
 
+/** Keys the form validator does not know but the pipeline needs: the confirmed teaser (listing_source). */
+function carried(intake: Record<string, unknown>) {
+  return Object.fromEntries(Object.entries(intake).filter(([k]) => k === "listing_source" || k === "teaser.source_report_id"));
+}
+
 function log(entry: Record<string, unknown>) {
   console.info(JSON.stringify({ evt: "vs.call", at: new Date().toISOString(), ...entry }));
 }
@@ -68,7 +73,7 @@ export async function executeRun(runId: string, opts: { fetchImpl?: typeof fetch
       product,
       reportId: report.id,
       attempt: run.attempt,
-      intake: { ...(checked ? checked.intake : report.intake), ...docsIntake(documents) },
+      intake: { ...(checked ? checked.intake : report.intake), ...carried(report.intake), ...docsIntake(documents) },
       complete: checked ? checked.ok : true,
       userPublicId,
       appOrigin: appOrigin(),

@@ -51,7 +51,7 @@ export default async function MyReports({ searchParams }: { searchParams: Promis
         <p role="status" className="rounded-lg bg-ok-soft px-4 py-2 text-sm text-ok">The report was deleted.</p>
       )}
 
-      <form method="get" className="grid gap-3 rounded-[var(--radius-card)] border border-line bg-white p-4 sm:grid-cols-[1fr_auto_auto_auto]" role="search">
+      <form method="get" className="grid gap-3 rounded-[var(--radius-card)] border border-line bg-white p-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] [&>*]:min-w-0" role="search">
         <label className="sr-only" htmlFor="q">Search by title</label>
         <Input id="q" name="q" placeholder="Search by title" defaultValue={filters.q} />
         <label className="sr-only" htmlFor="product">Product</label>
@@ -110,7 +110,7 @@ async function Results({
           )}
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-[var(--radius-card)] border border-line bg-white md:overflow-visible">
+        <div tabIndex={0} className="overflow-x-auto rounded-[var(--radius-card)] border border-line bg-white md:overflow-visible">
           <table className="w-full min-w-[640px] text-left text-sm md:min-w-0" data-testid="reports-table">
             <thead className="bg-sand text-muted">
               <tr>

@@ -107,5 +107,6 @@ export const STATUS_TONE = {
 export function reportHref(r: { id: string; product: Product; status: string }) {
   if (r.status === "queued" || r.status === "running" || r.status === "failed") return `/app/reports/${r.id}/run`;
   if (r.status === "draft") return `/app/new/${r.product}?id=${r.id}`;
+  if (r.status === "needs_confirmation") return `/app/reports/${r.id}/confirm`;
   return `/app/reports/${r.id}`;
 }

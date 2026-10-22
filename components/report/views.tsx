@@ -92,7 +92,7 @@ export function QuickReportView({ p }: { p: any }) {
 
       <section aria-labelledby="qr-metrics" className="space-y-3">
         <SectionHeading id="qr-metrics" title="Key figures" />
-        <div className="overflow-x-auto rounded-xl border border-line bg-white">
+        <div tabIndex={0} className="overflow-x-auto rounded-xl border border-line bg-white">
           <table className="w-full min-w-[560px] text-left text-sm" data-testid="metrics">
             <thead className="bg-sand text-muted">
               <tr>
@@ -225,8 +225,8 @@ export function TeaserCheck({ ls }: { ls: any }) {
           <p className="mb-2 text-sm font-medium">Red flags</p>
           <ul className="space-y-2 text-sm">
             {ls.red_flags.map((f: any, i: number) => (
-              <li key={i} className="flex gap-3 rounded-lg border border-line bg-white p-3">
-                <Badge tone={SEVERITY_TONE[f.severity as keyof typeof SEVERITY_TONE] ?? "neutral"}>{f.severity}</Badge>
+              <li key={i} className="flex items-start gap-3 rounded-lg border border-line bg-white p-3">
+                <Badge tone={SEVERITY_TONE[f.severity as keyof typeof SEVERITY_TONE] ?? "neutral"} className="shrink-0">{f.severity}</Badge>
                 <span>
                   <span className="font-medium">{f.flag}.</span> {f.why}
                 </span>
@@ -372,7 +372,7 @@ const SECTION_ORDER = [
 
 function Criteria({ items }: { items: any[] }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-line bg-white" data-testid="criteria">
+    <div tabIndex={0} className="overflow-x-auto rounded-xl border border-line bg-white" data-testid="criteria">
       <table className="w-full min-w-[640px] text-left text-sm">
         <thead className="bg-sand text-muted">
           <tr>
@@ -420,7 +420,7 @@ function Statement({ title, s }: { title: string; s: any }) {
       <figcaption className="mb-2 font-medium">
         {title} <span className="text-xs font-normal text-muted">({s.currency}{scale !== "one" ? `, ${scale}s` : ""})</span>
       </figcaption>
-      <div className="overflow-x-auto rounded-xl border border-line bg-white">
+      <div tabIndex={0} className="overflow-x-auto rounded-xl border border-line bg-white">
         <table className="w-full text-right text-xs tabular-nums">
           <thead className="bg-sand text-muted">
             <tr>
@@ -464,7 +464,7 @@ function Financials({ f }: { f: any }) {
       </dl>
 
       {f.scenarios?.length > 0 && (
-        <div className="overflow-x-auto rounded-xl border border-line bg-white">
+        <div tabIndex={0} className="overflow-x-auto rounded-xl border border-line bg-white">
           <table className="w-full min-w-[520px] text-left text-sm">
             <caption className="px-3 pt-3 text-left font-medium">Scenarios</caption>
             <thead className="text-muted">
@@ -527,7 +527,7 @@ function Financials({ f }: { f: any }) {
       )}
 
       {f.assumptions?.length > 0 && (
-        <div className="overflow-x-auto rounded-xl border border-line bg-white">
+        <div tabIndex={0} className="overflow-x-auto rounded-xl border border-line bg-white">
           <table className="w-full min-w-[520px] text-left text-sm">
             <caption className="px-3 pt-3 text-left font-medium">Assumptions</caption>
             <tbody>
@@ -625,3 +625,63 @@ export function FeasibilityReportView({ p }: { p: any }) {
   );
 }
 
+
+// ------------------------------------------------------------------ Teaser Scan (teaser_intake payload)
+
+const CONFIDENCE_TONE = { high: "ok", medium: "warn", low: "bad" } as const;
+
+/** A scan's facts and checks. Shown after the broker confirmed (the Quick Report holds the result). */
+export function TeaserScanView({ p, confirmedReportId }: { p: any; confirmedReportId: string | null }) {
+  const facts: any[] = p.listing?.facts ?? [];
+  return (
+    <div className="space-y-8">
+      <section aria-label="Scan result" className="rounded-[var(--radius-card)] border-l-4 border-info bg-info-soft p-5" data-testid="verdict">
+        <p className="font-display text-2xl text-info">{confirmedReportId ? "Confirmed" : "Scanned"}</p>
+        <p className="mt-1 text-ink">{p.listing?.headline_as_written}</p>
+        {confirmedReportId && (
+          <p className="mt-3">
+            <a href={`/app/reports/${confirmedReportId}`} className="font-medium">
+              Open the Quick Report made from this teaser
+            </a>
+          </p>
+        )}
+      </section>
+      <section aria-labelledby="teaser-facts" className="space-y-3">
+        <SectionHeading id="teaser-facts" title="What the teaser says" />
+        <div tabIndex={0} className="overflow-x-auto rounded-xl border border-line bg-white">
+          <table className="w-full min-w-[560px] text-left text-sm" data-testid="teaser-facts">
+            <thead className="bg-sand text-muted">
+              <tr>
+                <th scope="col" className="px-3 py-2 font-medium">Fact</th>
+                <th scope="col" className="px-3 py-2 font-medium">As written</th>
+                <th scope="col" className="px-3 py-2 font-medium">Where</th>
+                <th scope="col" className="px-3 py-2 font-medium">Confidence</th>
+              </tr>
+            </thead>
+            <tbody>
+              {facts.map((f) => (
+                <tr key={f.key} className="border-t border-line align-top">
+                  <td className="px-3 py-2 font-medium">{f.label}</td>
+                  <td className="px-3 py-2">
+                    &ldquo;{f.source?.quote ?? f.value_text}&rdquo;
+                    {f.conflict && <span className="mt-1 block text-xs text-bad">{f.conflict}</span>}
+                  </td>
+                  <td className="px-3 py-2 text-xs text-muted">
+                    {[f.source?.doc_ref, f.source?.page ? `page ${f.source.page}` : null, f.source?.timestamp_s != null ? `${f.source.timestamp_s}s` : null].filter(Boolean).join(", ")}
+                  </td>
+                  <td className="px-3 py-2">
+                    <Badge tone={CONFIDENCE_TONE[f.confidence as keyof typeof CONFIDENCE_TONE] ?? "neutral"}>{f.confidence}</Badge>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <TeaserCheck
+        ls={{ files_count: (p.files ?? []).length, relationship: p.meta?.relationship, claims: p.claims, red_flags: p.red_flags, questions_for_seller: p.questions_for_seller }}
+      />
+      <Sources sources={p.sources ?? []} />
+    </div>
+  );
+}

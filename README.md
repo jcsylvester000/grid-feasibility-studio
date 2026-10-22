@@ -40,6 +40,8 @@ Secrets live in `.env.local` (git-ignored). `.env.example` lists every variable 
 | `npm test` | Unit, contract and integration tests (in-memory Postgres, no network) |
 | `npm run e2e` | Playwright end-to-end tests (run `npm run build` first; `npx playwright install chromium` once) |
 | `npm run lint` · `npm run typecheck` | ESLint and TypeScript checks |
+| `npm run scan:secrets` · `npm run audit:prod` | Secret scan (repository and browser bundles) · production dependency audit |
+| `npm run admin:create -- --username <name>` | Creates an admin account (password and key printed once) |
 
 ## Layout
 
@@ -55,10 +57,9 @@ drizzle/             SQL migrations
 tests/               unit, contract, integration (PGlite) and e2e (Playwright)
 ```
 
-## Deploying (batch B10)
+## Deploying and running
 
-Netlify builds with `npm run build:netlify` (migrate, then build) using `@netlify/plugin-nextjs` and Node 22.
-Set the variables from `.env.example` in Netlify (Site configuration → Environment variables), with
-`RUN_DISPATCH=netlify` and a long random `INTERNAL_DISPATCH_SECRET`. Never commit values.
+- [docs/DEPLOY.md](docs/DEPLOY.md): Netlify site, environment variables, secret rotation, live VectorShift.
+- [docs/RUNBOOK.md](docs/RUNBOOK.md): everyday tasks, support actions, release checks, privacy rules.
 
 Not a licensed appraisal, engineering, legal, tax or financial opinion.

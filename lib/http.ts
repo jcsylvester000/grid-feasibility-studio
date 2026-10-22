@@ -16,3 +16,11 @@ export async function apiSession(opts: { mutating?: boolean } = {}) {
   if (!s) return { error: jsonError(401, "UNAUTHENTICATED", "Sign in first") } as const;
   return { session: s } as const;
 }
+
+/** Admin API routes: non-admins get 404 so the admin API is not advertised (AD pages). */
+export async function apiAdmin(opts: { mutating?: boolean } = {}) {
+  const a = await apiSession(opts);
+  if ("error" in a) return a;
+  if (a.session.user.role !== "admin") return { error: jsonError(404, "NOT_FOUND", "Not found") } as const;
+  return a;
+}

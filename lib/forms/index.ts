@@ -3,7 +3,7 @@ import { getOptions } from "@/lib/options";
 import type { FormDefinition, Intake, ValidationResult } from "./types";
 import { FORM_DEFINITIONS, VALIDATORS } from "./validators";
 
-/** Form definitions per product. The Teaser Scan form arrives in batch B7. */
+/** Form definitions per product. */
 export const FORMS: Partial<Record<Product, FormDefinition>> = FORM_DEFINITIONS;
 
 export function validateIntake(product: Product, intake: Intake): ValidationResult | null {
@@ -12,7 +12,7 @@ export function validateIntake(product: Product, intake: Intake): ValidationResu
 }
 
 /** Default answers for a new draft (the Feasibility Report starts summary-first, as GRID's sample). */
-export const DEFAULT_INTAKE: Partial<Record<Product, Intake>> = { feasibility_report: { toc_mode: "summary_first" } };
+export const DEFAULT_INTAKE: Partial<Record<Product, Intake>> = { feasibility_report: { toc_mode: "summary_first" }, teaser_intake: { "teaser.target_product": "quick_report" } };
 
 /** Short location label for titles, e.g. "Taguig". */
 export function locationLabel(intake: Intake) {

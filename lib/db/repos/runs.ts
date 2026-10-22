@@ -32,16 +32,40 @@ export async function lastAttemptForReport(reportId: string) {
   return Number(r?.attempt ?? 0);
 }
 
-/** Inserts a queued run and moves the report to "queued" in one transaction. Throws on the active-run unique index. */
-export async function createQueuedRun(values: {
-  reportId: string;
-  product: Product;
-  pipelineId: string;
-  attempt: number;
-  retryAt?: Date | null;
-}) {
+export class RunLimitError extends Error {
+  constructor(public readonly scope: "user" | "global") {
+    super(`run limit reached (${scope})`);
+  }
+}
+
+/**
+ * Inserts a queued run and moves the report to "queued" in one transaction. Throws on the active-run
+ * unique index. With `limits`, the per-user and global active-run limits are checked inside the
+ * transaction under an advisory lock, so a burst of requests cannot exceed them (B9 load test, GFS-25).
+ */
+export async function createQueuedRun(
+  values: {
+    reportId: string;
+    product: Product;
+    pipelineId: string;
+    attempt: number;
+    retryAt?: Date | null;
+  },
+  limits?: { userId: string; perUser: number; global: number },
+) {
   const db = await getDb();
   return db.transaction(async (tx) => {
+    if (limits) {
+      await tx.execute(sql`select pg_advisory_xact_lock(7311001)`);
+      const [mine] = await tx
+        .select({ n: sql<number>`count(*)::int` })
+        .from(runs)
+        .innerJoin(reports, eq(runs.reportId, reports.id))
+        .where(and(eq(reports.userId, limits.userId), inArray(runs.status, [...ACTIVE])));
+      if (Number(mine?.n ?? 0) >= limits.perUser) throw new RunLimitError("user");
+      const [all] = await tx.select({ n: sql<number>`count(*)::int` }).from(runs).where(inArray(runs.status, [...ACTIVE]));
+      if (Number(all?.n ?? 0) >= limits.global) throw new RunLimitError("global");
+    }
     const [run] = await tx
       .insert(runs)
       .values({ ...values, status: "queued", phase: "request_sent", retryAt: values.retryAt ?? null })

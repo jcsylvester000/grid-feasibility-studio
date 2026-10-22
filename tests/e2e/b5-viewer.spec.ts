@@ -3,7 +3,7 @@ import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { fillQuickReport, freshAddress, register, signUpAndStartQuick } from "./helpers";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 const golden = (p: string) => JSON.parse(readFileSync(path.join(process.cwd(), "mock/vectorshift/payloads", `${p}.json`), "utf8"));
 
 async function generateQuick(page: Page) {

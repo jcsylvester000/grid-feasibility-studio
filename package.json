@@ -21,7 +21,9 @@
     "db:migrate": "tsx scripts/db-migrate.ts",
     "mock:vs": "tsx mock/vectorshift/server.ts",
     "check:budgets": "tsx scripts/check-budgets.ts",
-    "admin:create": "tsx scripts/admin-create.ts"
+    "admin:create": "tsx scripts/admin-create.ts",
+    "scan:secrets": "tsx scripts/secret-scan.ts",
+    "audit:prod": "npm audit --omit=dev --audit-level=critical"
   },
   "dependencies": {
     "@neondatabase/serverless": "~1.2.0",
@@ -42,6 +44,7 @@
     "zod": "~4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.11.0",
     "@electric-sql/pglite": "~0.5.11",
     "@netlify/functions": "~6.0.3",
     "@netlify/plugin-nextjs": "~5.16.4",
@@ -60,5 +63,8 @@
     "tsx": "~4.23.15",
     "typescript": "~5.9.3",
     "vitest": "~5.0.5"
+  },
+  "overrides": {
+    "effect": "3.21.5"
   }
 }

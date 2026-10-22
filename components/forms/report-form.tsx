@@ -32,6 +32,7 @@ import {
 } from "@/lib/forms/levels";
 import { isRequired, isShown, type FormField, type FormStep, type Intake, type Issue } from "@/lib/forms/types";
 import { VALIDATORS } from "@/lib/forms/validators";
+import { routeFor } from "@/lib/files/config";
 import { cn } from "@/lib/utils";
 
 type SaveState = "idle" | "saving" | "saved" | "error" | "offline";
@@ -79,7 +80,7 @@ export function ReportForm(props: Props) {
   const reviewIndex = steps.length;
   const hasDocuments = steps.some((s) => s.documents);
   const full = product === "executive_summary" || product === "feasibility_report";
-  const uploads = useUploads({ reportId, driver: props.uploadDriver ?? "uploadthing", initial: props.initialFiles ?? [] });
+  const uploads = useUploads({ reportId, driver: props.uploadDriver ?? "uploadthing", initial: props.initialFiles ?? [], route: routeFor(product) ?? "documents" });
   const ctx = useMemo(() => ({ fields, locations }), [fields, locations]);
   const validation = useMemo(() => VALIDATORS[product]!(intake, ctx), [product, intake, ctx]);
   const issuesByKey = useMemo(() => Object.fromEntries(validation.issues.map((i) => [i.key, i])), [validation]);
@@ -336,7 +337,11 @@ export function ReportForm(props: Props) {
               product={product}
               steps={steps}
               intake={intake}
-              issues={validation.issues}
+              issues={
+                product === "teaser_intake" && uploads.stored === 0 && !String(intake["teaser.pasted_text"] ?? "").trim()
+                  ? [...validation.issues, { key: "teaser.files", label: "Files or text", step: "teaser", message: "Upload a file or paste the post text." }]
+                  : validation.issues
+              }
               labelFor={labelFor}
               goTo={goTo}
               notAsked={props.notAsked}
@@ -380,7 +385,7 @@ export function ReportForm(props: Props) {
   );
 }
 
-function Field(p: {
+export function Field(p: {
   f: FormField;
   intake: Intake;
   ctx: { fields: FieldEntry[]; locations: LocationTree };
@@ -415,7 +420,20 @@ function Field(p: {
   }
 
   let control: React.ReactNode;
-  if (kind === "text" || kind === "number" || kind === "date") {
+  if (kind === "textarea") {
+    control = (
+      <textarea
+        {...common}
+        rows={6}
+        maxLength={5000}
+        placeholder={f.placeholder}
+        className={cn(controlCls, "h-auto min-h-32 py-2 leading-relaxed")}
+        value={value === undefined ? "" : String(value)}
+        onChange={(e) => p.onChange(e.target.value)}
+        onBlur={p.onBlur}
+      />
+    );
+  } else if (kind === "text" || kind === "number" || kind === "date") {
     const n = kind === "number" && value !== undefined && value !== "" ? Number(value) : NaN;
     control = (
       <>
@@ -536,7 +554,9 @@ function Review(p: {
   const docs = p.uploads?.docs ?? {};
   const busy = !!p.uploads?.busy;
   const lede =
-    p.product === "quick_report"
+    p.product === "teaser_intake"
+      ? "Check your files and answers, then scan. You will check and confirm what the scan found before any report is created."
+      : p.product === "quick_report"
       ? "Check your answers, then generate. The result is an indicative screen, not a feasibility verdict."
       : "Check your answers, then generate. Anything you left out is listed in the report as a limitation, not guessed.";
   return (
@@ -645,7 +665,7 @@ function Review(p: {
           </p>
         )}
         <Button size="lg" onClick={p.onGenerate} disabled={p.issues.length > 0 || p.generating || busy}>
-          {p.generating ? "Starting…" : "Generate report"}
+          {p.generating ? "Starting…" : p.product === "teaser_intake" ? "Scan teaser" : "Generate report"}
         </Button>
       </div>
     </div>
