@@ -16,7 +16,8 @@ import { fieldDictionary } from "@/lib/options";
 import { QR_PIPELINE_INPUTS, quickReportInputs, quickReportRef } from "@/lib/vectorshift/quick-report-fields";
 import { normaliseLive, parseJsonLoose, parseLiveOutputs, QR_LIVE_FORMAT } from "@/lib/vectorshift/quick-report-live";
 import { reportVersions } from "@/lib/reports/versions";
-import { dispatchMode, dispatchRun } from "@/lib/runs/dispatch";
+import { DispatchError, dispatchMode, dispatchRun } from "@/lib/runs/dispatch";
+import { dispatchSecret } from "@/lib/runs/dispatch-secret";
 import { handleMockRequest } from "@/mock/vectorshift/handler";
 
 process.env.APP_SECRET = "test-secret-test-secret-test-secret-123";
@@ -223,6 +224,40 @@ describe("dispatch on Netlify (runs never wait inside a 26-30 second function)",
     expect(dispatchMode()).toBe("netlify");
     process.env.RUN_DISPATCH = "inline";
     expect(dispatchMode()).toBe("inline");
+  });
+
+  it("derives the worker secret from APP_SECRET when INTERNAL_DISPATCH_SECRET is not set", () => {
+    delete process.env.INTERNAL_DISPATCH_SECRET;
+    const derived = dispatchSecret();
+    expect(derived).toMatch(/^[A-Za-z0-9_-]{40,}$/);
+    expect(derived).not.toContain(process.env.APP_SECRET!);
+    process.env.INTERNAL_DISPATCH_SECRET = "explicit";
+    expect(dispatchSecret()).toBe("explicit");
+    delete process.env.INTERNAL_DISPATCH_SECRET;
+  });
+
+  it("tries the next site address when one fails, and reports a reference code when all fail", async () => {
+    process.env.RUN_DISPATCH = "netlify";
+    process.env.URL = "https://grid-feasibility-studio-demo.netlify.app";
+    const spy = vi.spyOn(globalThis, "fetch").mockImplementation(async (input) =>
+      String(input).startsWith("https://bad.example") ? new Response("nope", { status: 404 }) : new Response(null, { status: 202 }),
+    );
+    const err = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      await dispatchRun("run-2", { origin: "https://bad.example" });
+      expect(spy.mock.calls.map((c) => String(c[0]))).toEqual([
+        "https://bad.example/.netlify/functions/run-worker",
+        "https://grid-feasibility-studio-demo.netlify.app/.netlify/functions/run-worker",
+      ]);
+      expect(new Headers(spy.mock.calls[1]![1]!.headers).get("x-internal-secret")).toBe(dispatchSecret());
+      spy.mockImplementation(async () => new Response("down", { status: 500 }));
+      await expect(dispatchRun("run-3", { origin: "https://bad.example" })).rejects.toMatchObject({ code: "DISPATCH_HTTP_500" });
+      await expect(dispatchRun("run-3")).rejects.toBeInstanceOf(DispatchError);
+    } finally {
+      spy.mockRestore();
+      err.mockRestore();
+      delete process.env.URL;
+    }
   });
 
   it("calls the background function on the address the request came in on", async () => {

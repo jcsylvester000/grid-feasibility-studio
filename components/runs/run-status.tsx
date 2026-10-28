@@ -1,8 +1,9 @@
 "use client";
 
 /**
- * Run status (BRD S-04). Polls GET /api/runs/{id} every 3 s, every 10 s after 5 minutes; pauses while
- * the tab is hidden and resumes on return. Opens the report when ready. Status changes are announced
+ * Run status (BRD S-04). Polls GET /api/runs/{id} every 1.5 s for the first 2 minutes, then every 3 s,
+ * every 10 s after 5 minutes; pauses while the tab is hidden and resumes on return. Opens the report as
+ * soon as the result is stored. Status changes are announced
  * to screen readers (live region).
  */
 import Link from "next/link";
@@ -55,7 +56,7 @@ export function RunStatus({ initial, formHref }: { initial: RunStatusView; formH
     if (!(active || retrying)) return;
     let timer: ReturnType<typeof setTimeout>;
     const schedule = () => {
-      const interval = view.elapsedMs > 5 * 60_000 ? 10_000 : 3_000;
+      const interval = view.elapsedMs > 5 * 60_000 ? 10_000 : view.elapsedMs > 2 * 60_000 ? 3_000 : 1_500;
       timer = setTimeout(async () => {
         if (document.visibilityState === "visible") await poll();
         schedule();

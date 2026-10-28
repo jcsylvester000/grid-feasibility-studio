@@ -1,6 +1,6 @@
 import { after } from "next/server";
 import { apiSession, json, jsonError } from "@/lib/http";
-import { dispatchRun } from "@/lib/runs/dispatch";
+import { DispatchError, dispatchRun } from "@/lib/runs/dispatch";
 import { failQueuedRun } from "@/lib/db/repos/runs";
 import { startRun } from "@/lib/runs/service";
 
@@ -19,7 +19,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   } catch (err) {
     console.error("dispatch failed:", err instanceof Error ? err.message : err);
     await failQueuedRun(result.runId, "VS_UNAVAILABLE").catch(() => null);
-    return jsonError(503, "VS_UNAVAILABLE", "The report service could not be reached. Try again.");
+    const ref = err instanceof DispatchError ? err.code : "DISPATCH_FAILED";
+    return jsonError(503, ref, `The report could not be started. Try again. If it keeps happening, tell GRID support the reference ${ref}.`);
   }
   return json({ runId: result.runId }, { status: 202 });
 }

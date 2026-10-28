@@ -1,49 +1,39 @@
 /**
  * Quick Report from GRID's live VectorShift pipeline (output format vs_quick_report/1). Server component.
- * Everything the pipeline returned is shown as text (React escapes it); source links are https only.
+ * The rating and key figures are computed by code from the answers entered (lib/report/quick-screen.ts);
+ * the pipeline supplies the research: summary, checks, market snapshot and sources. Everything from the
+ * pipeline is shown as text (React escapes it); source links are https/http only.
  */
 import { Fragment } from "react";
 import { Badge } from "@/components/ui/badge";
-import { num, peso } from "@/lib/report/format";
+import { quickScreen, SCREEN_LABEL, SCREEN_RULE } from "@/lib/report/quick-screen";
 import type { LabelledInput } from "@/lib/reports/inputs";
 import type { QuickReportLive } from "@/lib/vectorshift/quick-report-live";
 import { Blocks } from "./blocks";
 import { SectionHeading } from "./primitives";
 import { Banner, PricePosition } from "./views";
 
-const METRIC_LABEL: Record<string, string> = {
-  total_asking_price_php: "Total asking price",
-  comparable_low_total_php: "Value at the lowest comparable",
-  comparable_high_total_php: "Value at the highest comparable",
-  asking_price_vs_comparable_low_pct: "Asking price against the lowest comparable",
-  asking_price_vs_comparable_high_pct: "Asking price against the highest comparable",
-  asking_price_vs_comparable_midpoint_pct: "Asking price against the middle of the range",
-  commission_php: "Commission",
-};
-
 const clean = (s: string) => s.replace(/[​-‍﻿]/g, "");
-export const humanize = (key: string) => {
-  const t = clean(key).replace(/_(php|pct)$/i, "").replace(/_/g, " ").trim();
-  return t.charAt(0).toUpperCase() + t.slice(1);
-};
-
-export function formatLiveMetric(key: string, v: number) {
-  if (/_pct$/i.test(key)) return `${v > 0 ? "+" : ""}${num(v, 1)}%`;
-  if (/_php$/i.test(key)) return peso(v);
-  return num(v, 2);
-}
 
 const TONE: Record<string, string> = { warning: "warning", warn: "warning", info: "info", ok: "success", success: "success", risk: "risk", error: "risk", bad: "risk" };
 
+/** Pipeline checks that repeat one the app already makes from the answers (same topic). */
+const TOPICS: [RegExp, string][] = [
+  [/zonal/i, "app_zonal"],
+  [/title/i, "app_no_title"],
+  [/tax.?dec/i, "app_no_tax_dec"],
+  [/asking.*closed|closed.*sale/i, "app_asking"],
+];
+
 /** Text with [n] citations turned into links to the numbered sources. */
-function Cited({ text, sources }: { text: string; sources: number }) {
+function Cited({ text, known }: { text: string; known: Set<number> }) {
   const parts = clean(text).split(/(\[\d{1,3}\])/);
   return (
     <>
       {parts.map((p, i) => {
         const m = p.match(/^\[(\d{1,3})\]$/);
         const n = m ? Number(m[1]) : 0;
-        return m && n >= 1 && n <= sources ? (
+        return m && known.has(n) ? (
           <sup key={i}>
             <a href={`#src-${n}`} className="no-underline">[{n}]</a>
           </sup>
@@ -55,7 +45,19 @@ function Cited({ text, sources }: { text: string; sources: number }) {
   );
 }
 
-/** Minimal Markdown for pipeline text: paragraphs, "-"/"*" bullets, **bold**, "#" headings. */
+function CiteLinks({ cites, known }: { cites: number[]; known: Set<number> }) {
+  const ok = cites.filter((c) => known.has(c));
+  if (!ok.length) return null;
+  return (
+    <sup className="ml-0.5">
+      {ok.map((c) => (
+        <a key={c} href={`#src-${c}`} className="no-underline">[{c}]</a>
+      ))}
+    </sup>
+  );
+}
+
+/** Minimal Markdown for pipeline text: paragraphs, "-"/"*"/"1." bullets, **bold**, "#" headings. */
 function Bold({ text }: { text: string }) {
   return (
     <>
@@ -83,7 +85,7 @@ export function SimpleMarkdown({ text }: { text: string }) {
   for (const raw of text.split(/\r?\n/)) {
     const line = raw.trim();
     if (!line) { flush(); continue; }
-    const bullet = line.match(/^[-*•]\s+(.*)$/);
+    const bullet = line.match(/^(?:[-*•]|\d+\.)\s+(.*)$/);
     if (bullet) { list.push(bullet[1]!); continue; }
     flush();
     const h = line.match(/^#{1,6}\s+(.*)$/);
@@ -92,8 +94,6 @@ export function SimpleMarkdown({ text }: { text: string }) {
   flush();
   return <div className="space-y-2 text-sm leading-relaxed">{blocks}</div>;
 }
-
-const safeUrl = (u: string) => (/^https?:\/\/[^\s"<>]+$/i.test(u.trim()) ? u.trim() : null);
 
 export function LiveQuickReportView({
   r,
@@ -106,86 +106,127 @@ export function LiveQuickReportView({
   inputs: LabelledInput[];
   reportRef: string | null;
 }) {
-  const ask = Number(intake["qd.ask_psqm"]);
-  const low = Number(intake["qd.comp_low"]);
-  const high = Number(intake["qd.comp_high"]);
-  const price = [ask, low, high].every((v) => Number.isFinite(v) && v > 0) ? { base: ask, unit: "PHP/sqm", compare: { low, high } } : null;
-  const nSources = r.sources.length;
-  // Stored JSON does not keep key order: known figures first, in a fixed order, then any others.
-  const order = Object.keys(METRIC_LABEL);
-  const rank = (k: string) => (order.indexOf(k) === -1 ? order.length : order.indexOf(k));
-  const metrics = [...r.metrics].sort((a, b) => rank(a[0]) - rank(b[0]) || a[0].localeCompare(b[0]));
+  const screen = quickScreen(intake);
+  const known = new Set(r.sources.map((s) => s.n));
+  const disagrees = r.rating.rating !== screen.rating;
+  const covered = new Set(screen.checks.map((c) => c.key));
+  const pipelineChecks = r.checks.filter((c) => !TOPICS.some(([re, key]) => covered.has(key) && re.test(`${c.key} ${c.detail}`)));
+  const checks = [...screen.checks.map((c) => ({ tone: c.tone, text: c.detail })), ...pipelineChecks.map((c) => ({ tone: TONE[c.tone.toLowerCase()] ?? (c.ok === false ? "warning" : "info"), text: clean(c.detail) }))];
+  const summary = r.summary;
+  // The pipeline's own headline names its rating; hide it when that differs from the rating shown.
+  const otherRating = (["promising", "marginal", "weak"] as const).filter((x) => x !== screen.rating).some((x) => new RegExp(`\\b${x}\\b`, "i").test(summary?.headline ?? ""));
+  const summaryHeadline = summary && !otherRating ? summary.headline : "";
 
   return (
     <div className="space-y-10" data-testid="live-quick-report">
       <p className="flex flex-wrap items-center gap-2 text-xs text-muted">
         <Badge tone="ok">Live research</Badge>
-        Produced by GRID&apos;s Quick Report pipeline on VectorShift{reportRef ? ` · Ref ${reportRef}` : ""}
+        Market research by GRID&apos;s Quick Report pipeline on VectorShift{reportRef ? ` · Ref ${reportRef}` : ""}
       </p>
 
-      <Banner rating={r.rating.rating} label={r.rating.label} headline={r.rating.headline} confidence={r.rating.confidence}>
+      <Banner rating={screen.rating} label={screen.label} headline={screen.headline} confidence={r.rating.confidence}>
         {(r.rating.evidenceScore !== null || r.rating.evidenceText) && (
           <p className="mt-3 text-sm text-ink-2">
-            <span className="font-medium">Evidence{r.rating.evidenceScore !== null ? ` ${r.rating.evidenceScore}/5` : ""}:</span> {r.rating.evidenceText}
+            <span className="font-medium">Evidence{r.rating.evidenceScore !== null ? ` ${r.rating.evidenceScore}/5` : ""}:</span> {clean(r.rating.evidenceText)}
           </p>
         )}
-        <p className="mt-2 text-xs text-muted">Indicative price screen, not a feasibility verdict. {r.rating.ruleNote}</p>
+        <p className="mt-2 text-xs text-muted">{SCREEN_RULE}</p>
+        {disagrees && (
+          <p className="mt-2 text-xs text-muted" data-print="hide" data-testid="rating-note">
+            The research pipeline suggested &ldquo;{SCREEN_LABEL[r.rating.rating]}&rdquo;; the rating above follows GRID&apos;s screening rule applied to the
+            answers entered.
+          </p>
+        )}
       </Banner>
 
-      {price && <PricePosition m={price} />}
+      {screen.price && <PricePosition m={screen.price} />}
 
-      {metrics.length > 0 && (
+      {screen.figures.length > 0 && (
         <section aria-labelledby="lqr-metrics" className="space-y-3">
           <SectionHeading id="lqr-metrics" title="Key figures" />
           <div tabIndex={0} className="overflow-x-auto rounded-xl border border-line bg-white">
             <table className="w-full min-w-[420px] text-left text-sm" data-testid="live-metrics">
               <tbody>
-                {metrics.map(([k, v]) => (
-                  <tr key={k} className="border-t border-line first:border-t-0">
-                    <th scope="row" className="px-3 py-2 font-medium">{METRIC_LABEL[k] ?? humanize(k)}</th>
-                    <td className="px-3 py-2 text-right font-semibold tabular-nums">{formatLiveMetric(k, v)}</td>
+                {screen.figures.map((f) => (
+                  <tr key={f.key} className="border-t border-line align-top first:border-t-0">
+                    <th scope="row" className="px-3 py-2 font-normal">
+                      <span className="font-medium">{f.label}</span>
+                      <span className="mt-0.5 block text-xs text-muted">{f.formula}</span>
+                    </th>
+                    <td className="px-3 py-2 text-right font-semibold whitespace-nowrap tabular-nums">{f.value}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-muted">Computed from the answers entered: asking prices, not closed sales.</p>
+          <p className="text-xs text-muted">Computed by GRID from the answers entered. Comparables are asking prices, not closed sales.</p>
         </section>
       )}
 
-      {r.checks.length > 0 && (
+      {summary && (summaryHeadline || summary.notes.length > 0) && (
+        <section aria-labelledby="lqr-summary" className="space-y-3">
+          <SectionHeading id="lqr-summary" title="Summary" />
+          <div className="space-y-3 rounded-xl border border-line bg-white p-5 text-sm leading-relaxed" data-testid="live-summary">
+            {summaryHeadline && <p className="font-medium text-ink">{clean(summaryHeadline)}</p>}
+            {summary.notes.length > 0 && (
+              <ul className="list-disc space-y-1.5 pl-5">
+                {summary.notes.map((n, i) => (
+                  <li key={i}><Cited text={n} known={known} /></li>
+                ))}
+              </ul>
+            )}
+            {summary.truncated && (
+              <p className="text-xs text-muted" data-print="hide">The research pipeline&apos;s summary was cut off; only its complete notes are shown.</p>
+            )}
+          </div>
+        </section>
+      )}
+
+      {checks.length > 0 && (
         <section aria-labelledby="lqr-checks" className="space-y-3">
           <SectionHeading id="lqr-checks" title="Checks" />
-          <Blocks blocks={r.checks.map((c) => ({ type: "callout", tone: TONE[c.tone.toLowerCase()] ?? (c.ok === false ? "warning" : "info"), text: c.detail }))} />
+          <Blocks blocks={checks.map((c) => ({ type: "callout", tone: c.tone, text: c.text }))} />
         </section>
       )}
 
       {r.snapshot.length > 0 && (
         <section aria-labelledby="lqr-snapshot" className="space-y-4">
-          <SectionHeading id="lqr-snapshot" title="Market snapshot" />
+          <SectionHeading id="lqr-snapshot" title="Market snapshot" right={r.snapshotDate ? <span className="text-xs text-muted">As of {clean(r.snapshotDate)}</span> : undefined} />
           {r.snapshot.map((q) => (
             <article key={q.id} className="rounded-xl border border-line bg-white p-5 print:break-inside-avoid">
-              {q.question && <h3 className="font-medium">{clean(q.question)}</h3>}
-              {q.answer && <p className="mt-2 text-sm leading-relaxed"><Cited text={q.answer} sources={nSources} /></p>}
-              {q.extra.length > 0 && (
+              <h3 className="font-medium">{clean(q.title)}</h3>
+              {q.answer && <p className="mt-2 text-sm leading-relaxed"><Cited text={q.answer} known={known} /></p>}
+              {q.evidence.length > 0 && (
+                <ul className="mt-3 space-y-2 text-sm leading-relaxed">
+                  {q.evidence.map((e, i) => (
+                    <li key={i} className="border-l-2 border-gold/70 pl-3">
+                      <Cited text={e.text} known={known} />
+                      <CiteLinks cites={e.cites} known={known} />
+                      {e.source && <span className="mt-0.5 block text-xs text-muted">{clean(e.source)}</span>}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {q.bullets.length > 0 && (
+                <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">
+                  {q.bullets.map((b, i) => (
+                    <li key={i}><Cited text={b} known={known} /></li>
+                  ))}
+                </ul>
+              )}
+              {q.facts.length > 0 && (
                 <dl className="mt-3 grid gap-x-4 gap-y-1.5 border-t border-line pt-3 text-sm sm:grid-cols-[220px_1fr]">
-                  {q.extra.map(([k, v]) => (
-                    <Fragment key={k}>
-                      <dt className="text-muted">{humanize(k)}</dt>
-                      <dd className="min-w-0 break-words"><Cited text={v} sources={nSources} /></dd>
+                  {q.facts.map((f, i) => (
+                    <Fragment key={i}>
+                      <dt className="text-muted">{f.label}</dt>
+                      <dd className="min-w-0 break-words"><Cited text={f.value} known={known} /></dd>
                     </Fragment>
                   ))}
                 </dl>
               )}
             </article>
           ))}
-        </section>
-      )}
-
-      {r.draft && (
-        <section aria-labelledby="lqr-summary" className="space-y-3">
-          <SectionHeading id="lqr-summary" title="Summary" />
-          <div className="rounded-xl border border-line bg-white p-5"><SimpleMarkdown text={r.draft} /></div>
+          <p className="text-xs text-muted">Public listings show asking prices, not closed sales. Check the sources before relying on a figure.</p>
         </section>
       )}
 
@@ -201,31 +242,30 @@ export function LiveQuickReportView({
         </dl>
       </section>
 
-      {nSources > 0 && (
+      {r.sources.length > 0 && (
         <section aria-labelledby="lqr-sources" className="space-y-3">
           <SectionHeading id="lqr-sources" title="Sources" />
           <ol className="space-y-1.5 text-sm" data-testid="live-sources">
-            {r.sources.map((s, i) => {
-              const url = safeUrl(s);
-              return (
-                <li key={i} id={`src-${i + 1}`} className="grid grid-cols-[2.5rem_1fr] gap-1">
-                  <span className="font-mono text-xs text-bronze-ink">[{i + 1}]</span>
-                  {url ? (
-                    <a href={url} target="_blank" rel="noopener noreferrer nofollow" className="min-w-0 break-all">{url}</a>
-                  ) : (
-                    <span className="min-w-0 break-words">{s}</span>
+            {r.sources.map((s) => (
+              <li key={s.n} id={`src-${s.n}`} className="grid grid-cols-[2.5rem_1fr] gap-1">
+                <span className="font-mono text-xs text-bronze-ink">[{s.n}]</span>
+                <span className="min-w-0 break-all">
+                  {s.label && <span className="mr-1 break-words">{clean(s.label)}</span>}
+                  {s.url && (
+                    <a href={s.url} target="_blank" rel="noopener noreferrer nofollow">
+                      {s.url}
+                    </a>
                   )}
-                </li>
-              );
-            })}
+                </span>
+              </li>
+            ))}
           </ol>
-          <p className="text-xs text-muted">Listing and third-party sources show asking prices and public figures; check them before relying on them.</p>
         </section>
       )}
 
       {r.qa && (
         <details className="rounded-xl border border-line bg-white p-5" data-print="hide">
-          <summary className="cursor-pointer font-medium">Quality check notes (GRID)</summary>
+          <summary className="cursor-pointer font-medium">Quality check notes from the pipeline (GRID)</summary>
           <div className="mt-3"><SimpleMarkdown text={r.qa} /></div>
         </details>
       )}

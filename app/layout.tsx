@@ -15,7 +15,8 @@ export const viewport: Viewport = { themeColor: "#0e192f", width: "device-width"
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-PH" className={`${cantata.variable} ${poppins.variable}`}>
-      <body>{children}</body>
+      {/* Browser extensions (e.g. test recorders, password managers) add attributes to <body>; ignore them. */}
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

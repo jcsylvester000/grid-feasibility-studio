@@ -1,14 +1,15 @@
 /**
  * Netlify Background Function: runs one VectorShift pipeline call for a queued run (up to 15 minutes;
  * the caller gets 202 immediately). Called by lib/runs/dispatch.ts when RUN_DISPATCH=netlify with
- * header x-internal-secret = INTERNAL_DISPATCH_SECRET and body { runId, delayMs }.
+ * header x-internal-secret = INTERNAL_DISPATCH_SECRET (or a value derived from APP_SECRET) and body { runId, delayMs }.
  * Same worker module as local runs (lib/runs/worker.ts), so behaviour is identical.
  */
 import type { Config } from "@netlify/functions";
 import { executeRun } from "../../lib/runs/worker";
+import { dispatchSecret } from "../../lib/runs/dispatch-secret";
 
 export default async (req: Request) => {
-  const secret = process.env.INTERNAL_DISPATCH_SECRET;
+  const secret = dispatchSecret();
   if (!secret || req.headers.get("x-internal-secret") !== secret) {
     console.warn("run-worker: refused (bad or missing internal secret)");
     return;

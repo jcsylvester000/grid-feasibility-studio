@@ -1,7 +1,7 @@
 /**
  * Product catalogue for the signed-in app. Typical-time estimates are the Project Brief v1.1 targets
- * (19 Oct 2026): Quick Report under 5 minutes, Executive Summary under 30 minutes, Feasibility Report
- * under 3 hours. They are shown as "estimate" until 20 successful runs exist (BRD S-01, AC-021).
+ * (19 Oct 2026): Executive Summary under 30 minutes, Feasibility Report under 3 hours. Quick Report: about
+ * 1 minute on the live VectorShift pipeline (28 Oct 2026: GRID reports under 30 s; first measured run 102 s). They are shown as "estimate" until 20 successful runs exist (BRD S-01, AC-021).
  * GRID-DECISION: Teaser Scan has no published target; 5 minutes is a placeholder.
  */
 import type { Product } from "@/lib/db/schema";
@@ -25,7 +25,7 @@ export const PRODUCTS: ProductInfo[] = [
     short: "Fast price screen against comparable listings.",
     answers: "Is the asking price below, inside or above comparable listings?",
     needs: "Dropdowns only: location, lot area, asking price and comparables",
-    estimateMs: 5 * MIN,
+    estimateMs: 1 * MIN,
   },
   {
     key: "executive_summary",

@@ -7,6 +7,14 @@
  *    run must never be executed inline there: on Netlify the mode defaults to "netlify" (GFS-28).
  */
 import { appOrigin } from "./config";
+import { dispatchSecret } from "./dispatch-secret";
+
+/** Why a hand-off to the background function failed (shown as a reference code and logged). */
+export class DispatchError extends Error {
+  constructor(public readonly code: "DISPATCH_NOT_CONFIGURED" | "DISPATCH_UNREACHABLE" | `DISPATCH_HTTP_${number}`, detail: string) {
+    super(`${code}: ${detail}`);
+  }
+}
 
 type Schedule = (task: () => Promise<unknown>) => void;
 
@@ -26,8 +34,9 @@ export function dispatchMode(): "inline" | "netlify" | "none" {
  * Site address for calling the background function: the address the request came in on, then Netlify's
  * own site URL, then APP_ORIGIN. (A wrong APP_ORIGIN must not stop runs from starting.)
  */
-function workerOrigin(origin?: string) {
-  return (origin || process.env.URL || appOrigin()).replace(/\/$/, "");
+function workerOrigins(origin?: string) {
+  const list = [origin, process.env.URL, process.env.DEPLOY_PRIME_URL, appOrigin()].filter((o): o is string => !!o).map((o) => o.replace(/\/$/, ""));
+  return [...new Set(list)];
 }
 
 export async function dispatchRun(runId: string, opts: { delayMs?: number; schedule?: Schedule; origin?: string } = {}) {
@@ -35,15 +44,26 @@ export async function dispatchRun(runId: string, opts: { delayMs?: number; sched
   const mode = dispatchMode();
   if (mode === "none") return; // tests: the caller runs executeRun itself
   if (mode === "netlify") {
-    const secret = process.env.INTERNAL_DISPATCH_SECRET;
-    if (!secret) throw new Error("Missing environment variable INTERNAL_DISPATCH_SECRET");
-    const res = await fetch(`${workerOrigin(opts.origin)}/.netlify/functions/run-worker`, {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-internal-secret": secret },
-      body: JSON.stringify({ runId, delayMs }),
-    });
-    if (res.status !== 202 && !res.ok) throw new Error(`run-worker dispatch failed with HTTP ${res.status}`);
-    return;
+    const secret = dispatchSecret();
+    if (!secret) throw new DispatchError("DISPATCH_NOT_CONFIGURED", "neither INTERNAL_DISPATCH_SECRET nor APP_SECRET is set");
+    // The address the request came in on first; then Netlify's own site addresses; then APP_ORIGIN.
+    let last: DispatchError | null = null;
+    for (const origin of workerOrigins(opts.origin)) {
+      try {
+        const res = await fetch(`${origin}/.netlify/functions/run-worker`, {
+          method: "POST",
+          headers: { "content-type": "application/json", "x-internal-secret": secret },
+          body: JSON.stringify({ runId, delayMs }),
+          signal: AbortSignal.timeout(10_000),
+        });
+        if (res.status === 202 || res.ok) return;
+        last = new DispatchError(`DISPATCH_HTTP_${res.status}`, `${origin} answered ${res.status}`);
+      } catch (err) {
+        last = new DispatchError("DISPATCH_UNREACHABLE", `${origin}: ${err instanceof Error ? err.message : String(err)}`);
+      }
+      console.error(JSON.stringify({ evt: "dispatch.failed", runId, error: last.message }));
+    }
+    throw last ?? new DispatchError("DISPATCH_UNREACHABLE", "no address to call");
   }
   const task = async () => {
     if (delayMs) await sleep(delayMs);

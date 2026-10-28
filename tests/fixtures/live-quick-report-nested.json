@@ -1,0 +1,126 @@
+{
+ "draft": "{\"headline\":\"Promising, worth a full study, but treat this as a first look: asking ₱2,500/sqm (about ₱10,000,000 for 4,000 sqm), low confidence\",\"notes\":[\"Price: the asking price sits inside the comparable range you gave us [2].\",\"Evidence is thin: only 1 to 2 comparable listings.\",\"Rent needs checking: public warehouse examples show about ₱120 to ₱200",
+ "checks": {
+  "checks": [
+   {
+    "ok": true,
+    "key": "zonal_checked",
+    "tone": "info",
+    "detail": "BIR zonal value checked: ₱3,000 per sqm."
+   },
+   {
+    "ok": false,
+    "key": "rent_outlier",
+    "tone": "warning",
+    "detail": "The rent entered is far above public warehouse examples."
+   }
+  ]
+ },
+ "rating": {
+  "rule": {
+   "note": "x",
+   "label": "y",
+   "metric": "price_vs_comps",
+   "marginal_at": null,
+   "promising_at": null
+  },
+  "label": "Promising - worth a full study",
+  "rating": "promising",
+  "headline": "Promising: asked at PHP 2,500/sqm, 67% below the lowest comparable (PHP 1,500).",
+  "confidence": "low",
+  "evidence_text": "1-2 listings, prices this month, zonal value checked",
+  "evidence_score": 2
+ },
+ "metrics": {
+  "commission_amount_php": 300000,
+  "zonal_value_total_php": 12000000,
+  "asking_price_total_php": 10000000,
+  "gross_rent_monthly_php": 7500000,
+  "comparable_value_range_php": {
+   "low": 6000000,
+   "high": 28000000
+  },
+  "asking_price_vs_comparable_low_pct": 566.67,
+  "asking_price_vs_comparable_high_pct": -64.29
+ },
+ "sources": [
+  {
+   "url": "https://example.com/listing-a",
+   "citation": "[1]"
+  },
+  {
+   "url": "https://example.com/listing-b",
+   "citation": "[2]"
+  },
+  {
+   "url": "javascript:alert(1)",
+   "citation": "[3]"
+  }
+ ],
+ "qa_result": "**QA result: FAIL**\n- Draft is truncated.",
+ "market_snapshot": {
+  "date": "2026-10-28",
+  "report_id": "QR-20261028-DA42B77B",
+  "location": {
+   "region": "CALABARZON (Region IV-A)",
+   "province": "Batangas",
+   "road_access": "Fronts a major road or highway",
+   "city_municipality": "Batangas City"
+  },
+  "q2_current_leasing_evidence": {
+   "broker_figure": {
+    "building_area_sqm": 3000,
+    "current_rent_per_sqm_per_month_php": 2500,
+    "implied_monthly_rent_if_applied_to_entire_building_php": 7500000
+   },
+   "public_evidence": [
+    {
+     "source": "Example listings",
+     "finding": "Warehouse space in Batangas City asks about ₱150/sqm/month.",
+     "citation": "[1]"
+    }
+   ]
+  },
+  "q1_market_land_price_evidence": {
+   "broker_figures": {
+    "comparables_gathered": "This month",
+    "asking_price_per_sqm_php": 2500,
+    "reported_comparable_count": "1–2 listings",
+    "bir_zonal_value_per_sqm_php": 3000,
+    "estimated_total_land_price_php": 10000000,
+    "reported_comparable_range_per_sqm_php": {
+     "low": 1500,
+     "high": 7000
+    }
+   },
+   "public_evidence": [
+    {
+     "source": "Example portal",
+     "finding": "Six public listings, median about ₱5,689/sqm.",
+     "citation": "[2]"
+    }
+   ]
+  },
+  "q4_development_and_validation_items": {
+   "document_status": {
+    "title_copy_available": false,
+    "tax_declaration_copy_available": false
+   },
+   "public_market_observations": [
+    "Industrial parks nearby report steady demand [1]."
+   ]
+  },
+  "q3_location_demand_and_access_evidence": {
+   "public_evidence": [
+    {
+     "source": "Example news",
+     "finding": "Port expansion supports logistics demand.",
+     "citation": "[2]"
+    }
+   ]
+  }
+ },
+ "quick_report_inputs": {
+  "report_id": "QR-20261028-DA42B77B"
+ }
+}
