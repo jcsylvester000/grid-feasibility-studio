@@ -1,0 +1,111 @@
+{
+ "quick_report_inputs": {
+  "report_id": "QR-20261028-C6TEST",
+  "today": "2026-10-28",
+  "region": "NCR",
+  "province": "Metro Manila",
+  "city_municipality": "Taguig",
+  "road_access": "Fronts a major road or highway",
+  "lot_area": "about 15,000 sqm",
+  "building_on_site": "None (raw land)",
+  "client_goal": "Develop and sell",
+  "client_type": "Individual landowner",
+  "title_copy": "Have a photocopy from the seller",
+  "tax_declaration_copy": "Have a copy",
+  "asking_price_per_sqm": "₱42,000 per sqm",
+  "bir_zonal_value": "Not checked yet",
+  "comparable_lowest": "₱20,000 per sqm",
+  "comparable_highest": "₱70,000 per sqm",
+  "comparable_count": "11–20 listings",
+  "comparables_gathered": "This month",
+  "commission": "3% of sales",
+  "market_insight": "Yes, Market Insight has been run",
+  "current_rent": null
+ },
+ "market_snapshot": {
+  "q1": {
+   "question": "What public comparable land listings were found in Taguig?",
+   "answer": "Public listings include approximately 11,520 sqm along Laguna Lake Highway in Santa Ana, Taguig, offered at ₱24,000/sqm, and approximately 2,750 sqm along a main road in Santa Ana, offered at ₱50,000/sqm. These provide public asking-price references of ₱24,000–₱50,000/sqm for sizable or main-road land in the broader Taguig market. [3][12]",
+   "broker_figure": "Broker comparables: ₱20,000–₱70,000/sqm from 11–20 listings gathered this month.",
+   "property_asking_price": "₱42,000/sqm",
+   "indicative_gross_asking_value": "₱630,000,000 for approximately 15,000 sqm"
+  },
+  "q2": {
+   "question": "How does the asking price compare with publicly reported Taguig land listings?",
+   "answer": "The asking price of ₱42,000/sqm is above the cited ₱24,000/sqm 11,520-sqm listing and below the cited ₱50,000/sqm 2,750-sqm main-road listing. It falls within the broker's reported ₱20,000–₱70,000/sqm comparable range. [3][12]",
+   "position_within_broker_range": "Mid-range",
+   "calculated_position": "Approximately 45.5% of the way from ₱20,000/sqm to ₱70,000/sqm"
+  },
+  "q3": {
+   "question": "What public BIR zonal-value information is available for Taguig?",
+   "answer": "A public 2026 Taguig zonal-value compilation reports citywide residential values of ₱7,000–₱523,000/sqm, with a reported median of ₱47,000/sqm, while commercial values range from ₱9,000/sqm up to ₱2,160,000/sqm. The exact applicable BIR zonal value cannot be identified without the property's barangay, street, land classification, and official BIR schedule. [4]",
+   "broker_input": "BIR zonal value: Not checked yet",
+   "comparison_to_reported_tag​uig_residential_median": "The asking price of ₱42,000/sqm is ₱5,000/sqm below the reported Taguig residential median of ₱47,000/sqm. [4]",
+   "official_verification_source": "The BIR publishes zonal values through its official Zonal Values page. [8]"
+  },
+  "q4": {
+   "question": "What current public market and infrastructure signals are relevant to a major-road development site in Taguig?",
+   "answer": "Public reporting indicates continuing large-scale investment and transport-led development in Taguig. Ayala Land committed ₱1 billion to modernize Market! Market! and prepare it for integration with mass-transit infrastructure, while Arca South is reported to be associated with planned Skyway Stage 4 or Southeast Metro Manila Expressway access ramps. These are location-level market signals only and do not establish the site's entitlement, access, zoning, or development feasibility. [5][2]",
+   "development_context": "The property is raw land of approximately 15,000 sqm, fronts a major road or highway, and the stated client goal is to develop and sell.",
+   "commission_at_3_percent": "₱18,900,000 based on the ₱630,000,000 gross asking value",
+   "gross_value_less_stated_commission": "₱611,100,000 before taxes, transaction costs, development costs, financing, and other expenses"
+  }
+ },
+ "sources": [
+  "https://ren.ph/tools/zonal-value",
+  "https://bworldonline.com/corporate/2026/10/25/789089/ayala-land-relies-on-transit-links-to-drive-arca-south-demand/",
+  "https://homes.trovit.ph/land-taguig",
+  "https://ren.ph/tools/zonal-value/metro-manila/taguig",
+  "https://www.gmanetwork.com/news/money/companies/1002307/ayala-land-gets-12-year-lease-extension-for-market-market-commits-p1b/story/",
+  "https://onepropertee.com/consular-road-lot-for-sale-taguig",
+  "https://ren.ph/tools/zonal-value/metro-manila",
+  "https://www.bir.gov.ph/zonal-values",
+  "https://zonalvalue.ph/zonal-value/taguig-city",
+  "https://www.landvalueph.com/land-value",
+  "https://onepropertee.com/c6-pasig-properties",
+  "https://homes.trovit.ph/land-fort-bonifacio",
+  "https://onepropertee.com/pre-selling-lot-bgc-taguig",
+  "https://mb.com.ph/2026/07/23/real-estate-remains-resilient-industrial-sector-gains-momentum-in-h1-of-2026",
+  "https://homes.trovit.ph/land-western-bicutan"
+ ],
+ "checks": [
+  {
+   "key": "zonal_not_checked",
+   "ok": false,
+   "tone": "warning",
+   "detail": "BIR zonal value not checked yet. It is public and quick to look up."
+  },
+  {
+   "key": "snapshot_comps",
+   "ok": true,
+   "tone": "info",
+   "detail": "Market snapshot found 2 listings with a median asking price of about PHP 37,000 per sqm"
+  }
+ ],
+ "metrics": {
+  "total_asking_price_php": 630000000,
+  "comparable_low_total_php": 300000000,
+  "comparable_high_total_php": 1050000000,
+  "asking_price_vs_comparable_low_pct": 110,
+  "asking_price_vs_comparable_high_pct": -40,
+  "asking_price_vs_comparable_midpoint_pct": -6.6666666667,
+  "commission_php": 18900000
+ },
+ "rating": {
+  "rating": "marginal",
+  "label": "Marginal - fairly priced",
+  "headline": "Marginal: asked at PHP 42,000/sqm, inside the comparable range of PHP 20,000 to PHP 70,000 and in the lower half (7% under the middle).",
+  "confidence": "medium",
+  "evidence_score": 4,
+  "evidence_text": "11–20 listings, prices this month, zonal value not checked, title copy on hand",
+  "rule": {
+   "metric": "price_vs_comps",
+   "label": "Asking price per sqm against comparable listings",
+   "promising_at": null,
+   "marginal_at": null,
+   "note": "Below the comparable low = Promising; inside the range = Marginal; above the comparable high = Weak. GRID placeholder bands; the team must confirm before launch."
+  }
+ },
+ "draft": "",
+ "qa_result": "**QA status: Blocked — Q06 draft missing.**\n\nThere is no text under “DRAFT TO CHECK,” so wording, completeness, and consistency cannot be assessed. Provide the Q06 draft for review.\n\n**Reference checks for the eventual review:**\n- **Rating:** Preserve “Marginal — fairly priced,” with medium confidence; do not present this as a valuation or verified development feasibility.\n- **Arithmetic:** Approximately 15,000 sqm × ₱42,000/sqm = **₱630 million**. At 3%, commission is **₱18.9 million**. Asking price is approximately **6.7% below the broker-range midpoint** of ₱45,000/sqm.\n- **Upstream discrepancy:** Q02’s “45.5% of the way” is incorrect. ₱42,000 sits **44%** of the way from ₱20,000 to ₱70,000/sqm.\n- **Comparable evidence:** Distinguish the broker-reported **11–20 listings at ₱20,000–₱70,000/sqm** from the **two public references at ₱24,000 and ₱50,000/sqm**. These are asking prices, not confirmed transaction prices.\n- **Zonal value:** The property-specific BIR zonal value remains **unchecked**. A third-party citywide median is not the applicable site value.\n- **Documents and feasibility:** A title photocopy and tax declaration copy do not establish verified ownership, clean title, zoning, access rights, or development feasibility.\n- **Proceeds wording:** ₱611.1 million is asking value less the stated commission only—not net proceeds or development profit.\n\n**Source-verification limit:** The supplied snapshot contains citations, but their contents have not been independently verified in this QA check."
+}

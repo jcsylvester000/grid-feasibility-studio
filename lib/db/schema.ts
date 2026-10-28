@@ -34,6 +34,14 @@ export type RunPhase = (typeof RUN_PHASES)[number];
 export const AUTH_ATTEMPT_KINDS = ["login", "login_address", "register", "availability"] as const;
 
 export type Product = (typeof PRODUCTS)[number];
+
+export type RunInputSnapshot = {
+  intake: Record<string, unknown>;
+  mode?: "fields" | "run_request";
+  sent?: Record<string, string> | null;
+  report_ref?: string | null;
+  recorded_at: string;
+};
 export type ReportStatus = (typeof REPORT_STATUSES)[number];
 export type RunStatus = (typeof RUN_STATUSES)[number];
 export type UserRole = (typeof USER_ROLES)[number];
@@ -143,6 +151,11 @@ export const runs = pgTable(
     retryAt: ts("retry_at"),
     rawFailureBody: jsonb("raw_failure_body"),
     rawFailureExpiresAt: ts("raw_failure_expires_at"),
+    /**
+     * The answers this run used, kept with the run so every version of a report shows its own inputs
+     * even after the form is edited (migration 0006). `sent` is exactly what went to the pipeline.
+     */
+    inputSnapshot: jsonb("input_snapshot").$type<RunInputSnapshot>(),
   },
   (t) => [
     index("runs_status_started_idx").on(t.status, t.startedAt),

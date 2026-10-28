@@ -4,7 +4,7 @@
  */
 import { and, desc, eq, inArray, lt, sql } from "drizzle-orm";
 import { getDb } from "../client";
-import { envelopes, reports, runs, users, type Product, type ReportStatus, type RunPhase } from "../schema";
+import { envelopes, reports, runs, users, type Product, type ReportStatus, type RunInputSnapshot, type RunPhase } from "../schema";
 
 export type RunRow = typeof runs.$inferSelect;
 
@@ -50,6 +50,7 @@ export async function createQueuedRun(
     pipelineId: string;
     attempt: number;
     retryAt?: Date | null;
+    inputSnapshot?: RunInputSnapshot | null;
   },
   limits?: { userId: string; perUser: number; global: number },
 ) {
@@ -68,7 +69,7 @@ export async function createQueuedRun(
     }
     const [run] = await tx
       .insert(runs)
-      .values({ ...values, status: "queued", phase: "request_sent", retryAt: values.retryAt ?? null })
+      .values({ ...values, status: "queued", phase: "request_sent", retryAt: values.retryAt ?? null, inputSnapshot: values.inputSnapshot ?? null })
       .returning();
     await tx.update(reports).set({ status: "queued", updatedAt: new Date() }).where(eq(reports.id, values.reportId));
     return run!;
@@ -91,6 +92,31 @@ export async function claimRun(runId: string, now = new Date()) {
 export async function setRunPhase(runId: string, phase: RunPhase) {
   const db = await getDb();
   await db.update(runs).set({ phase }).where(and(eq(runs.id, runId), eq(runs.status, "running")));
+}
+
+/** Records exactly what was sent to the pipeline (the intake part is written when the run is queued). */
+export async function recordRunInputs(runId: string, snapshot: RunInputSnapshot) {
+  const db = await getDb();
+  await db.update(runs).set({ inputSnapshot: snapshot }).where(eq(runs.id, runId));
+}
+
+/** Every run of a report, oldest first (the version history). Envelope bodies are not loaded. */
+export async function listRunsForReport(reportId: string) {
+  const db = await getDb();
+  return db.select().from(runs).where(eq(runs.reportId, reportId)).orderBy(runs.queuedAt);
+}
+
+/** The stored envelope of one succeeded run of a report (an older version). */
+export async function envelopeForReportRun(reportId: string, runId: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(runId)) return null;
+  const db = await getDb();
+  const [e] = await db
+    .select({ envelope: envelopes, run: runs })
+    .from(envelopes)
+    .innerJoin(runs, eq(envelopes.runId, runs.id))
+    .where(and(eq(runs.reportId, reportId), eq(runs.id, runId), eq(runs.status, "succeeded")))
+    .limit(1);
+  return e ?? null;
 }
 
 export async function getRun(runId: string) {
@@ -192,6 +218,21 @@ export async function cancelRun(runId: string, now = new Date()) {
   });
 }
 
+/** A queued run that could not be handed to the worker (dispatch failed): failed, so the report is free again. */
+export async function failQueuedRun(runId: string, code: string, now = new Date()) {
+  const db = await getDb();
+  return db.transaction(async (tx) => {
+    const [run] = await tx
+      .update(runs)
+      .set({ status: "failed", errorCode: code, finishedAt: now })
+      .where(and(eq(runs.id, runId), eq(runs.status, "queued")))
+      .returning();
+    if (!run) return null;
+    await tx.update(reports).set({ status: "failed", updatedAt: now }).where(eq(reports.id, run.reportId));
+    return run;
+  });
+}
+
 /**
  * Safety net for a worker that died (function killed, process restart): running runs older than their
  * timeout plus a grace period are failed with VS_TIMEOUT.
@@ -241,6 +282,7 @@ export async function insertFinishedRun(values: {
   durationMs: number;
   envelope: { schemaVersion: string; envelope: Record<string, unknown> };
   at: Date;
+  inputSnapshot?: RunInputSnapshot | null;
 }) {
   const db = await getDb();
   return db.transaction(async (tx) => {
@@ -259,6 +301,7 @@ export async function insertFinishedRun(values: {
         queuedAt: new Date(values.at.getTime() - values.durationMs),
         startedAt: new Date(values.at.getTime() - values.durationMs),
         finishedAt: values.at,
+        inputSnapshot: values.inputSnapshot ?? null,
       })
       .returning();
     await tx.insert(envelopes).values({ runId: run!.id, product: values.product, ...values.envelope });

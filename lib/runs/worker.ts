@@ -3,16 +3,19 @@
  * Background Function run-worker (RUN_DISPATCH=netlify). Never throws; every outcome is stored.
  * VS-09 log line: ids, status, sizes and timing only, never inputs or outputs.
  */
-import { claimRun, createQueuedRun, finishRun, getRun, getRunContext, setRunPhase } from "@/lib/db/repos/runs";
-import type { Product, ReportStatus } from "@/lib/db/schema";
+import { claimRun, createQueuedRun, finishRun, getRun, getRunContext, recordRunInputs, setRunPhase } from "@/lib/db/repos/runs";
+import type { Product, ReportStatus, RunInputSnapshot } from "@/lib/db/schema";
 import { validateIntake } from "@/lib/forms";
 import { track } from "@/lib/usage/track";
 import { callPipeline, type PipelineFile } from "@/lib/vectorshift/client";
 import { shouldAutoRetry } from "@/lib/vectorshift/errors";
 import { parseOutputs } from "@/lib/vectorshift/parse-output";
-import { appOrigin, pipelineId as pipelineFor, RETRY_DELAY_MS, timeoutMs, vectorShift } from "./config";
+import { quickReportInputs, quickReportRef } from "@/lib/vectorshift/quick-report-fields";
+import { parseLiveOutputs, QR_LIVE_FORMAT, QR_LIVE_SCHEMA } from "@/lib/vectorshift/quick-report-live";
+import { validateEnvelope } from "@/lib/contract/validate";
+import { appOrigin, inputMode, pipelineId as pipelineFor, RETRY_DELAY_MS, timeoutMs, vectorShift } from "./config";
 import { docsIntake, loadRunFiles } from "@/lib/files/run-files";
-import { buildRunRequest, type RunDocument } from "./run-request";
+import { buildRunRequest, manilaDate, type RunDocument } from "./run-request";
 
 export type RunFiles = (runId: string, reportId: string) => Promise<{ documents: RunDocument[]; files: PipelineFile[] }>;
 
@@ -49,17 +52,62 @@ export async function executeRun(runId: string, opts: { fetchImpl?: typeof fetch
     log({ runId, product, pipelineId: run.pipelineId, vsRunId: extra.vsRunId ?? null, http: extra.httpStatus ?? null, ms: durationMs, inBytes: extra.inputBytes ?? null, outBytes: extra.outputBytes ?? null, code, ignored: !stored });
     if (!stored) return { claimed: true as const, status: "ignored" };
     await track(userPublicId, "run.failed", { product, pipelineId: run.pipelineId, durationMs, errorCode: code, status: "failed" });
-    if (shouldAutoRetry(code, product, run.attempt)) await scheduleRetry(run.reportId, product, run.attempt + 1);
+    if (shouldAutoRetry(code, product, run.attempt)) await scheduleRetry(run.reportId, product, run.attempt + 1, run.inputSnapshot ?? null);
     return { claimed: true as const, status: "failed", code };
+  };
+
+  /**
+   * Live Quick Report pipeline: 21 named text inputs, output in the pipeline's own format (stored as is,
+   * with its cost outputs). A contract envelope in result_envelope is still accepted.
+   */
+  const runQuickReportFields = async () => {
+    const pipelineId = run.pipelineId;
+    const { baseUrl, apiKey } = vectorShift(product);
+    const intakeNow = run.inputSnapshot?.intake ?? report.intake;
+    const checked = validateIntake(product, intakeNow);
+    const today = manilaDate(now());
+    const reportRef = quickReportRef(report.id, today);
+    const inputs = quickReportInputs(checked ? checked.intake : intakeNow, { reportRef, today });
+    const snapshot: RunInputSnapshot = { intake: intakeNow, mode: "fields", sent: inputs, report_ref: reportRef, recorded_at: run.inputSnapshot?.recorded_at ?? now().toISOString() };
+    await recordRunInputs(runId, snapshot);
+    await setRunPhase(runId, "files_attached");
+    await setRunPhase(runId, "pipeline_working");
+    const result = await callPipeline({ baseUrl, apiKey, pipelineId, inputs, timeoutMs: timeoutMs(product), fetchImpl: opts.fetchImpl });
+    const base = { vsRunId: result.vsRunId, httpStatus: result.httpStatus, inputBytes: result.inputBytes, outputBytes: result.outputBytes, durationMs: Date.now() - started };
+    if (!result.ok) return await fail(result.code, { ...base, rawFailureBody: result.rawBody });
+
+    await setRunPhase(runId, "checking");
+    const parsed = parseLiveOutputs(result.outputs);
+    if (!parsed.ok) return await fail(parsed.code, { ...base, rawFailureBody: { issues: parsed.issues, outputs: truncate(result.outputs) } });
+    let envelope: { schemaVersion: string; product: Product; envelope: Record<string, unknown> };
+    if (parsed.kind === "contract") {
+      const v = validateEnvelope(parsed.candidate, { product, reportId: report.id });
+      if (!v.ok) return await fail("SCHEMA_INVALID", { ...base, rawFailureBody: { issues: v.issues, outputs: truncate(result.outputs) } });
+      if (v.value.run.status === "failed" || v.value.run.status === "cancelled")
+        return await fail(v.value.errors[0]?.code ?? "NODE_FAILED", { ...base, envelope: { schemaVersion: v.value.schema_version, product, envelope: v.value as unknown as Record<string, unknown> } });
+      envelope = { schemaVersion: v.value.schema_version, product, envelope: v.value as unknown as Record<string, unknown> };
+    } else {
+      envelope = {
+        schemaVersion: QR_LIVE_SCHEMA,
+        product,
+        envelope: { format: QR_LIVE_FORMAT, version: 1, report_ref: reportRef, vs_run_id: result.vsRunId, result: parsed.raw, costs: parsed.costs },
+      };
+    }
+    const stored = await finishRun(runId, { status: "succeeded", ...base, envelope, reportStatus: "ready" }, now());
+    log({ runId, product, pipelineId, vsRunId: result.vsRunId, http: result.httpStatus, ms: base.durationMs, inBytes: result.inputBytes, outBytes: result.outputBytes, code: null, ignored: !stored });
+    if (stored) await track(userPublicId, "run.succeeded", { product, pipelineId, durationMs: base.durationMs, status: "succeeded" });
+    return { claimed: true as const, status: stored ? "succeeded" : "ignored" };
   };
 
   try {
     const pipelineId = run.pipelineId;
-    const { baseUrl, apiKey } = vectorShift();
+    const { baseUrl, apiKey } = vectorShift(product);
     if (!pipelineId) return await fail("VS_BAD_REQUEST", { rawFailureBody: { error: `No pipeline id configured for ${product}` } });
     if (!apiKey) return await fail("VS_AUTH", { rawFailureBody: { error: "VECTORSHIFT_API_KEY is not set" } });
 
-    const checked = validateIntake(product, report.intake);
+    // The answers recorded when the run was queued (the version's inputs); older runs fall back to the report.
+    const intakeNow = run.inputSnapshot?.intake ?? report.intake;
+    const checked = validateIntake(product, intakeNow);
     let files: PipelineFile[] = [];
     let documents: RunDocument[] = [];
     try {
@@ -69,11 +117,14 @@ export async function executeRun(runId: string, opts: { fetchImpl?: typeof fetch
     }
     await setRunPhase(runId, "files_attached");
 
+    const mode = inputMode(product);
+    if (product === "quick_report" && mode === "fields") return await runQuickReportFields();
+
     const runRequest = buildRunRequest({
       product,
       reportId: report.id,
       attempt: run.attempt,
-      intake: { ...(checked ? checked.intake : report.intake), ...carried(report.intake), ...docsIntake(documents) },
+      intake: { ...(checked ? checked.intake : intakeNow), ...carried(intakeNow), ...docsIntake(documents) },
       complete: checked ? checked.ok : true,
       userPublicId,
       appOrigin: appOrigin(),
@@ -117,7 +168,7 @@ export async function executeRun(runId: string, opts: { fetchImpl?: typeof fetch
 }
 
 /** 7.3 step 6: one automatic retry after 20 seconds for retryable failures. */
-async function scheduleRetry(reportId: string, product: Product, attempt: number) {
+async function scheduleRetry(reportId: string, product: Product, attempt: number, inputSnapshot: RunInputSnapshot | null) {
   try {
     const retry = await createQueuedRun({
       reportId,
@@ -125,6 +176,7 @@ async function scheduleRetry(reportId: string, product: Product, attempt: number
       pipelineId: pipelineFor(product),
       attempt,
       retryAt: new Date(Date.now() + RETRY_DELAY_MS),
+      inputSnapshot: inputSnapshot ? { intake: inputSnapshot.intake, recorded_at: inputSnapshot.recorded_at } : null,
     });
     const { dispatchRun } = await import("./dispatch");
     await dispatchRun(retry.id, { delayMs: RETRY_DELAY_MS });

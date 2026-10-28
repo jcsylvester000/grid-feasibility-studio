@@ -50,6 +50,8 @@ export async function startRun(user: UserRow, reportId: string): Promise<StartRe
         product,
         pipelineId: pipelineId(product),
         attempt: (await lastAttemptForReport(report.id)) + 1,
+        // The answers this version uses; later edits to the form do not change it.
+        inputSnapshot: { intake: report.intake, recorded_at: new Date().toISOString() },
       },
       { userId: user.id, perUser: MAX_ACTIVE_PER_USER, global: maxConcurrent() },
     );

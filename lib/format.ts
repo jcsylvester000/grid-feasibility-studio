@@ -18,3 +18,9 @@ export function formatDate(input: string | Date) {
     .reduce<Record<string, string>>((acc, p) => ((acc[p.type] = p.value), acc), {});
   return `${Number(parts.day)} ${months[Number(parts.month) - 1]} ${parts.year}`;
 }
+
+/** A Date → "28 Oct 2026, 2:14 PM" (Manila time). */
+export function formatDateTime(date: Date) {
+  const time = new Intl.DateTimeFormat("en-PH", { timeZone: "Asia/Manila", hour: "numeric", minute: "2-digit", hour12: true }).format(date).replace(/\s?([ap])\.?m\.?/i, (_m, a: string) => ` ${a.toUpperCase()}M`);
+  return `${formatDate(date)}, ${time}`;
+}

@@ -20,6 +20,8 @@ import { buildRunRequest } from "@/lib/runs/run-request";
 process.env.APP_SECRET = "test-secret-test-secret-test-secret-123";
 process.env.RUN_DISPATCH = "none";
 process.env.VECTORSHIFT_BASE_URL = "http://localhost:4010";
+// These tests cover the BRD contract path (run_request in, result_envelope contract out).
+process.env.VS_INPUT_QUICK_REPORT = "run_request";
 process.env.VECTORSHIFT_API_KEY = "mock";
 process.env.VS_PIPELINE_QUICK_REPORT = "mock-quick_report";
 process.env.VS_PIPELINE_TEASER_INTAKE = "mock-teaser_intake";

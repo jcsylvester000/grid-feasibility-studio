@@ -52,7 +52,7 @@ string with user `admin_reader` and that password.
 | `UPLOAD_DRIVER` | `uploadthing` |
 | `APP_ORIGIN` | Your site URL, e.g. `https://grid-feasibility-studio.netlify.app` (no trailing slash) |
 | `APP_SECRET` | 48+ random characters (`node -e "console.log(require('crypto').randomBytes(36).toString('base64url'))"`) |
-| `RUN_DISPATCH` | `netlify` |
+| `RUN_DISPATCH` | `netlify` (the default on Netlify; runs go to the background function, never an ordinary 26-30 second function) |
 | `INTERNAL_DISPATCH_SECRET` | Another 48+ random characters |
 | `VECTORSHIFT_BASE_URL` | Until the pipelines are ready, leave runs off (see step 6). Live: `https://api.vectorshift.ai` |
 | `VECTORSHIFT_API_KEY` | VectorShift API key (step 6) |
@@ -67,7 +67,9 @@ string with user `admin_reader` and that password.
 | `DESIGN_SAMPLES` | `false` (or leave unset) |
 | `DEMO_MODE` | `true` only on a demo or staging site (shows "Load the 20 demo scenarios"); `false` in production |
 | `DEMO_LOGIN` | Demo site only: a shared login as `username:password` (e.g. `TestUser1:…`), created on first sign-in. Needs `DEMO_MODE=true`. Remove before launch |
-| `PROTOTYPE_MODE` | Optional. The prototype banner already shows while `VECTORSHIFT_BASE_URL` is not the VectorShift API |
+| `PROTOTYPE_MODE` | Optional. The prototype banner already shows while any product still runs on the stand-in, and names the live ones |
+| `VS_INPUT_QUICK_REPORT` | Optional. `fields` (default: the live Quick Report pipeline's 21 named inputs) or `run_request` |
+| `VS_BASE_URL_<PRODUCT>` | Optional. A different address for one product (e.g. keep a product on a test endpoint) |
 
 Do not set `ALLOW_PGLITE`, `PGLITE_SEED_ADMIN` or `UPLOAD_LOCAL_DIR` on Netlify; they are for tests only.
 
@@ -78,6 +80,27 @@ Do not set `ALLOW_PGLITE`, `PGLITE_SEED_ADMIN` or `UPLOAD_LOCAL_DIR` on Netlify;
 - Use "Run now" on the two scheduled functions once and check the logs for `{"job":"usage-rollup"…}` and
   `{"job":"file-cleanup"…}`.
 - `https://<site>/api/health` returns `{"ok":true,"database":"ok",…}`.
+
+## 6a. Quick Report on live VectorShift (28 Oct 2026)
+
+The Quick Report pipeline is live. In Netlify set:
+
+| Variable | Value |
+| --- | --- |
+| `VECTORSHIFT_BASE_URL` | `https://api.vectorshift.ai` |
+| `VECTORSHIFT_API_KEY` | The VectorShift API key (secret; Netlify only, never in the repository) |
+| `VS_PIPELINE_QUICK_REPORT` | `6adefcd965509b4158a2f6de` |
+| `RUN_DISPATCH` | `netlify` |
+| `INTERNAL_DISPATCH_SECRET` | 48+ random characters (required for the background function) |
+
+Then redeploy. The first build runs migration `0006_run_input_snapshot` (adds `runs.input_snapshot`).
+Executive Summaries and Feasibility Reports keep their pipeline ids; until those pipelines exist, runs of
+those products fail with a clear message, and the prototype banner says they are not live yet.
+
+How a run works: Generate → the app records the answers on a new run → the background function calls
+VectorShift (a Quick Report takes under 30 seconds; the call may wait up to 14 minutes) → the result is
+stored in Neon → the run page, which polls every few seconds, opens the report. Every run is kept as a
+version; "Edit inputs and run again" adds a version and never overwrites one.
 
 ## 6. Switch to live VectorShift (B10-04, B10-05), when the payloads are ready
 

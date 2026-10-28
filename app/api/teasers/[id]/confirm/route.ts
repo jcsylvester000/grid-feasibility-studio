@@ -3,6 +3,7 @@ import { z } from "zod";
 import { isTeaserScanEnabled } from "@/lib/flags";
 import { apiSession, json, jsonError } from "@/lib/http";
 import { dispatchRun } from "@/lib/runs/dispatch";
+import { failQueuedRun } from "@/lib/db/repos/runs";
 import { confirmTeaser } from "@/lib/teasers/service";
 
 export const maxDuration = 60;
@@ -20,9 +21,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!r.ok) return json({ error: { code: r.code, message: r.message, issues: r.issues, conflicts: r.conflicts } }, { status: r.status });
   if (r.runId) {
     try {
-      await dispatchRun(r.runId, { schedule: (task) => after(task) });
+      await dispatchRun(r.runId, { schedule: (task) => after(task), origin: new URL(req.url).origin });
     } catch (err) {
       console.error("dispatch failed:", err instanceof Error ? err.message : err);
+      await failQueuedRun(r.runId, "VS_UNAVAILABLE").catch(() => null);
     }
   }
   return json({ reportId: r.reportId, runId: r.runId, runError: r.runError ?? null }, { status: 201 });

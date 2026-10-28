@@ -25,11 +25,35 @@ export function timeoutMs(product: Product) {
 export const maxConcurrent = () => Number(process.env.VS_MAX_CONCURRENT) || 10;
 export const MAX_ACTIVE_PER_USER = 2;
 
-export function vectorShift() {
-  const baseUrl = process.env.VECTORSHIFT_BASE_URL || "https://api.vectorshift.ai";
+export const VECTORSHIFT_API = "https://api.vectorshift.ai";
+
+/**
+ * Where a product's pipeline runs. VECTORSHIFT_BASE_URL for all products; VS_BASE_URL_<PRODUCT> overrides it
+ * for one product (e.g. Quick Report on VectorShift while the others still use the local mock).
+ */
+export function baseUrlFor(product: Product) {
+  return process.env[`VS_BASE_URL_${ENV_KEY[product]}`] || process.env.VECTORSHIFT_BASE_URL || VECTORSHIFT_API;
+}
+
+/** True when the product's pipeline is VectorShift's own API (not the mock or a stand-in). */
+export const isLivePipeline = (product: Product) => /^https:\/\/api\.vectorshift\.ai/.test(baseUrlFor(product));
+
+/**
+ * How a product's inputs are sent. "fields": one text input per answer (the live Quick Report pipeline).
+ * "run_request": one JSON run_request input (BRD v2.0 contract; the other products and the tests).
+ * VS_INPUT_<PRODUCT> overrides; the Quick Report defaults to "fields".
+ */
+export function inputMode(product: Product): "fields" | "run_request" {
+  const v = process.env[`VS_INPUT_${ENV_KEY[product]}`];
+  if (v === "fields" || v === "run_request") return v;
+  return product === "quick_report" ? "fields" : "run_request";
+}
+
+export function vectorShift(product?: Product) {
+  const baseUrl = product ? baseUrlFor(product) : process.env.VECTORSHIFT_BASE_URL || VECTORSHIFT_API;
   const isLocalMock = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?/.test(baseUrl);
-  // The local mock accepts any bearer key; the real service needs VECTORSHIFT_API_KEY.
-  const apiKey = process.env.VECTORSHIFT_API_KEY || (isLocalMock ? "local-mock-key" : "");
+  // The local mock accepts any bearer key, so the real key is never sent to it.
+  const apiKey = isLocalMock ? "local-mock-key" : process.env.VECTORSHIFT_API_KEY || "";
   return { baseUrl, apiKey };
 }
 

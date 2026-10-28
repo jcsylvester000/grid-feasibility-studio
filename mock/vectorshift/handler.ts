@@ -15,6 +15,7 @@ import path from "node:path";
 import { buildEnvelope } from "../../lib/contract/envelope";
 import { prototypePayload } from "../../lib/demo/engine";
 import type { Product } from "../../lib/db/schema";
+import { isLiveQuickReportRequest, liveQuickReportOutputs } from "./quick-live";
 
 const PRODUCTS: Product[] = ["quick_report", "executive_summary", "feasibility_report", "teaser_intake"];
 const payloadCache = new Map<Product, Record<string, unknown>>();
@@ -97,6 +98,9 @@ export async function handleMockRequest(req: Request, opts: { delayMs?: number }
   } catch {
     return json(400, { status: "failed", error: "Malformed request body" });
   }
+  // Live Quick Report pipeline format: 21 named text inputs instead of run_request.
+  if (product === "quick_report" && isLiveQuickReportRequest(inputs)) return liveQuickReport(pipelineId, scenario, inputs as Record<string, string>, opts);
+
   let runRequest: { report_id?: string; product?: string; documents?: { doc_ref: string; capability?: string }[]; intake?: Record<string, unknown> };
   try {
     runRequest = JSON.parse(String(inputs.run_request ?? ""));
@@ -154,5 +158,41 @@ export async function handleMockRequest(req: Request, opts: { delayMs?: number }
         outputs: { result_envelope: JSON.stringify(env), progress_log: `mock ${product}: ${files.length} file(s)` },
       });
     }
+  }
+}
+
+/** Scenario override for a live Quick Report: report_id is "QR-YYYYMMDD-<first 8 hex of the report id>". */
+function overrideForRef(ref: string | undefined) {
+  const tail = ref?.split("-").at(-1)?.toLowerCase();
+  if (!tail) return undefined;
+  for (const [reportId, sc] of overrides) if (reportId.replace(/-/g, "").slice(0, 8).toLowerCase() === tail) return sc;
+  return undefined;
+}
+
+async function liveQuickReport(pipelineId: string, scenario: string, inputs: Record<string, string>, opts: { delayMs?: number }) {
+  scenario = overrideForRef(inputs.report_id) ?? scenario;
+  mockLog.push({ pipelineId, scenario, product: "quick_report", reportId: inputs.report_id, files: [], documents: [], at: new Date().toISOString() });
+  const delay = opts.delayMs ?? Number(process.env.MOCK_VS_DELAY_MS ?? 2500);
+  await sleep(scenario === "slow" ? delay * 10 : delay);
+  const runId = `mockrun_${Date.now().toString(36)}`;
+  switch (scenario) {
+    case "auth":
+      return json(401, { error: "Invalid API key" });
+    case "bad_request":
+      return json(400, { status: "failed", error: "Input names do not match the pipeline" });
+    case "server_error":
+      return json(500, { status: "failed", error: "Internal pipeline error" });
+    case "unavailable":
+      return json(503, { error: "Service unavailable" });
+    case "failed":
+      return json(200, { status: "failed", run_id: runId, error: "Pipeline step Q06 failed" });
+    case "missing_output":
+      return json(200, { status: "success", run_id: runId, outputs: { Q07_qa_cost: "0" } });
+    case "invalid_json":
+      return json(200, { status: "success", run_id: runId, outputs: { result_envelope: "{ this is not json" } });
+    case "schema_invalid":
+      return json(200, { status: "success", run_id: runId, outputs: { result_envelope: JSON.stringify({ metrics: {}, rating: { rating: "excellent" } }) } });
+    default:
+      return json(200, { status: "success", run_id: runId, outputs: liveQuickReportOutputs(inputs) });
   }
 }

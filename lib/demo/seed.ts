@@ -44,6 +44,7 @@ export async function seedDemoScenarios(user: Pick<UserRow, "id" | "publicId">, 
       durationMs: DURATION_MS[s.product],
       envelope: { schemaVersion: envelope.schema_version, envelope: envelope as unknown as Record<string, unknown> },
       at,
+      inputSnapshot: { intake: s.intake, mode: "run_request", sent: null, report_ref: null, recorded_at: at.toISOString() },
     });
     await track(user.publicId, "report.created", { product: s.product });
     created++;

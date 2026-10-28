@@ -16,6 +16,7 @@ import { startReportAction } from "../../actions";
 import { listFilesForReport } from "@/lib/db/repos/files";
 import { fileView } from "@/lib/files/service";
 import { uploadDriver } from "@/lib/files/storage";
+import { listRunsForReport } from "@/lib/db/repos/runs";
 
 export const metadata: Metadata = { title: "Report form" };
 
@@ -47,6 +48,7 @@ export default async function ReportFormPage({ params, searchParams }: Props) {
   if (report.status === "queued" || report.status === "running") redirect(`/app/reports/${report.id}/run`);
   const form = FORMS[product as Product];
   const files = form?.steps.some((s) => s.documents) ? await listFilesForReport(report.id) : [];
+  const versionCount = (await listRunsForReport(report.id)).filter((r) => r.status === "succeeded").length;
 
   return (
     <div className="space-y-6" data-testid="report-form" data-report-id={report.id}>
@@ -56,6 +58,12 @@ export default async function ReportFormPage({ params, searchParams }: Props) {
           <h1 className="text-3xl">{report.title}</h1>
           <StatusBadge status={report.status} />
         </div>
+        {versionCount > 0 && (
+          <p className="mt-3 rounded-lg border border-info/30 bg-info-soft px-4 py-3 text-sm" data-testid="new-version-note">
+            This report has {versionCount} version{versionCount === 1 ? "" : "s"}. Change any answers, then generate: you get version {versionCount + 1}{" "}
+            dated today, and earlier versions stay available on the <Link href={`/app/reports/${report.id}`}>report page</Link>.
+          </p>
+        )}
       </header>
       {form ? (
         <ReportForm

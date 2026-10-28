@@ -31,7 +31,7 @@ const VERDICT_LABEL: Record<string, string> = {
   insufficient_data: "Insufficient data",
 };
 
-function Banner({ rating, label, headline, confidence, children }: { rating: string; label: string; headline: string; confidence: string; children?: React.ReactNode }) {
+export function Banner({ rating, label, headline, confidence, children }: { rating: string; label: string; headline: string; confidence: string; children?: React.ReactNode }) {
   const r = RATING[rating as keyof typeof RATING] ?? RATING.cannot_tell;
   return (
     <section aria-label="Result" className={cn("rounded-[var(--radius-card)] border-l-4 p-5 sm:p-6 print:break-inside-avoid", r.tone)} data-testid="verdict">
@@ -50,7 +50,7 @@ function Banner({ rating, label, headline, confidence, children }: { rating: str
 const TAG_LABEL: Record<string, string> = { can: "Broker can provide", idea: "Broker has an idea", cant: "Usually can't provide", system: "Studio setting" };
 const FLAG_TONE = { warning: "warning", info: "info", risk: "risk" } as const;
 
-function PricePosition({ m }: { m: any }) {
+export function PricePosition({ m }: { m: any }) {
   if (!m?.compare || m.base === null) return null;
   const lo = Math.min(m.compare.low, m.base);
   const hi = Math.max(m.compare.high, m.base);

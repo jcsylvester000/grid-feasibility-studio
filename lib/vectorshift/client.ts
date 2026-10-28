@@ -2,6 +2,7 @@
  * VectorShift pipelines API client (BRD 7.1). All calls to VectorShift go through this module.
  *   POST {base}/v1/pipeline/{id}/run   Authorization: Bearer <key>
  *   JSON  { inputs: { run_request } }  or  multipart: inputs (JSON string) + inputs.file_1..file_10
+ *   or, for pipelines with named text inputs (the live Quick Report): JSON { inputs: { name: "text", ... } }
  * The API key is read on the server only and never logged (VS-08).
  */
 import type { AppCode } from "./errors";
@@ -33,18 +34,25 @@ export async function callPipeline(opts: {
   baseUrl: string;
   apiKey: string;
   pipelineId: string;
-  runRequest: object;
+  /** One run_request input (contract pipelines)… */
+  runRequest?: object;
+  /** …or named text inputs sent as they are (the live Quick Report pipeline). */
+  inputs?: Record<string, string>;
   files?: PipelineFile[];
   timeoutMs: number;
   fetchImpl?: typeof fetch;
 }): Promise<CallResult> {
   const started = Date.now();
-  const runRequestText = JSON.stringify(opts.runRequest);
+  const runRequestText = JSON.stringify(opts.runRequest ?? {});
   let body: BodyInit;
   let inputBytes = Buffer.byteLength(runRequestText);
   const headers: Record<string, string> = { authorization: `Bearer ${opts.apiKey}`, accept: "application/json" };
 
-  if (opts.files?.length) {
+  if (opts.inputs) {
+    body = JSON.stringify({ inputs: opts.inputs });
+    inputBytes = Buffer.byteLength(body);
+    headers["content-type"] = "application/json";
+  } else if (opts.files?.length) {
     const form = new FormData();
     form.set("inputs", JSON.stringify({ run_request: runRequestText }));
     opts.files.slice(0, 10).forEach((f, i) => {
