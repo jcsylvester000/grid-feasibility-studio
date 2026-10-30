@@ -34,6 +34,7 @@ import { isRequired, isShown, type FormField, type FormStep, type Intake, type I
 import { VALIDATORS } from "@/lib/forms/validators";
 import { routeFor } from "@/lib/files/config";
 import { cn } from "@/lib/utils";
+import { NotEnoughTokens, useTokenConfirm, type TokenInfo } from "@/components/tokens/token-confirm";
 
 type SaveState = "idle" | "saving" | "saved" | "error" | "offline";
 
@@ -49,6 +50,16 @@ type Props = {
   titleFor: { prefix: string; fallback: string };
   uploadDriver?: "uploadthing" | "local";
   initialFiles?: ServerFile[];
+  /** GRID Token cost and balance; null when this product is not charged. */
+  tokens?: TokenInfo | null;
+  /** Set when the report was started from another finished report (answers carried over). */
+  source?: { productName: string; title: string; finishedOn: string; ageDays: number; reuse: boolean; carried: number; href: string | null } | null;
+  /** Carried values that are approximate (Quick Report bands), by intake key. */
+  approx?: Record<string, number>;
+  /** Documents uploaded to the source report; included in the run automatically. */
+  inheritedFiles?: { name: string; docType: string | null; label: string }[];
+  /** Step to open on (the first step that still needs an answer when started from another report). */
+  initialStep?: number;
 };
 
 const controlCls =
@@ -69,7 +80,7 @@ export function ReportForm(props: Props) {
   const { reportId, steps, fields, locations, product } = props;
   const router = useRouter();
   const [intake, setIntake] = useState<Intake>(props.initialIntake);
-  const [stepIndex, setStepIndex] = useState(0);
+  const [stepIndex, setStepIndex] = useState(props.initialStep ?? 0);
   const [save, setSave] = useState<SaveState>("idle");
   const [online, setOnline] = useState(true);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -82,6 +93,23 @@ export function ReportForm(props: Props) {
   const full = product === "executive_summary" || product === "feasibility_report";
   const uploads = useUploads({ reportId, driver: props.uploadDriver ?? "uploadthing", initial: props.initialFiles ?? [], route: routeFor(product) ?? "documents" });
   const ctx = useMemo(() => ({ fields, locations }), [fields, locations]);
+  const inheritedFiles = props.inheritedFiles;
+  const allDocs = useMemo(
+    () => ({ ...Object.fromEntries((inheritedFiles ?? []).filter((f) => f.docType && f.docType !== "other").map((f) => [f.docType!, true])), ...uploads.docs }),
+    [inheritedFiles, uploads.docs],
+  );
+  const approx = props.approx ?? {};
+  const approxHint = (f: FormField): FormField => {
+    const a = approx[f.key];
+    if (a === undefined || Number(intake[f.key]) !== a || !props.source) return f;
+    return {
+      ...f,
+      hint:
+        f.key === "fin.land_cost"
+          ? `From your ${props.source.productName}: asking price × lot area (approximate). Change it if the land cost is different.`
+          : `From your ${props.source.productName} (approximate). Enter the exact figure if you have it.`,
+    };
+  };
   const validation = useMemo(() => VALIDATORS[product]!(intake, ctx), [product, intake, ctx]);
   const issuesByKey = useMemo(() => Object.fromEntries(validation.issues.map((i) => [i.key, i])), [validation]);
 
@@ -190,8 +218,14 @@ export function ReportForm(props: Props) {
   const stepHasAnswers = (s: FormStep) => s.fields.some((f) => isShown(f, intake) && intake[f.key] !== undefined && intake[f.key] !== false) || (s.documents && uploads.stored > 0);
   const stepDone = (s: FormStep) => stepComplete(s) && (!s.optional || stepHasAnswers(s));
 
+  const tokens = props.tokens ?? null;
+  const tokenShort = !!tokens && tokens.balance < tokens.cost;
+  const tokenConfirm = useTokenConfirm(tokens, product === "teaser_intake" ? "Scan" : "Generate");
+
   async function generate() {
     setRunError(null);
+    if (tokenShort) return;
+    if (!(await tokenConfirm.ask())) return;
     setGenerating(true);
     try {
       if (uploads.busy) throw new Error("Wait for the uploads to finish.");
@@ -203,7 +237,7 @@ export function ReportForm(props: Props) {
       const res = await fetch(`/api/reports/${reportId}/runs`, { method: "POST" });
       const body = await res.json().catch(() => ({}));
       if (res.status === 202 || res.status === 409) {
-        router.push(`/app/reports/${reportId}/run`);
+        router.replace(`/app/reports/${reportId}/run`);
         return;
       }
       throw new Error(body?.error?.message ?? "The report could not be started. Try again.");
@@ -222,6 +256,30 @@ export function ReportForm(props: Props) {
 
   return (
     <div className="relative space-y-4" data-testid="report-form-client">
+      {tokenConfirm.dialog}
+      {props.source && (
+        <div className="rounded-[var(--radius-card)] border border-info/30 bg-info-soft px-4 py-3 text-sm" data-testid="source-banner">
+          <p>
+            <span className="font-semibold">Started from your {props.source.productName}</span>
+            {props.source.href ? (
+              <>
+                {" "}
+                <a href={props.source.href}>{props.source.title}</a>
+              </>
+            ) : (
+              ` ${props.source.title}`
+            )}
+            {props.source.finishedOn && <span className="text-ink-2"> (version of {props.source.finishedOn})</span>}.
+          </p>
+          <p className="mt-1 text-ink-2">
+            {props.source.carried} answer{props.source.carried === 1 ? " was" : "s were"} carried over, so you only need to add what is new.{" "}
+            {props.source.reuse
+              ? `Its research is ${props.source.ageDays === 0 ? "from today" : `${props.source.ageDays} day${props.source.ageDays === 1 ? "" : "s"} old`} and will be reused.`
+              : `Its research is ${props.source.ageDays} days old, so it will be refreshed.`}{" "}
+            Values marked approximate can be replaced with exact figures.
+          </p>
+        </div>
+      )}
       {!online && (
         <p role="status" className="rounded-lg bg-warn-soft px-4 py-2 text-sm text-warn">
           You are offline. Changes will save when you reconnect.
@@ -297,11 +355,22 @@ export function ReportForm(props: Props) {
                   <DropZone uploads={uploads} />
                 </div>
               )}
+              {current.documents && !!inheritedFiles?.length && props.source && (
+                <div className="mt-4 rounded-lg border border-info/30 bg-info-soft px-4 py-3 text-sm" data-testid="inherited-files">
+                  <p className="font-medium">Included from your {props.source.productName}</p>
+                  <ul className="mt-1 list-disc pl-5 text-ink-2">
+                    {inheritedFiles.map((f, i) => (
+                      <li key={`${f.name}-${i}`}>{f.name} <span className="text-muted">({f.label})</span></li>
+                    ))}
+                  </ul>
+                  <p className="mt-1 text-xs text-muted">These are read again with this report. Upload only what is new.</p>
+                </div>
+              )}
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 {current.fields.filter((f) => isShown(f, intake)).map((f, idx) => (
                   <Field
                     key={`${f.key}-${idx}`}
-                    f={f}
+                    f={approxHint(f)}
                     intake={intake}
                     ctx={ctx}
                     issue={touched[f.key] ? issuesByKey[f.key] : undefined}
@@ -347,8 +416,10 @@ export function ReportForm(props: Props) {
               notAsked={props.notAsked}
               onGenerate={generate}
               generating={generating}
+              tokens={tokens}
               runError={runError}
               uploads={hasDocuments ? uploads : null}
+              docs={allDocs}
             />
           )}
         </section>
@@ -356,7 +427,7 @@ export function ReportForm(props: Props) {
         {/* Side panel */}
         <aside aria-label="Your answers" className="hidden lg:block">
           <div className="sticky top-24 space-y-4">
-            {full && <LevelMeter product={product} intake={intake} docs={uploads.docs} />}
+            {full && <LevelMeter product={product} intake={intake} docs={allDocs} />}
             <div className="rounded-[var(--radius-card)] border border-line bg-white p-4">
               <p className="eyebrow">{props.productName}</p>
               <p className="mt-2 text-sm font-medium">{title}</p>
@@ -547,11 +618,13 @@ function Review(p: {
   goTo: (i: number) => void;
   notAsked: string[];
   onGenerate: () => void;
+  tokens: TokenInfo | null;
   generating: boolean;
   runError: string | null;
   uploads: Uploads | null;
+  docs: DocSet;
 }) {
-  const docs = p.uploads?.docs ?? {};
+  const docs = p.docs;
   const busy = !!p.uploads?.busy;
   const lede =
     p.product === "teaser_intake"
@@ -664,7 +737,13 @@ function Review(p: {
             Waiting for uploads to finish…
           </p>
         )}
-        <Button size="lg" onClick={p.onGenerate} disabled={p.issues.length > 0 || p.generating || busy}>
+        {p.tokens && p.tokens.balance < p.tokens.cost && <NotEnoughTokens tokens={p.tokens} className="mr-auto rounded-lg border border-bad/30 bg-bad-soft px-4 py-2 text-sm text-ink" />}
+        {p.tokens && p.tokens.balance >= p.tokens.cost && (
+          <p className="text-sm text-muted" data-testid="generate-token-cost">
+            Uses {p.tokens.cost} GRID {p.tokens.cost === 1 ? "Token" : "Tokens"} · you have {p.tokens.balance}
+          </p>
+        )}
+        <Button size="lg" onClick={p.onGenerate} disabled={p.issues.length > 0 || p.generating || busy || (!!p.tokens && p.tokens.balance < p.tokens.cost)}>
           {p.generating ? "Starting…" : p.product === "teaser_intake" ? "Scan teaser" : "Generate report"}
         </Button>
       </div>

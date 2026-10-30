@@ -67,6 +67,9 @@ string with user `admin_reader` and that password.
 | `DESIGN_SAMPLES` | `false` (or leave unset) |
 | `DEMO_MODE` | `true` only on a demo or staging site (shows "Load the 20 demo scenarios"); `false` in production |
 | `DEMO_LOGIN` | Demo site only: a shared login as `username:password` (e.g. `TestUser1:…`), created on first sign-in. Needs `DEMO_MODE=true`. Remove before launch |
+| `FEATURE_TOKENS` | Mock GRID Token wallet. On unless set to `false`. Prices: Quick Report 30, Executive Summary 50, Feasibility Report 100 (`TOKENS_COST_<PRODUCT>` overrides); the user is asked first, and tokens come back if the report fails or is cancelled |
+| `VS_AUTO_RETRY` | Leave unset. On the live VectorShift API a failed or timed-out run is not retried automatically, so one Generate = at most one pipeline call (credits). The user can press Retry |
+| `TOKENS_STARTING_BALANCE` | Opening balance for each wallet (default 100). Changing it affects new wallets only |
 | `PROTOTYPE_MODE` | Optional. The prototype banner already shows while any product still runs on the stand-in, and names the live ones |
 | `VS_INPUT_QUICK_REPORT` | Optional. `fields` (default: the live Quick Report pipeline's 21 named inputs) or `run_request` |
 | `VS_BASE_URL_<PRODUCT>` | Optional. A different address for one product (e.g. keep a product on a test endpoint) |

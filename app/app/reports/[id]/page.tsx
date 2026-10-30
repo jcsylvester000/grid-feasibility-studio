@@ -9,6 +9,8 @@ import { VersionHistory } from "@/components/report/version-history";
 import { ExecutiveSummaryView, FeasibilityReportView, QuickReportView, TeaserScanView } from "@/components/report/views";
 import { buttonVariants } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth/session";
+import { tokenInfoFor } from "@/lib/tokens/info";
+import { UpgradePanel } from "@/components/report/upgrade-panel";
 import { getReportForUser } from "@/lib/db/repos/reports";
 import { envelopeForReportRun, latestEnvelopeForReport } from "@/lib/db/repos/runs";
 import type { Product, RunInputSnapshot } from "@/lib/db/schema";
@@ -91,10 +93,16 @@ export default async function ReportPage({ params, searchParams }: { params: Pro
               : `Created ${formatDateTime(report.createdAt)}`}
             {` · User ${user.publicId}`}
           </p>
+          {typeof report.intake["source.report_id"] === "string" && typeof report.intake["source.product"] === "string" && (
+            <p className="mt-1 text-sm text-muted" data-testid="built-from">
+              Built from your {productInfo(report.intake["source.product"] as Product).name}{" "}
+              <Link href={`/app/reports/${report.intake["source.report_id"]}`}>{String(report.intake["source.title"] ?? "")}</Link>
+            </p>
+          )}
         </div>
         <div data-print="hide" className="flex flex-wrap items-start gap-2">
           {hasContent && <PrintButton reportId={report.id} />}
-          {hasContent && !runActive && <RunAgainButton reportId={report.id} />}
+          {hasContent && !runActive && <RunAgainButton reportId={report.id} tokens={await tokenInfoFor(user.id, report.product)} />}
           {hasContent && !runActive && product !== "teaser_intake" && (
             <Link href={formHref} className={buttonVariants({ variant: "outline" })} data-testid="edit-and-rerun">
               Edit inputs and run again
@@ -103,6 +111,8 @@ export default async function ReportPage({ params, searchParams }: { params: Pro
           <ConfirmDelete id={report.id} title={report.title} />
         </div>
       </header>
+
+      {hasContent && !runActive && <UpgradePanel reportId={report.id} product={report.product} />}
 
       {runActive && (
         <Notice tone="info">

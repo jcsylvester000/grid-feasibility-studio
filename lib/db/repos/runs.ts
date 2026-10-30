@@ -5,6 +5,7 @@
 import { and, desc, eq, inArray, lt, sql } from "drizzle-orm";
 import { getDb } from "../client";
 import { envelopes, reports, runs, users, type Product, type ReportStatus, type RunInputSnapshot, type RunPhase } from "../schema";
+import { chargeTokens, refundCharge } from "./tokens";
 
 export type RunRow = typeof runs.$inferSelect;
 
@@ -51,8 +52,12 @@ export async function createQueuedRun(
     attempt: number;
     retryAt?: Date | null;
     inputSnapshot?: RunInputSnapshot | null;
+    /** An automatic retry carries the charge of the run it retries. */
+    chargeId?: string | null;
   },
   limits?: { userId: string; perUser: number; global: number },
+  /** Tokens to charge for this run (user-started runs). Throws InsufficientTokensError; nothing is created then. */
+  charge?: { userId: string; cost: number; reportTitle: string },
 ) {
   const db = await getDb();
   return db.transaction(async (tx) => {
@@ -69,8 +74,13 @@ export async function createQueuedRun(
     }
     const [run] = await tx
       .insert(runs)
-      .values({ ...values, status: "queued", phase: "request_sent", retryAt: values.retryAt ?? null, inputSnapshot: values.inputSnapshot ?? null })
+      .values({ ...values, status: "queued", phase: "request_sent", retryAt: values.retryAt ?? null, inputSnapshot: values.inputSnapshot ?? null, chargeId: values.chargeId ?? null })
       .returning();
+    if (charge && charge.cost > 0) {
+      const chargeId = await chargeTokens(tx, { userId: charge.userId, cost: charge.cost, product: values.product, reportId: values.reportId, reportTitle: charge.reportTitle, runId: run!.id });
+      await tx.update(runs).set({ chargeId }).where(eq(runs.id, run!.id));
+      run!.chargeId = chargeId;
+    }
     await tx.update(reports).set({ status: "queued", updatedAt: new Date() }).where(eq(reports.id, values.reportId));
     return run!;
   });
@@ -214,6 +224,7 @@ export async function cancelRun(runId: string, now = new Date()) {
       .returning();
     if (!run) return null;
     await tx.update(reports).set({ status: "draft", updatedAt: now }).where(eq(reports.id, run.reportId));
+    await refundCharge(tx, run.chargeId, run.id);
     return run;
   });
 }
@@ -229,6 +240,7 @@ export async function failQueuedRun(runId: string, code: string, now = new Date(
       .returning();
     if (!run) return null;
     await tx.update(reports).set({ status: "failed", updatedAt: now }).where(eq(reports.id, run.reportId));
+    await refundCharge(tx, run.chargeId, run.id);
     return run;
   });
 }
@@ -247,6 +259,7 @@ export async function failStaleRun(runId: string, olderThan: Date, now = new Dat
       .returning();
     if (!run) return null;
     await tx.update(reports).set({ status: "failed", updatedAt: now }).where(eq(reports.id, run.reportId));
+    await refundCharge(tx, run.chargeId, run.id);
     return run;
   });
 }

@@ -6,6 +6,7 @@ import { getReportForUser } from "@/lib/db/repos/reports";
 import { latestRunForReport } from "@/lib/db/repos/runs";
 import { productInfo } from "@/lib/options/products";
 import { getRunStatus } from "@/lib/runs/service";
+import { tokenInfoFor } from "@/lib/tokens/info";
 
 export const metadata: Metadata = { title: "Run status" };
 
@@ -25,7 +26,7 @@ export default async function RunPage({ params }: { params: Promise<{ id: string
         <p className="eyebrow">{productInfo(report.product).name}</p>
         <h1 className="mt-2 text-3xl">{report.title}</h1>
       </header>
-      <RunStatus initial={view} formHref={`/app/new/${report.product}?id=${report.id}`} />
+      <RunStatus initial={view} formHref={`/app/new/${report.product}?id=${report.id}`} tokens={await tokenInfoFor(user.id, report.product)} />
     </div>
   );
 }

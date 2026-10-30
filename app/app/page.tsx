@@ -11,6 +11,8 @@ import { DemoLoader } from "@/components/app/demo-loader";
 import { listReportTitles } from "@/lib/db/repos/reports";
 import { demoEnabled } from "@/lib/demo/seed";
 import { SCENARIOS } from "@/lib/demo/scenarios";
+import { getBalance } from "@/lib/db/repos/tokens";
+import { tokenCost, tokensEnabled } from "@/lib/tokens/config";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -29,6 +31,7 @@ async function Recent({ userId }: { userId: string }) {
 export default async function Dashboard() {
   const { user } = await requireUser("/app");
   const products = await productsWithTypicalTimes();
+  const balance = tokensEnabled() ? await getBalance(user.id) : 0;
   const demo = demoEnabled();
   const demoLoaded = demo ? (await listReportTitles(user.id)).filter((t) => SCENARIOS.some((s) => s.title === t)).length : 0;
   return (
@@ -39,7 +42,7 @@ export default async function Dashboard() {
       </header>
       <section aria-label="Products" className={`grid gap-4 sm:grid-cols-2 ${products.length > 3 ? "xl:grid-cols-4" : "xl:grid-cols-3"}`}>
         {products.map((p) => (
-          <ProductCard key={p.key} p={p} />
+          <ProductCard key={p.key} p={{ ...p, tokenCost: tokenCost(p.key), tokenBalance: balance }} />
         ))}
       </section>
       {demo && <DemoLoader loaded={demoLoaded} />}

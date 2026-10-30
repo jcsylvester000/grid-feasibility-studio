@@ -14,6 +14,8 @@ import {
   latestRunForReport,
 } from "@/lib/db/repos/runs";
 import type { UserRow } from "@/lib/db/repos/users";
+import { getBalance, InsufficientTokensError } from "@/lib/db/repos/tokens";
+import { tokenCost, tokenWord } from "@/lib/tokens/config";
 import type { Product } from "@/lib/db/schema";
 import { validateIntake } from "@/lib/forms";
 import type { Issue } from "@/lib/forms/types";
@@ -38,6 +40,19 @@ export async function startRun(user: UserRow, reportId: string): Promise<StartRe
   if (product === "teaser_intake" && !checked.intake["teaser.pasted_text"] && (await fileTotalsForReport(report.id)).count === 0)
     return { ok: false, status: 400, code: "INPUT_INVALID", message: "Upload a file or paste the post text." };
 
+  // GRID Tokens: checked here for a clear message, and again atomically when the run is created.
+  const cost = tokenCost(product);
+  const notEnough = (balance: number) => ({
+    ok: false as const,
+    status: 402,
+    code: "INSUFFICIENT_TOKENS",
+    message: `Not enough GRID Tokens. This report uses ${cost} ${tokenWord(cost)}; you have ${balance}.`,
+  });
+  if (cost > 0) {
+    const balance = await getBalance(user.id);
+    if (balance < cost) return notEnough(balance);
+  }
+
   if ((await countActiveRunsForUser(user.id)) >= MAX_ACTIVE_PER_USER)
     return { ok: false, status: 429, code: "RATE_LIMITED", message: describeError("RATE_LIMITED").message };
   if ((await countActiveRunsGlobal()) >= maxConcurrent())
@@ -54,10 +69,13 @@ export async function startRun(user: UserRow, reportId: string): Promise<StartRe
         inputSnapshot: { intake: report.intake, recorded_at: new Date().toISOString() },
       },
       { userId: user.id, perUser: MAX_ACTIVE_PER_USER, global: maxConcurrent() },
+      cost > 0 ? { userId: user.id, cost, reportTitle: report.title } : undefined,
     );
     await track(user.publicId, "run.started", { product, pipelineId: run.pipelineId, status: "queued" });
+    if (cost > 0) await track(user.publicId, "tokens.charged", { product, status: String(cost) });
     return { ok: true, runId: run.id };
   } catch (err) {
+    if (err instanceof InsufficientTokensError) return notEnough(err.balance);
     if (err instanceof RunLimitError)
       return {
         ok: false,

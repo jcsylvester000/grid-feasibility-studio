@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useTokenConfirm, type TokenInfo } from "@/components/tokens/token-confirm";
 
 export function PrintButton({ reportId }: { reportId: string }) {
   return (
@@ -23,21 +24,27 @@ export function PrintButton({ reportId }: { reportId: string }) {
   );
 }
 
-export function RunAgainButton({ reportId }: { reportId: string }) {
+export function RunAgainButton({ reportId, tokens = null }: { reportId: string; tokens?: TokenInfo | null }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const confirm = useTokenConfirm(tokens, "Run again");
+  const short = !!tokens && tokens.balance < tokens.cost;
   return (
     <span className="inline-flex flex-col items-start gap-1">
+      {confirm.dialog}
       <Button
         type="button"
         variant="outline"
-        disabled={busy}
+        disabled={busy || short}
+        title={short ? `Not enough GRID Tokens: this report uses ${tokens!.cost}, your wallet has ${tokens!.balance}.` : undefined}
+        data-testid="run-again"
         onClick={async () => {
+          if (!(await confirm.ask())) return;
           setBusy(true);
           setError(null);
           const res = await fetch(`/api/reports/${reportId}/runs`, { method: "POST" });
-          if (res.status === 202) return router.push(`/app/reports/${reportId}/run`);
+          if (res.status === 202) return router.replace(`/app/reports/${reportId}/run`);
           const body = await res.json().catch(() => ({}));
           setError(body?.error?.message ?? "The report could not be started.");
           setBusy(false);
@@ -45,7 +52,9 @@ export function RunAgainButton({ reportId }: { reportId: string }) {
       >
         {busy ? "Starting…" : "Run again"}
       </Button>
-      <span role="status" className="min-h-4 text-xs text-bad">{error}</span>
+      <span role="status" className="min-h-4 text-xs text-bad">
+        {error ?? (short ? `Not enough GRID Tokens (uses ${tokens!.cost}, you have ${tokens!.balance}).` : null)}
+      </span>
     </span>
   );
 }

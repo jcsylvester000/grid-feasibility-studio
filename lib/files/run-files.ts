@@ -9,8 +9,12 @@ import type { PipelineFile } from "@/lib/vectorshift/client";
 import { DOC_TYPES, DOCUMENT_RULES } from "./config";
 import { storage } from "./storage";
 
-export async function loadRunFiles(_runId: string, reportId: string, now = new Date()): Promise<{ documents: RunDocument[]; files: PipelineFile[] }> {
-  const rows = (await listFilesForReport(reportId)).slice(0, DOCUMENT_RULES.maxFiles);
+export async function loadRunFiles(_runId: string, reportId: string, alsoFrom: string[] = [], now = new Date()): Promise<{ documents: RunDocument[]; files: PipelineFile[] }> {
+  // This report's files first, then any from the report it was started from (same name and size counted once).
+  const own = await listFilesForReport(reportId);
+  const extra = (await Promise.all(alsoFrom.map((id) => listFilesForReport(id)))).flat();
+  const seen = new Set(own.map((f) => `${f.name}|${f.sizeBytes}`));
+  const rows = [...own, ...extra.filter((f) => !seen.has(`${f.name}|${f.sizeBytes}`))].slice(0, DOCUMENT_RULES.maxFiles);
   if (!rows.length) return { documents: [], files: [] };
   const s = storage();
   const documents: RunDocument[] = [];

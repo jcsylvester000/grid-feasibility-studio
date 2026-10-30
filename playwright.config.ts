@@ -25,6 +25,8 @@ const app = (p: number, extra: Record<string, string>) => ({
     // Most suites check the BRD contract output; the b12 suite runs the live Quick Report format.
     VS_INPUT_QUICK_REPORT: "run_request",
     VS_MAX_CONCURRENT: "50",
+    // GRID Tokens are exercised on the live server only (b12/b13), so other suites need no confirm step.
+    FEATURE_TOKENS: "false",
     DESIGN_SAMPLES: "true",
     UPLOAD_DRIVER: "local",
     UPLOAD_LOCAL_DIR: `.data/e2e-uploads-${p}`,
@@ -44,10 +46,10 @@ export default defineConfig({
     launchOptions: process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {},
   },
   projects: [
-    { name: "mobile", testIgnore: /b7-|b12-/, use: { ...devices["Pixel 7"], browserName: "chromium" } },
+    { name: "mobile", testIgnore: /b7-|b1[23]-/, use: { ...devices["Pixel 7"], browserName: "chromium" } },
     {
       name: "desktop",
-      testIgnore: /b7-|b12-/,
+      testIgnore: /b7-|b1[23]-/,
       use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 800 } },
     },
     // Teaser Scan is behind FEATURE_TEASER_SCAN: a second server with the flag on (release 1b).
@@ -65,9 +67,9 @@ export default defineConfig({
         baseURL: `http://localhost:${teaserPort}`,
       },
     },
-    // Live Quick Report format (named inputs, pipeline output format) and report versions.
-    { name: "live-desktop", testMatch: /b12-/, use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 800 }, baseURL: `http://localhost:${livePort}` } },
-    { name: "live-mobile", testMatch: /b12-/, use: { ...devices["Pixel 7"], browserName: "chromium", baseURL: `http://localhost:${livePort}` } },
+    // Live Quick Report format (named inputs, pipeline output format), report versions and GRID Tokens.
+    { name: "live-desktop", testMatch: /b1[23]-/, use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 800 }, baseURL: `http://localhost:${livePort}` } },
+    { name: "live-mobile", testMatch: /b1[23]-/, use: { ...devices["Pixel 7"], browserName: "chromium", baseURL: `http://localhost:${livePort}` } },
   ],
   webServer: [
     {
@@ -78,6 +80,7 @@ export default defineConfig({
     },
     app(port, {}),
     app(teaserPort, { FEATURE_TEASER_SCAN: "true", DEMO_MODE: "true" }),
-    app(livePort, { VS_INPUT_QUICK_REPORT: "fields" }),
+    // Tokens on, with a small opening balance so a test can reach "not enough tokens" in two runs.
+    app(livePort, { VS_INPUT_QUICK_REPORT: "fields", FEATURE_TOKENS: "true", TOKENS_STARTING_BALANCE: "60", DEMO_MODE: "true" }),
   ],
 });

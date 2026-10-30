@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ReportForm } from "@/components/forms/report-form";
+import { tokenInfoFor } from "@/lib/tokens/info";
 import { FORMS } from "@/lib/forms";
 import { quickReportNotAsked } from "@/lib/forms/quick-report";
 import { getOptions } from "@/lib/options";
@@ -17,6 +18,10 @@ import { listFilesForReport } from "@/lib/db/repos/files";
 import { fileView } from "@/lib/files/service";
 import { uploadDriver } from "@/lib/files/storage";
 import { listRunsForReport } from "@/lib/db/repos/runs";
+import { getReportForUser as getSource } from "@/lib/db/repos/reports";
+import { VALIDATORS } from "@/lib/forms/validators";
+import { sourceInfo } from "@/lib/reports/sources";
+import { DOC_TYPES } from "@/lib/files/config";
 
 export const metadata: Metadata = { title: "Report form" };
 
@@ -49,6 +54,19 @@ export default async function ReportFormPage({ params, searchParams }: Props) {
   const form = FORMS[product as Product];
   const files = form?.steps.some((s) => s.documents) ? await listFilesForReport(report.id) : [];
   const versionCount = (await listRunsForReport(report.id)).filter((r) => r.status === "succeeded").length;
+  // Started from another report: banner, approximate-value hints, inherited documents, and open on the
+  // first step that still needs an answer (so the user lands on what is new).
+  const source = await sourceInfo(user.id, report.intake);
+  const sourceReport = source?.exists ? await getSource(user.id, source.reportId) : null;
+  const inherited = sourceReport && FORMS[sourceReport.product as Product]?.steps.some((s) => s.documents)
+    ? (await listFilesForReport(sourceReport.id)).map((f) => ({ name: f.name, docType: f.docType ?? null, label: DOC_TYPES.find((d) => d.value === f.docType)?.label ?? "Document" }))
+    : [];
+  let initialStep = 0;
+  if (source && form && versionCount === 0) {
+    const issues = VALIDATORS[product as Product]?.(report.intake, { fields: getOptions(product as Product).fields, locations: getOptions(product as Product).locations }).issues ?? [];
+    const first = form.steps.findIndex((s) => issues.some((i) => i.step === s.key));
+    initialStep = first >= 0 ? first : form.steps.length;
+  }
 
   return (
     <div className="space-y-6" data-testid="report-form" data-report-id={report.id}>
@@ -78,6 +96,11 @@ export default async function ReportFormPage({ params, searchParams }: Props) {
           initialIntake={report.intake}
           notAsked={product === "quick_report" ? quickReportNotAsked : []}
           titleFor={{ prefix: info.name, fallback: report.title }}
+          tokens={await tokenInfoFor(user.id, product as Product)}
+          source={source ? { productName: source.productName, title: source.title, finishedOn: source.finishedOn, ageDays: source.ageDays, reuse: source.reuse, carried: source.carried, href: source.exists ? `/app/reports/${source.reportId}` : null } : null}
+          approx={source?.approx ?? {}}
+          inheritedFiles={inherited}
+          initialStep={initialStep}
         />
       ) : (
         <div className="rounded-[var(--radius-card)] border border-dashed border-line-2 bg-white p-6">

@@ -39,6 +39,13 @@ export function baseUrlFor(product: Product) {
 export const isLivePipeline = (product: Product) => /^https:\/\/api\.vectorshift\.ai/.test(baseUrlFor(product));
 
 /**
+ * Automatic retries call the pipeline a second time, and a timed-out or 5xx call may still have run (and
+ * used credits) on VectorShift. So on the live VectorShift API there is no automatic retry unless
+ * VS_AUTO_RETRY=true: one press of Generate = at most one pipeline call. The user can still press Retry.
+ */
+export const autoRetryAllowed = (product: Product) => (isLivePipeline(product) ? process.env.VS_AUTO_RETRY === "true" : process.env.VS_AUTO_RETRY !== "false");
+
+/**
  * How a product's inputs are sent. "fields": one text input per answer (the live Quick Report pipeline).
  * "run_request": one JSON run_request input (BRD v2.0 contract; the other products and the tests).
  * VS_INPUT_<PRODUCT> overrides; the Quick Report defaults to "fields".

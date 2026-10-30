@@ -13,6 +13,8 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { formatDuration, formatElapsed } from "@/lib/duration";
 import type { RunStatusView } from "@/lib/runs/service";
 import { cn } from "@/lib/utils";
+import { announceTokens } from "@/components/tokens/token-chip";
+import { NotEnoughTokens, useTokenConfirm, type TokenInfo } from "@/components/tokens/token-confirm";
 
 const STEPS = [
   { phase: "request_sent", label: "Request sent" },
@@ -22,7 +24,7 @@ const STEPS = [
   { phase: "done", label: "Report ready" },
 ];
 
-export function RunStatus({ initial, formHref }: { initial: RunStatusView; formHref: string }) {
+export function RunStatus({ initial, formHref, tokens: initialTokens = null }: { initial: RunStatusView; formHref: string; tokens?: TokenInfo | null }) {
   const router = useRouter();
   const [view, setView] = useState(initial);
   const [now, setNow] = useState(() => Date.now());
@@ -30,6 +32,11 @@ export function RunStatus({ initial, formHref }: { initial: RunStatusView; formH
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const runId = useRef(initial.runId);
+  // Consecutive failed polls (server stopped, network down): back off and say so instead of hammering.
+  const [failures, setFailures] = useState(0);
+  const [tokens, setTokens] = useState(initialTokens);
+  const confirm = useTokenConfirm(tokens, "Retry");
+  const tokenShort = !!tokens && tokens.balance < tokens.cost;
 
   const active = view.status === "queued" || view.status === "running";
   const retrying = !!view.nextRunId;
@@ -37,7 +44,11 @@ export function RunStatus({ initial, formHref }: { initial: RunStatusView; formH
   const poll = useCallback(async () => {
     try {
       const res = await fetch(`/api/runs/${runId.current}`, { cache: "no-store" });
-      if (!res.ok) return;
+      if (!res.ok) {
+        setFailures((f) => f + 1);
+        return;
+      }
+      setFailures(0);
       const next = (await res.json()) as RunStatusView;
       if (next.nextRunId && next.status === "failed") {
         // An automatic retry was queued: follow it.
@@ -47,7 +58,7 @@ export function RunStatus({ initial, formHref }: { initial: RunStatusView; formH
       setFetchedAt(Date.now());
       if (next.status === "succeeded") router.replace(`/app/reports/${next.reportId}`);
     } catch {
-      /* try again on the next tick */
+      setFailures((f) => f + 1); // try again later, with a longer wait
     }
   }, [router]);
 
@@ -56,7 +67,8 @@ export function RunStatus({ initial, formHref }: { initial: RunStatusView; formH
     if (!(active || retrying)) return;
     let timer: ReturnType<typeof setTimeout>;
     const schedule = () => {
-      const interval = view.elapsedMs > 5 * 60_000 ? 10_000 : view.elapsedMs > 2 * 60_000 ? 3_000 : 1_500;
+      const base = view.elapsedMs > 5 * 60_000 ? 10_000 : view.elapsedMs > 2 * 60_000 ? 3_000 : 1_500;
+      const interval = failures ? Math.min(30_000, base * 2 ** Math.min(failures, 5)) : base;
       timer = setTimeout(async () => {
         if (document.visibilityState === "visible") await poll();
         schedule();
@@ -69,7 +81,7 @@ export function RunStatus({ initial, formHref }: { initial: RunStatusView; formH
       clearTimeout(timer);
       document.removeEventListener("visibilitychange", onVisible);
     };
-  }, [active, retrying, poll, view.elapsedMs]);
+  }, [active, retrying, poll, view.elapsedMs, failures]);
 
   // Local clock for the elapsed timer between polls.
   useEffect(() => {
@@ -92,12 +104,17 @@ export function RunStatus({ initial, formHref }: { initial: RunStatusView; formH
   }
 
   async function retry() {
+    if (tokenShort || !(await confirm.ask())) return;
     setBusy(true);
     setError(null);
     const res = await fetch(`/api/reports/${view.reportId}/runs`, { method: "POST" });
     const body = await res.json().catch(() => ({}));
     if (res.status === 202) {
       runId.current = body.runId;
+      if (tokens) {
+        setTokens({ ...tokens, balance: tokens.balance - tokens.cost });
+        announceTokens();
+      }
       setView({ ...view, runId: body.runId, status: "queued", phase: "request_sent", elapsedMs: 0, errorCode: null, message: null, nextRunId: null });
       setFetchedAt(Date.now());
     } else setError(body?.error?.message ?? "The report could not be started.");
@@ -119,6 +136,7 @@ export function RunStatus({ initial, formHref }: { initial: RunStatusView; formH
 
   return (
     <div className="space-y-6">
+      {confirm.dialog}
       <div role="status" aria-live="polite" className="sr-only">
         {headline}
       </div>
@@ -175,6 +193,12 @@ export function RunStatus({ initial, formHref }: { initial: RunStatusView; formH
           </p>
         )}
 
+        {view.status === "failed" && view.canRetry && !retrying && tokens && tokenShort && <NotEnoughTokens tokens={tokens} className="mt-4 rounded-lg border border-bad/30 bg-bad-soft px-4 py-3 text-sm text-ink" />}
+        {(active || retrying) && failures >= 3 && (
+          <p role="status" className="mt-4 rounded-lg bg-warn-soft px-4 py-2 text-sm text-warn" data-testid="poll-offline">
+            Can&apos;t reach the server right now. The report keeps running; this page checks again automatically.
+          </p>
+        )}
         <div className="mt-6 flex flex-wrap gap-3">
           {active && (
             <Button variant="outline" onClick={cancel} disabled={busy}>
@@ -182,7 +206,7 @@ export function RunStatus({ initial, formHref }: { initial: RunStatusView; formH
             </Button>
           )}
           {view.status === "failed" && view.canRetry && !retrying && (
-            <Button onClick={retry} disabled={busy}>
+            <Button onClick={retry} disabled={busy || tokenShort} data-testid="run-retry">
               Retry
             </Button>
           )}

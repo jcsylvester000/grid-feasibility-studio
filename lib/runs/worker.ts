@@ -3,7 +3,10 @@
  * Background Function run-worker (RUN_DISPATCH=netlify). Never throws; every outcome is stored.
  * VS-09 log line: ids, status, sizes and timing only, never inputs or outputs.
  */
+import { getReportForUser } from "@/lib/db/repos/reports";
 import { claimRun, createQueuedRun, finishRun, getRun, getRunContext, recordRunInputs, setRunPhase } from "@/lib/db/repos/runs";
+import { refundCharge } from "@/lib/db/repos/tokens";
+import { getDb } from "@/lib/db/client";
 import type { Product, ReportStatus, RunInputSnapshot } from "@/lib/db/schema";
 import { validateIntake } from "@/lib/forms";
 import { track } from "@/lib/usage/track";
@@ -13,21 +16,31 @@ import { parseOutputs } from "@/lib/vectorshift/parse-output";
 import { quickReportInputs, quickReportRef } from "@/lib/vectorshift/quick-report-fields";
 import { parseLiveOutputs, QR_LIVE_FORMAT, QR_LIVE_SCHEMA } from "@/lib/vectorshift/quick-report-live";
 import { validateEnvelope } from "@/lib/contract/validate";
-import { appOrigin, inputMode, pipelineId as pipelineFor, RETRY_DELAY_MS, timeoutMs, vectorShift } from "./config";
+import { appOrigin, autoRetryAllowed, inputMode, pipelineId as pipelineFor, RETRY_DELAY_MS, timeoutMs, vectorShift } from "./config";
 import { docsIntake, loadRunFiles } from "@/lib/files/run-files";
+import { sourceRunKeys } from "@/lib/reports/source-age";
 import { buildRunRequest, manilaDate, type RunDocument } from "./run-request";
 
-export type RunFiles = (runId: string, reportId: string) => Promise<{ documents: RunDocument[]; files: PipelineFile[] }>;
+export type RunFiles = (runId: string, reportId: string, alsoFrom?: string[]) => Promise<{ documents: RunDocument[]; files: PipelineFile[] }>;
 
 /** File loader: signed URLs from storage (B6). Tests may replace it. */
-let loadFiles: RunFiles = (runId, reportId) => loadRunFiles(runId, reportId);
+let loadFiles: RunFiles = (runId, reportId, alsoFrom) => loadRunFiles(runId, reportId, alsoFrom);
 export function setFileLoader(fn: RunFiles) {
   loadFiles = fn;
 }
 
-/** Keys the form validator does not know but the pipeline needs: the confirmed teaser (listing_source). */
+/** Keys the form validator does not know but the pipeline needs: the confirmed teaser (listing_source) and,
+ *  for a report started from another report, the source link (source.*). */
 function carried(intake: Record<string, unknown>) {
-  return Object.fromEntries(Object.entries(intake).filter(([k]) => k === "listing_source" || k === "teaser.source_report_id"));
+  return Object.fromEntries(Object.entries(intake).filter(([k]) => k === "listing_source" || k === "teaser.source_report_id" || k.startsWith("source.")));
+}
+
+/** The source report's id when this report was started from one the same user owns (its documents are read too). */
+async function sourceReportFor(userId: string, intake: Record<string, unknown>) {
+  const id = intake["source.report_id"];
+  if (typeof id !== "string") return [];
+  const src = await getReportForUser(userId, id);
+  return src ? [src.id] : [];
 }
 
 function log(entry: Record<string, unknown>) {
@@ -52,7 +65,9 @@ export async function executeRun(runId: string, opts: { fetchImpl?: typeof fetch
     log({ runId, product, pipelineId: run.pipelineId, vsRunId: extra.vsRunId ?? null, http: extra.httpStatus ?? null, ms: durationMs, inBytes: extra.inputBytes ?? null, outBytes: extra.outputBytes ?? null, code, ignored: !stored });
     if (!stored) return { claimed: true as const, status: "ignored" };
     await track(userPublicId, "run.failed", { product, pipelineId: run.pipelineId, durationMs, errorCode: code, status: "failed" });
-    if (shouldAutoRetry(code, product, run.attempt)) await scheduleRetry(run.reportId, product, run.attempt + 1, run.inputSnapshot ?? null);
+    // An automatic retry keeps the charge; otherwise the tokens go back to the wallet.
+    const retried = autoRetryAllowed(product) && shouldAutoRetry(code, product, run.attempt) && (await scheduleRetry(run.reportId, product, run.attempt + 1, run.inputSnapshot ?? null, run.chargeId ?? null));
+    if (!retried && run.chargeId && (await refundCharge(await getDb(), run.chargeId, runId))) await track(userPublicId, "tokens.refunded", { product, errorCode: code });
     return { claimed: true as const, status: "failed", code };
   };
 
@@ -111,7 +126,7 @@ export async function executeRun(runId: string, opts: { fetchImpl?: typeof fetch
     let files: PipelineFile[] = [];
     let documents: RunDocument[] = [];
     try {
-      ({ files, documents } = await loadFiles(runId, report.id));
+      ({ files, documents } = await loadFiles(runId, report.id, await sourceReportFor(report.userId, report.intake)));
     } catch (err) {
       return await fail("FILE_FETCH_FAILED", { rawFailureBody: { error: String((err as Error)?.message ?? err) } });
     }
@@ -124,7 +139,7 @@ export async function executeRun(runId: string, opts: { fetchImpl?: typeof fetch
       product,
       reportId: report.id,
       attempt: run.attempt,
-      intake: { ...(checked ? checked.intake : intakeNow), ...carried(intakeNow), ...docsIntake(documents) },
+      intake: { ...(checked ? checked.intake : intakeNow), ...carried(intakeNow), ...sourceRunKeys(intakeNow, now()), ...docsIntake(documents) },
       complete: checked ? checked.ok : true,
       userPublicId,
       appOrigin: appOrigin(),
@@ -168,7 +183,7 @@ export async function executeRun(runId: string, opts: { fetchImpl?: typeof fetch
 }
 
 /** 7.3 step 6: one automatic retry after 20 seconds for retryable failures. */
-async function scheduleRetry(reportId: string, product: Product, attempt: number, inputSnapshot: RunInputSnapshot | null) {
+async function scheduleRetry(reportId: string, product: Product, attempt: number, inputSnapshot: RunInputSnapshot | null, chargeId: string | null): Promise<boolean> {
   try {
     const retry = await createQueuedRun({
       reportId,
@@ -177,11 +192,14 @@ async function scheduleRetry(reportId: string, product: Product, attempt: number
       attempt,
       retryAt: new Date(Date.now() + RETRY_DELAY_MS),
       inputSnapshot: inputSnapshot ? { intake: inputSnapshot.intake, recorded_at: inputSnapshot.recorded_at } : null,
+      chargeId,
     });
     const { dispatchRun } = await import("./dispatch");
     await dispatchRun(retry.id, { delayMs: RETRY_DELAY_MS });
+    return true;
   } catch (err) {
     console.error("retry scheduling failed:", reportId, err instanceof Error ? err.message : err);
+    return false;
   }
 }
 

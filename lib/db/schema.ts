@@ -156,6 +156,8 @@ export const runs = pgTable(
      * even after the form is edited (migration 0006). `sent` is exactly what went to the pipeline.
      */
     inputSnapshot: jsonb("input_snapshot").$type<RunInputSnapshot>(),
+    /** The token charge this run (and its automatic retries) is paid by; refunded if it finally fails (0007). */
+    chargeId: uuid("charge_id"),
   },
   (t) => [
     index("runs_status_started_idx").on(t.status, t.startedAt),
@@ -248,4 +250,44 @@ export const auditLog = pgTable(
     at: ts("at").notNull().defaultNow(),
   },
   (t) => [index("audit_log_at_idx").on(t.at)],
+);
+
+/**
+ * GRID Token wallet (prototype, migration 0007). One wallet per account, opened with the starting balance
+ * on first use. Every change is a ledger row; the wallet balance always equals the sum of its ledger.
+ */
+export const TOKEN_ENTRY_KINDS = ["opening", "charge", "refund", "top_up"] as const;
+export type TokenEntryKind = (typeof TOKEN_ENTRY_KINDS)[number];
+
+export const tokenWallets = pgTable("token_wallets", {
+  userId: uuid("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  balance: integer("balance").notNull(),
+  createdAt: ts("created_at").notNull().defaultNow(),
+  updatedAt: ts("updated_at").notNull().defaultNow(),
+});
+
+export const tokenLedger = pgTable(
+  "token_ledger",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    /** Insertion order (several entries can share a timestamp inside one transaction). */
+    seq: bigserial("seq", { mode: "number" }).notNull(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kind: text("kind", { enum: TOKEN_ENTRY_KINDS }).notNull(),
+    delta: integer("delta").notNull(),
+    balanceAfter: integer("balance_after").notNull(),
+    product: text("product", { enum: PRODUCTS }),
+    /** Not foreign keys: the history stays when a report is deleted. */
+    reportId: uuid("report_id"),
+    runId: uuid("run_id"),
+    reportTitle: text("report_title"),
+    /** For a refund: the charge it returns (each charge is refunded at most once). */
+    refundOf: uuid("refund_of"),
+    at: ts("at").notNull().defaultNow(),
+  },
+  (t) => [index("token_ledger_user_at_idx").on(t.userId, t.at), uniqueIndex("token_ledger_refund_once").on(t.refundOf).where(sql`refund_of is not null`)],
 );

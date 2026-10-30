@@ -54,7 +54,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 /** Per-report scenario overrides for end-to-end tests: POST /__control/{reportId} { scenario }. */
 const overrides = new Map<string, string>();
 
-export type MockLogEntry = { pipelineId: string; scenario: string; product?: string; reportId?: string; files: string[]; documents?: string[]; at: string };
+export type MockLogEntry = { pipelineId: string; scenario: string; product?: string; reportId?: string; files: string[]; documents?: string[]; source?: Record<string, unknown>; at: string };
 export const mockLog: MockLogEntry[] = [];
 
 export async function handleMockRequest(req: Request, opts: { delayMs?: number } = {}): Promise<Response> {
@@ -109,7 +109,8 @@ export async function handleMockRequest(req: Request, opts: { delayMs?: number }
   }
   const override = runRequest.report_id ? overrides.get(runRequest.report_id) : undefined;
   if (override) scenario = override;
-  mockLog.push({ pipelineId, scenario, product: runRequest.product, reportId: runRequest.report_id, files, documents: (runRequest.documents ?? []).map((d) => `${d.doc_ref}:${d.capability ?? ""}`), at: new Date().toISOString() });
+  const source = Object.fromEntries(Object.entries((runRequest as { intake?: Record<string, unknown> }).intake ?? {}).filter(([k]) => k.startsWith("source.")));
+  mockLog.push({ pipelineId, scenario, product: runRequest.product, reportId: runRequest.report_id, files, documents: (runRequest.documents ?? []).map((d) => `${d.doc_ref}:${d.capability ?? ""}`), ...(Object.keys(source).length ? { source } : {}), at: new Date().toISOString() });
 
   const delay = opts.delayMs ?? Number(process.env.MOCK_VS_DELAY_MS ?? 2500);
   await sleep(scenario === "slow" ? delay * 10 : delay);

@@ -12,6 +12,7 @@ test("versions: generate, edit and run again, view the older version and downloa
   const id = await signUpAndStartQuick(page);
   await fillQuickReport(page);
   await page.getByRole("button", { name: "Generate report" }).click();
+  await page.getByTestId("token-confirm-ok").click();
   await page.waitForURL(`**/app/reports/${id}`, { timeout: 25_000 });
 
   const view = page.getByTestId("report-view");
@@ -33,6 +34,7 @@ test("versions: generate, edit and run again, view the older version and downloa
   await choose(page, "Asking price per sqm", "₱60,000 per sqm");
   await goToStep(page, /Review/);
   await page.getByRole("button", { name: "Generate report" }).click();
+  await page.getByTestId("token-confirm-ok").click();
   await page.waitForURL(`**/app/reports/${id}`, { timeout: 25_000 });
   await expect(page.getByTestId("verdict")).toContainText("Weak");
   await expect(page.getByTestId("version-line")).toContainText("Version 2 of 2");

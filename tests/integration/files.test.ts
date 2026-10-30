@@ -110,6 +110,17 @@ describe("upload rules (UP-02)", () => {
 });
 
 describe("runs read files through signed URLs (UP-04, VS-03)", () => {
+  it("a report started from another report also reads that report's documents, once each", async () => {
+    const u = await newUser();
+    const es = await createReport(u, "executive_summary");
+    const fr = await createReport(u, "feasibility_report");
+    await upload(u, es.id, "title.pdf", "title_documents");
+    await upload(u, fr.id, "zoning.pdf", "zoning_certificate");
+    await upload(u, fr.id, "title.pdf", "title_documents"); // same file uploaded again: counted once
+    const { documents } = await loadRunFiles("run", fr.id, [es.id]);
+    expect(documents.map((d) => d.file_name)).toEqual(["zoning.pdf", "title.pdf"]);
+  });
+
   it("lists documents in upload order with doc refs and capabilities, and keeps files 90 days from the run", async () => {
     const u = await newUser();
     const r = await createReport(u, "feasibility_report");

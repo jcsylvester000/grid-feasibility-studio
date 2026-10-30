@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { changePassword, deleteAccount, logoutEverywhere, regenerateRecoveryKey } from "@/lib/auth/account";
 import { clearSessionCookies, isSameOrigin, requireUser, setRecoveryKeyFlash, setSessionCookies } from "@/lib/auth/session";
 import { createReport, isEnabledProduct, removeReport } from "@/lib/reports/service";
+import { canChain, createFromSource, eligibleSources } from "@/lib/reports/sources";
 
 const ORIGIN_ERROR = "This request did not come from the GRID Feasibility Studio site. Reload the page and try again.";
 const str = (fd: FormData, k: string) => String(fd.get(k) ?? "");
@@ -15,8 +16,21 @@ export async function startReportAction(fd: FormData) {
   if (!(await isSameOrigin())) throw new Error(ORIGIN_ERROR);
   const product = str(fd, "product");
   if (!isEnabledProduct(product)) redirect("/app/new");
+  // Executive Summary and Feasibility Report: offer to start from a finished report when the user has one.
+  if (str(fd, "blank") !== "1" && canChain(product) && (await eligibleSources(user.id, product, 1)).length > 0) redirect(`/app/new/${product}/start`);
   const report = await createReport(user, product);
   redirect(`/app/new/${product}?id=${report.id}`);
+}
+
+/** Start an Executive Summary or Feasibility Report from a finished report (answers carried over). */
+export async function startFromSourceAction(fd: FormData) {
+  const { user } = await requireUser("/app/new");
+  if (!(await isSameOrigin())) throw new Error(ORIGIN_ERROR);
+  const product = str(fd, "product");
+  if (!isEnabledProduct(product) || !canChain(product)) redirect("/app/new");
+  const r = await createFromSource(user, product, str(fd, "source"));
+  if (!r.ok) redirect(`/app/new/${product}/start?error=${encodeURIComponent(r.code)}`);
+  redirect(`/app/new/${product}?id=${r.reportId}`);
 }
 
 /** S-06: delete after confirmation. */

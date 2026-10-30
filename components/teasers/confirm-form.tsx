@@ -63,7 +63,7 @@ export function ConfirmForm(p: Props) {
     });
     const body = await res.json().catch(() => ({}));
     if (res.status === 201 && body.reportId) {
-      router.push(body.runId ? `/app/reports/${body.reportId}/run` : `/app/new/quick_report?id=${body.reportId}`);
+      router.replace(body.runId ? `/app/reports/${body.reportId}/run` : `/app/new/quick_report?id=${body.reportId}`);
       return;
     }
     setError(body?.error?.message ?? "The scan could not be confirmed. Try again.");

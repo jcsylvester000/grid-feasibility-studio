@@ -5,11 +5,16 @@ import { AppNav } from "@/components/app/app-nav";
 import { requireUser } from "@/lib/auth/session";
 import { PrototypeBanner } from "@/components/app/prototype-banner";
 import { isPrototypeMode } from "@/lib/flags";
+import { TokenChip } from "@/components/tokens/token-chip";
+import { getBalance } from "@/lib/db/repos/tokens";
+import { tokensEnabled } from "@/lib/tokens/config";
+import { minTokenCost } from "@/lib/tokens/info";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { user } = await requireUser("/app");
+  const balance = tokensEnabled() ? await getBalance(user.id) : null;
   return (
     <div className="min-h-dvh bg-cream print:min-h-0 print:bg-white">
       <a
@@ -22,6 +27,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
           <Logo />
           <div className="ml-auto flex items-center gap-3">
+            {balance !== null && <TokenChip balance={balance} minCost={minTokenCost()} />}
             <Link
               href="/app/account"
               className="rounded-full bg-white/10 px-3 py-1 font-mono text-xs text-gold no-underline hover:bg-white/15"
